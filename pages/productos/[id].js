@@ -496,8 +496,9 @@ const Producto = () => {
       const existeInversor = inversores.filter(
         (inversor) => inversor.usuarioId === usuario.uid
       );
-      if (existeInversor) {
+      if (existeInversor.length != 0) {
         // Encuentra el índice del elemento que coincide con el idUsuario deseado
+        console.log("existeee");
         const nuevosCampos = {
           categoria: inputCategoriaInversor,
           descripcion: inputDesInversor,
