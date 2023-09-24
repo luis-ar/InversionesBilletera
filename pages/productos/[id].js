@@ -257,10 +257,10 @@ const Producto = () => {
 
       if (docSnap.exists()) {
         // Obtiene el array inversores del documento
-        const inversores = docSnap.data().inversores;
+        const inversores = await docSnap.data().inversores;
 
         // Busca el inversor que coincide con el idUsuario
-        const inversorEncontrado = inversores.find(
+        const inversorEncontrado = await inversores.find(
           (inversor) => inversor.usuarioId === usuario.uid
         );
 
@@ -268,7 +268,6 @@ const Producto = () => {
           setInputDesInversor(inversorEncontrado.descripcion);
           setInputCuboInversor(inversorEncontrado.cubos);
           setInputCategoriaInversor(inversorEncontrado.categoria);
-          return inversorEncontrado; // Devuelve el inversor encontrado
         }
       }
     } catch (error) {
@@ -498,10 +497,9 @@ const Producto = () => {
       );
       if (existeInversor.length != 0) {
         // Encuentra el índice del elemento que coincide con el idUsuario deseado
-        console.log("existeee");
         const nuevosCampos = {
-          categoria: inputCategoriaInversor,
           descripcion: inputDesInversor,
+          categoria: inputCategoriaInversor,
           cubos: inputCuboInversor,
         };
         const indice = inversores.findIndex(
@@ -510,13 +508,13 @@ const Producto = () => {
         if (indice !== -1) {
           // Actualiza los campos del elemento con los nuevos valores
           inversores[indice] = { ...inversores[indice], ...nuevosCampos };
-          const nuevosInversores = [...inversores];
+          const nuevos = [...inversores];
 
           // Actualiza el documento con el array actualizado
-          await updateDoc(docRef, { nuevosInversores });
+          await updateDoc(docRef, { inversores });
           guardarProducto({
             ...producto,
-            inversores: nuevosInversores,
+            inversores: nuevos,
           });
           console.log("Elemento actualizado con éxito");
         }
