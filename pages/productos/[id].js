@@ -89,7 +89,7 @@ const Contenedor = styled.div`
       color: white;
       margin-bottom: 1.5rem;
       padding-bottom: 1rem;
-      border-bottom: 2px solid blue;
+      border-bottom: 2px solid #3b82f6;
     }
     .campo {
       display: grid;
@@ -633,7 +633,21 @@ const Producto = () => {
                   <legend>
                     {editarInversion ? "Nueva Inversión" : "Editar Inversión"}
                   </legend>
-
+                  <div
+                    css={css`
+                      margin-bottom: 5px;
+                      color: white;
+                      font-size: 20px;
+                      text-align: center;
+                      span {
+                        color: #3b82f6;
+                        font-size: 25px;
+                      }
+                    `}
+                  >
+                    Cantidad de cubos disponibles{" "}
+                    <span>{100 - totalCubos}</span>
+                  </div>
                   {mensaje && <Mensaje tipo="error">{mensaje}</Mensaje>}
 
                   <div className="campo">
