@@ -201,6 +201,7 @@ const Producto = () => {
   const [pase, setPase] = useState(false);
   const [numElementos, setNumElementos] = useState(0); // Nuevo estado para el número de elementos
   const [editarInversion, setEditarInversion] = useState(true);
+  const [inverEncontrado, setInverEncontrado] = useState();
   //mensaje error
   const [mensaje, setMensaje] = useState("");
   //cantida de cubos
@@ -265,6 +266,7 @@ const Producto = () => {
         );
 
         if (inversorEncontrado) {
+          setInverEncontrado(inversorEncontrado);
           setInputDesInversor(inversorEncontrado.descripcion);
           setInputCuboInversor(inversorEncontrado.cubos);
           setInputCategoriaInversor(inversorEncontrado.categoria);
@@ -480,6 +482,17 @@ const Producto = () => {
       }, 2000);
       return;
     }
+    if (
+      totalCubos + parseInt(inputCuboInversor) - inverEncontrado.cubos >
+      100
+    ) {
+      setMensaje("La cantidad de cubos ingresados supera a los disponibles");
+      setTimeout(() => {
+        setMensaje("");
+      }, 2000);
+      return;
+    }
+
     guardarModal(false);
     const docRef = doc(firebase.db, "productos", `${id}`);
     const docSnap = await getDoc(docRef);
@@ -596,7 +609,7 @@ const Producto = () => {
                       id="nombre"
                       type="text"
                       name="descripcion"
-                      placeholder="Añade el Nombre del Gasto"
+                      placeholder="Añade una descripcion de la inversion"
                       autocomplete="off"
                       value={inputDesInversor}
                       onChange={inversorDesChange}
@@ -756,8 +769,10 @@ const Producto = () => {
                   <CircularProgressbar
                     value={totalCubos}
                     styles={buildStyles({
-                      pathColor: "#3B82F6",
-                      trailColor: "#f5f5f5",
+                      pathColor: totalCubos < 100 ? "#3B82F6" : "#DC2626",
+                      textColor: totalCubos < 100 ? "#3B82F6" : "#DC2626",
+                      trailColor: "#eee",
+                      strokeLinecap: "butt",
                     })}
                     text={`${totalCubos}%`}
                   />
