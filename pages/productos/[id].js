@@ -311,7 +311,30 @@ const Producto = () => {
       console.error("Error:", error);
     }
   };
+  useEffect(() => {
+    const ejecutar = async () => {
+      const docRef = doc(firebase.db, "productos", `${id}`);
+      try {
+        // Obtiene el documento actual
+        const docSnap = await getDoc(docRef);
+        // Obtiene el array inversores del documento
+        const inversores = docSnap.data().inversores;
+        // Busca el inversor que coincide con el idUsuario
+        const inversorEncontrado = inversores.find(
+          (inversor) => inversor.usuarioId === usuario.uid
+        );
 
+        if (inversorEncontrado) {
+          setPase(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // Llama a la función ejecutar una vez que la página se haya cargado
+    ejecutar();
+  }, [producto]);
   useEffect(() => {
     if (id && consultarDB) {
       const obtenerProducto = async () => {
@@ -482,15 +505,25 @@ const Producto = () => {
       }, 2000);
       return;
     }
-    if (
-      totalCubos + parseInt(inputCuboInversor) - inverEncontrado.cubos >
-      100
-    ) {
-      setMensaje("La cantidad de cubos ingresados supera a los disponibles");
-      setTimeout(() => {
-        setMensaje("");
-      }, 2000);
-      return;
+    if (inverEncontrado) {
+      if (
+        totalCubos + parseInt(inputCuboInversor) - inverEncontrado.cubos >
+        100
+      ) {
+        setMensaje("La cantidad de cubos ingresados supera a los disponibles");
+        setTimeout(() => {
+          setMensaje("");
+        }, 2000);
+        return;
+      }
+    } else {
+      if (totalCubos + parseInt(inputCuboInversor) > 100) {
+        setMensaje("La cantidad de cubos ingresados supera a los disponibles");
+        setTimeout(() => {
+          setMensaje("");
+        }, 2000);
+        return;
+      }
     }
 
     guardarModal(false);
@@ -548,7 +581,7 @@ const Producto = () => {
         });
       }
     }
-
+    localStorage.setItem("pase", true);
     setPase(true);
     setInputDesInversor("");
     setInputCuboInversor("");
