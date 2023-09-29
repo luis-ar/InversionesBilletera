@@ -249,7 +249,7 @@ const Producto = () => {
   };
   const actualizarInversorPorId = async () => {
     const docRef = doc(firebase.db, "productos", `${id}`);
-
+    console.log(usuario);
     try {
       // Obtiene el documento actual
       guardarModal(true);
@@ -443,10 +443,12 @@ const Producto = () => {
   };
 
   const esCreadorInversor = (id) => {
-    if (usuario.uid == id) {
-      return true;
-    } else {
-      return false;
+    if (usuario != null) {
+      if (usuario.uid == id) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 
@@ -611,7 +613,16 @@ const Producto = () => {
         {error ? (
           <Error404 />
         ) : (
-          <div className="contenedor">
+          <div
+            className="contenedor"
+            css={css`
+              margin-left: 30%;
+              padding-left: 20px;
+              @media (min-width: 1000px) {
+                margin-left: 300px;
+              }
+            `}
+          >
             <h1
               css={css`
                 text-align: center;

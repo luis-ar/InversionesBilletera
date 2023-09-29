@@ -4,11 +4,11 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 const Producto = styled.li`
-  padding: 4rem;
+  padding: 1.5rem;
   border-radius: 20px;
   border: 5px solid #d4d3d2;
   margin-bottom: 7px;
-  background-color: white;
+  background-color: #0e1010;
 
   :last-child {
     margin-bottom: 5px;
@@ -27,6 +27,8 @@ const Producto = styled.li`
 const DescripcionProducto = styled.div`
   flex: 0 1 600px;
   display: grid;
+  color: white;
+
   grid-template-columns: 1fr 3fr;
   column-gap: 2rem;
   @media (max-width: 700px) {
@@ -37,7 +39,7 @@ const DescripcionProducto = styled.div`
 const Titulo = styled.a`
   font-size: 2rem;
   font-weight: bold;
-  color: black;
+  color: white;
   margin: 0;
   :hover {
     cursor: pointer;
@@ -71,6 +73,7 @@ const TextoDescripcion = styled.p`
   }
 `;
 const Comentarios = styled.div`
+  font-size: 20px;
   margin-top: rem;
   margin-bottom: 5px;
   display: flex;
@@ -81,6 +84,7 @@ const Comentarios = styled.div`
     border: 1px solid #e1e1e1;
     padding: 0.3rem 1rem;
     margin-right: 2rem;
+    height: 30px;
   }
 
   img {
@@ -102,12 +106,21 @@ const Comentarios = styled.div`
       font-size: 1.2rem;
     }
   }
+  .corazon {
+    cursor: pointer;
+  }
+  .bx {
+    margin-right: 5px;
+  }
 `;
 
 // npm i date-fns
 const Imagen = styled.img`
-  width: 200px;
-  box-shadow: 0 0 5px 1px black;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 15px;
+  box-shadow: 0 0 5px 1px white;
   @media (max-width: 550px) {
     width: 150px;
   }
@@ -142,13 +155,41 @@ const ContenedorImagen = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  width: 200px;
+  height: 200px;
 `;
 
 const Publicado = styled.p`
-margin-bottom: 5px;
+  margin-bottom: 5px;
   @media (max-width: 550px) {
     font-size: 12px;
+  }
+`;
+const ContenedorDatos = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+const RedesSociales = styled.div`
+  display: flex;
+  div {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e1e1e1;
+    padding: 0.3rem 1rem;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 30px;
+    height: 40px;
+    :first-child {
+      margin-right: 1rem;
+    }
+  }
+  .bx-map {
+    color: #dc2626;
+  }
+  .bxl-whatsapp {
+    color: #3ff71a;
   }
 `;
 const DetallesProducto = ({ producto }) => {
@@ -178,30 +219,42 @@ const DetallesProducto = ({ producto }) => {
           <ContenedorImagen>
             <Imagen src={urlimagen} />
           </ContenedorImagen>
-          <div>
+          <ContenedorDatos>
             <Link href="/productos/[id]" as={`/productos/${id}`}>
               <Titulo>{nombre}</Titulo>
             </Link>
-            <TextoDescripcion>{descripcion}</TextoDescripcion>
+            {/* <TextoDescripcion>{descripcion}</TextoDescripcion> */}
             <Precio>
               <span>Precio: </span> {formatearPresupuesto(parseInt(precio))}
             </Precio>
             <Comentarios>
               <div>
-                <img src="/static/img/comentario.png" />
-                <p>{comentarios.length} Comentarios</p>
+                <i class="bx bx-message-rounded-dots"></i>{" "}
+                <p>{comentarios.length}</p>
+              </div>
+              <div className="corazon">
+                <i className="bx bx-heart"></i>
+                <p>{votos}</p>
               </div>
             </Comentarios>
             <Publicado>
               Publicado hace :{" "}
               {formatDistanceToNow(new Date(creado), { locale: es })}
             </Publicado>
-          </div>
+          </ContenedorDatos>
         </DescripcionProducto>
-        <Votos>
+        <RedesSociales>
+          <div className="ubicacion">
+            <i class="bx bx-map"></i>
+          </div>
+          <div className="whatsapp">
+            <i class="bx bxl-whatsapp"></i>
+          </div>
+        </RedesSociales>
+        {/* <Votos>
           <div>&#9650;</div>
           <p>{votos}</p>
-        </Votos>
+        </Votos> */}
       </Producto>
       {/* <style jsx>
         {`

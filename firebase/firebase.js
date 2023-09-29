@@ -8,7 +8,12 @@ import {
 } from "firebase/auth";
 import firebaseConfig from "./config";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from '@firebase/storage';
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} from "@firebase/storage";
 
 class Firebase {
   constructor() {
@@ -18,14 +23,24 @@ class Firebase {
     this.storage = getStorage(app);
   }
   //registra usuario
-  async registrar(nombre, email, password) {
+  async registrar(nombre, email, password, imagen) {
     const nuevoUsuario = await createUserWithEmailAndPassword(
       this.auth,
       email,
       password
     );
+    // Subir la imagen de perfil al almacenamiento de Firebase
+    const storageRef = ref(
+      this.storage,
+      `profile_images/${nuevoUsuario.user.uid}`
+    );
+    await uploadBytesResumable(storageRef, imagen);
+
+    // Obtener la URL de descarga de la imagen de perfil
+    const imagenPerfilURL = await getDownloadURL(storageRef);
     return await updateProfile(nuevoUsuario.user, {
       displayName: nombre,
+      photoURL: imagenPerfilURL,
     });
   }
   //Inicia Sesion del usuario

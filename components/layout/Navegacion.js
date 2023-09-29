@@ -8,7 +8,7 @@ const Nav = styled.nav`
   a {
     font-size: 1.8rem;
     margin-left: 2rem;
-    color: var(--gris2);
+    color: white;
     font-family: "PT Sans", sans-serif;
     &:first-of-type {
       margin-left: 0rem;
@@ -26,21 +26,21 @@ const Navegacion = () => {
 
   return (
     <Nav>
-      <Link
+      {/* <Link
         href="/"
         onClick={() => {
           localStorage.clear();
         }}
       >
         Inicio
-      </Link>
+      </Link> */}
       <Link href="/populares">Populares</Link>
       {usuario && (
         <>
           <Link href="/nuevoProducto">Nuevo Producto</Link>
         </>
       )}
-      <Link href="/nosotros">Nosotros</Link>
+      {/* <Link href="/nosotros">Nosotros</Link> */}
     </Nav>
   );
 };

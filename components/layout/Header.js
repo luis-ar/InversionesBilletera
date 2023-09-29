@@ -9,17 +9,34 @@ import { FirebaseContext } from "../../firebase";
 import SliderBarra from "../ui/SliderBarra";
 import BarraSimple from "../ui/BarraSimple";
 import BarraRedes from "../ui/BarraRedes";
+import BarraLateral from "../ui/BarraLateral";
 const ContenedorHeader = styled.div`
-  width: 100%;
+  width: 70%;
   margin: 0 auto;
   position: fixed;
   height: 10vh;
   border-bottom: 4px solid black;
   z-index: 5;
   top: 0;
-  background-color: white;
+  background-color: #021414;
   display: flex;
   justify-content: space-between;
+  color: white;
+  @media (min-width: 1000px) {
+    width: calc(100% - 300px);
+  }
+  .contenedorImagen {
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+    cursor: pointer;
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 100%;
+      object-fit: cover;
+    }
+  }
 `;
 const Logo = styled.div`
   .iconoEscritorio {
@@ -51,103 +68,124 @@ const Header = () => {
 
   return (
     <>
-      <header>
-        <ContenedorHeader>
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-            `}
-          >
-            <Link
-              href="/"
-              onClick={() => {
-                localStorage.clear();
-              }}
-            >
-              <Logo>
-                <img src="/static/img/logo.png" className="iconoCelular" />
-                <img src="/static/img/future.png" className="iconoEscritorio" />
-              </Logo>
-            </Link>
-            {/* Buscador aqui */}
-            <Buscar />
-
-            {/* Nav aqui */}
-            <Navegacion />
-          </div>
-
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-              margin-right: 10px;
-            `}
-          >
-            {usuario ? (
-              <>
-                {/* Menu de administracion */}
-                <p
-                  css={css`
-                    margin-right: 2rem;
-                    text-align: center;
-                    @media (max-width: 490px) {
-                      font-size: 1.1rem;
-                      margin-right: 2rem;
-                    }
-                  `}
-                >
-                  Hola: {usuario.displayName}
-                </p>
-                <Boton
-                  bgColor="true"
-                  onClick={() => {
-                    firebase.cerrarSesion();
-                  }}
-                >
-                  Cerrar Sesion
-                </Boton>
-              </>
-            ) : (
-              <>
-                <Link href="/Login">
-                  <Boton
-                    bgColor="true"
-                    css={css`
-                      margin-right: 10px !important;
-                      padding: 6px 6px !important;
-                    `}
-                  >
-                    Login
-                  </Boton>
-                </Link>
-                <Link href="/crear-cuenta">
-                  <Boton
-                    css={css`
-                      margin-right: 10px !important;
-                      padding: 6px 6px !important;
-                    `}
-                  >
-                    Crear Cuenta
-                  </Boton>
-                </Link>
-              </>
-            )}
-          </div>
-        </ContenedorHeader>
-      </header>
-
-      <SliderBarra />
+      <BarraLateral />
       <div
         css={css`
-          position: fixed;
-          bottom: 0;
-          z-index: 1;
+          margin-left: 30%;
+          @media (min-width: 1000px) {
+            margin-left: 300px;
+          }
         `}
       >
-        <BarraSimple />
+        <header>
+          <ContenedorHeader>
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+              `}
+            >
+              {/* <Link
+                href="/"
+                onClick={() => {
+                  localStorage.clear();
+                }}
+              >
+                <Logo>
+                  <img src="/static/img/logo.png" className="iconoCelular" />
+                  <img
+                    src="/static/img/future.png"
+                    className="iconoEscritorio"
+                  />
+                </Logo>
+              </Link> */}
+              {/* Buscador aqui */}
+              <Buscar />
+
+              {/* Nav aqui */}
+              <Navegacion />
+            </div>
+
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                margin-right: 10px;
+              `}
+            >
+              {usuario ? (
+                <>
+                  {/* Menu de administracion */}
+                  <p
+                    css={css`
+                      margin-right: 2rem;
+                      text-align: center;
+                      @media (max-width: 490px) {
+                        font-size: 1.1rem;
+                        margin-right: 2rem;
+                      }
+                    `}
+                  >
+                    Hola: {usuario.displayName}
+                  </p>
+                  <Boton
+                    bgColor="true"
+                    onClick={() => {
+                      firebase.cerrarSesion();
+                    }}
+                  >
+                    Cerrar Sesion
+                  </Boton>
+                  <div className="contenedorImagen">
+                    <img
+                      src={
+                        usuario.photoURL
+                          ? usuario.photoURL
+                          : "/static/img/imagenPerfil.png"
+                      }
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link href="/Login">
+                    <Boton
+                      bgColor="true"
+                      css={css`
+                        margin-right: 10px !important;
+                        padding: 6px 6px !important;
+                      `}
+                    >
+                      Login
+                    </Boton>
+                  </Link>
+                  <Link href="/crear-cuenta">
+                    <Boton
+                      css={css`
+                        margin-right: 10px !important;
+                        padding: 6px 6px !important;
+                      `}
+                    >
+                      Crear Cuenta
+                    </Boton>
+                  </Link>
+                </>
+              )}
+            </div>
+          </ContenedorHeader>
+        </header>
+
+        <SliderBarra />
+        <div
+          css={css`
+            position: fixed;
+            bottom: 0;
+            z-index: 1;
+          `}
+        >
+          <BarraSimple />
+        </div>
       </div>
-      <BarraRedes />
     </>
   );
 };

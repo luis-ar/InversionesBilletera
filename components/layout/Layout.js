@@ -80,7 +80,7 @@ const Layout = (props) => {
           referrerpolicy="no-referrer"
         />
         <script
-          src="https://kit.fontawesome.com/9199bd82d8.js"
+          src="https://kit.fontawesome.com/01f495c2af.js"
           crossorigin="anonymous"
         ></script>
       </Head>

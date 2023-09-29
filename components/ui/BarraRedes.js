@@ -3,7 +3,7 @@ import styles from "@/styles/Redes.module.css";
 const BarraRedes = () => {
   return (
     <>
-      <div className={styles.contenedor}>
+      {/* <div className={styles.contenedor}>
         <ul>
           <li>
             <a
@@ -35,7 +35,7 @@ const BarraRedes = () => {
             </a>
           </li>
         </ul>
-      </div>
+      </div> */}
     </>
   );
 };

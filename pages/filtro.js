@@ -33,7 +33,6 @@ const filtro = () => {
             </ul>
           </div>
         </div>
-        <BarraRedes />
       </Layout>
     </div>
   );

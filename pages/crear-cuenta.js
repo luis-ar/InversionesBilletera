@@ -20,9 +20,10 @@ const STATE_INICIAL = {
 
 const crearCuenta = () => {
   const [error, guardarError] = useState(false);
+  const [imagen, setImagen] = useState("");
   const crearCuenta = async () => {
     try {
-      await firebase.registrar(nombre, email, password);
+      await firebase.registrar(nombre, email, password, imagen);
       Router.push("/");
     } catch (error) {
       console.error("hubo un error al crear el usuario", error.message);
@@ -88,6 +89,18 @@ const crearCuenta = () => {
                 value={password}
                 onChange={handleChange}
                 onBlur={handleBlur}
+              />
+            </Campo>
+            {errores.imagen && <ErrorMostrar>{errores.imagen}</ErrorMostrar>}
+            <Campo>
+              <label htmlFor="imagen">Imagen</label>
+              <input
+                type="file"
+                id="imagen"
+                name="imagen"
+                onChange={(e) => {
+                  setImagen(e.target.files[0]);
+                }}
               />
             </Campo>
             {error && <ErrorMostrar>{error}</ErrorMostrar>}

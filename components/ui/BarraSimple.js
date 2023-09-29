@@ -5,7 +5,7 @@ import { FirebaseContext } from "@/firebase";
 import { useRouter } from "next/router";
 const Contenedor = styled.div`
   position: relative;
-  width: 100vw;
+  width: 70vw;
   height: 48px;
   background-color: #b5b3b3;
   display: flex;
@@ -14,7 +14,7 @@ const Contenedor = styled.div`
   z-index: 100;
   ul {
     display: flex;
-    width: 90%;
+    width: 100%;
     li {
       position: relative;
       list-style: none;
@@ -113,7 +113,7 @@ const BarraSimple = () => {
             </a>
           </li>
         )}
-        <li>
+        {/* <li>
           <a
             href="/nosotros"
             className={isActive == "lista4" ? "activo" : ""}
@@ -128,7 +128,7 @@ const BarraSimple = () => {
             </span>
             <span className="text">Nosotros</span>
           </a>
-        </li>
+        </li> */}
       </ul>
     </Contenedor>
   );
