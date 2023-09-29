@@ -134,12 +134,12 @@ const Header = () => {
                       firebase.cerrarSesion();
                     }}
                   >
-                    Cerrar Sesion
+                    Cerrar Sesión
                   </Boton>
                   <div className="contenedorImagen">
                     <img
                       src={
-                        usuario.photoURL
+                        usuario.photoURL != null && usuario.photoURL
                           ? usuario.photoURL
                           : "/static/img/imagenPerfil.png"
                       }

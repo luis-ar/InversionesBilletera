@@ -37,7 +37,12 @@ class Firebase {
     await uploadBytesResumable(storageRef, imagen);
 
     // Obtener la URL de descarga de la imagen de perfil
-    const imagenPerfilURL = await getDownloadURL(storageRef);
+    let imagenPerfilURL;
+    if (imagen) {
+      imagenPerfilURL = await getDownloadURL(storageRef);
+    } else {
+      imagenPerfilURL = "";
+    }
     return await updateProfile(nuevoUsuario.user, {
       displayName: nombre,
       photoURL: imagenPerfilURL,
