@@ -18,6 +18,7 @@ export default function Home() {
   return (
     <>
       <Layout>
+        <Slider />
         <div
           className="listado-productos"
           css={css`

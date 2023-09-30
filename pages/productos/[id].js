@@ -563,12 +563,15 @@ const Producto = () => {
     if (docSnap.exists()) {
       // Obtener el array de inversores del documento
       const inversores = docSnap.data().inversores;
+      let existeInversor;
+      if (inversores != undefined) {
+        // Filtrar el array para eliminar el elemento con el idUsuario deseado
+        existeInversor = inversores.filter(
+          (inversor) => inversor.usuarioId === usuario.uid
+        );
+      }
 
-      // Filtrar el array para eliminar el elemento con el idUsuario deseado
-      const existeInversor = inversores.filter(
-        (inversor) => inversor.usuarioId === usuario.uid
-      );
-      if (existeInversor.length != 0) {
+      if (existeInversor != undefined && existeInversor.length != 0) {
         // Encuentra el índice del elemento que coincide con el idUsuario deseado
         const nuevosCampos = {
           descripcion: inputDesInversor,
@@ -580,32 +583,37 @@ const Producto = () => {
         );
         if (indice !== -1) {
           // Actualiza los campos del elemento con los nuevos valores
-          inversores[indice] = { ...inversores[indice], ...nuevosCampos };
-          const nuevos = [...inversores];
+          if (inversores != undefined) {
+            inversores[indice] = { ...inversores[indice], ...nuevosCampos };
+            const nuevos = [...inversores];
 
-          // Actualiza el documento con el array actualizado
-          await updateDoc(docRef, { inversores });
-          guardarProducto({
-            ...producto,
-            inversores: nuevos,
-          });
-          console.log("Elemento actualizado con éxito");
+            // Actualiza el documento con el array actualizado
+            await updateDoc(docRef, { inversores });
+            guardarProducto({
+              ...producto,
+              inversores: nuevos,
+            });
+            console.log("Elemento actualizado con éxito");
+          }
         }
       } else {
         //informacion extra
         inver.usuarioId = usuario.uid;
         inver.usuarioNombre = usuario.displayName;
+        inver.icono = usuario.photoURL;
         //copia de inversores
-        const nuevosInversores = [...inversores, inver];
-        //actualizar la bd
-        updateDoc(docRef, {
-          inversores: nuevosInversores,
-        });
-        //actulizar el state
-        guardarProducto({
-          ...producto,
-          inversores: nuevosInversores,
-        });
+        if (inversores != undefined) {
+          const nuevosInversores = [...inversores, inver];
+          //actualizar la bd
+          updateDoc(docRef, {
+            inversores: nuevosInversores,
+          });
+          //actulizar el state
+          guardarProducto({
+            ...producto,
+            inversores: nuevosInversores,
+          });
+        }
       }
     }
     localStorage.setItem("pase", true);
@@ -639,10 +647,10 @@ const Producto = () => {
           <Error404 />
         ) : (
           <div
-            className="contenedor"
             css={css`
               margin-left: 30%;
               padding-left: 20px;
+              padding-right: 20px;
               @media (min-width: 1000px) {
                 margin-left: 300px;
               }
@@ -930,7 +938,7 @@ const Producto = () => {
                                   leadingActions={leadingActions()}
                                   trailingActions={trailingActions()}
                                 >
-                                  <li
+                                  <ListaComentario
                                     key={`${inversor.usuarioId}-${i}`}
                                     css={css`
                                       border: 1px solid #e1e1e1;
@@ -939,70 +947,89 @@ const Producto = () => {
                                       margin-bottom: 20px;
                                     `}
                                   >
-                                    <p>
-                                      Cantidad de Cubos:{" "}
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.cubos}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Inversión:{" "}
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""}{" "}
-                                        {formatearPresupuesto(
-                                          (parseInt(precio) * inversor.cubos) /
-                                            100
-                                        )}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Inversor:
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.usuarioNombre}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Descripción:
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.descripcion}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Categoria:
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.categoria}
-                                      </span>
-                                    </p>
-                                    {esCreadorInversor(inversor.usuarioId) && (
-                                      <CreadorProducto>
-                                        Tu inversión
-                                      </CreadorProducto>
-                                    )}
-                                  </li>
+                                    <div className="contenedorPerfil">
+                                      <img
+                                        src={
+                                          inversor.icono != null
+                                            ? inversor.icono
+                                            : "/static/img/imagenPerfil.png"
+                                        }
+                                      />
+                                    </div>
+
+                                    <div
+                                      css={css`
+                                        padding-left: 20px;
+                                      `}
+                                    >
+                                      <p>
+                                        Cantidad de Cubos:{" "}
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""} {inversor.cubos}
+                                        </span>
+                                      </p>
+                                      <p>
+                                        Inversión:{" "}
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""}{" "}
+                                          {formatearPresupuesto(
+                                            (parseInt(precio) *
+                                              inversor.cubos) /
+                                              100
+                                          )}
+                                        </span>
+                                      </p>
+                                      <p>
+                                        Inversor:
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""} {inversor.usuarioNombre}
+                                        </span>
+                                      </p>
+                                      <p>
+                                        Descripción:
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""} {inversor.descripcion}
+                                        </span>
+                                      </p>
+                                      <p>
+                                        Categoria:
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""} {inversor.categoria}
+                                        </span>
+                                      </p>
+                                      {esCreadorInversor(
+                                        inversor.usuarioId
+                                      ) && (
+                                        <CreadorProducto>
+                                          Tu inversión
+                                        </CreadorProducto>
+                                      )}
+                                    </div>
+                                  </ListaComentario>
                                 </SwipeableListItem>
                               </SwipeableList>
                             ) : (
-                              <li
+                              <ListaComentario
                                 key={`${inversor.usuarioId}-${i}`}
                                 css={css`
                                   border: 1px solid #e1e1e1;
@@ -1011,65 +1038,81 @@ const Producto = () => {
                                   margin-bottom: 20px;
                                 `}
                               >
-                                <p>
-                                  Cantidad de Cubos:{" "}
-                                  <span
-                                    css={css`
-                                      font-weight: bold;
-                                    `}
-                                  >
-                                    {""} {inversor.cubos}
-                                  </span>
-                                </p>
-                                <p>
-                                  Inversión:{" "}
-                                  <span
-                                    css={css`
-                                      font-weight: bold;
-                                    `}
-                                  >
-                                    {""}{" "}
-                                    {formatearPresupuesto(
-                                      (parseInt(precio) * inversor.cubos) / 100
-                                    )}
-                                  </span>
-                                </p>
-                                <p>
-                                  Inversor:
-                                  <span
-                                    css={css`
-                                      font-weight: bold;
-                                    `}
-                                  >
-                                    {""} {inversor.usuarioNombre}
-                                  </span>
-                                </p>
-                                <p>
-                                  Descripción:
-                                  <span
-                                    css={css`
-                                      font-weight: bold;
-                                    `}
-                                  >
-                                    {""} {inversor.descripcion}
-                                  </span>
-                                </p>
-                                <p>
-                                  Categoria:
-                                  <span
-                                    css={css`
-                                      font-weight: bold;
-                                    `}
-                                  >
-                                    {""} {inversor.categoria}
-                                  </span>
-                                </p>
-                                {esCreadorInversor(inversor.usuarioId) && (
-                                  <CreadorProducto>
-                                    Tu inversión
-                                  </CreadorProducto>
-                                )}
-                              </li>
+                                <div className="contenedorPerfil">
+                                  <img
+                                    src={
+                                      inversor.icono != null
+                                        ? inversor.icono
+                                        : "/static/img/imagenPerfil.png"
+                                    }
+                                  />
+                                </div>
+                                <div
+                                  css={css`
+                                    padding-left: 20px;
+                                  `}
+                                >
+                                  <p>
+                                    Cantidad de Cubos:{" "}
+                                    <span
+                                      css={css`
+                                        font-weight: bold;
+                                      `}
+                                    >
+                                      {""} {inversor.cubos}
+                                    </span>
+                                  </p>
+                                  <p>
+                                    Inversión:{" "}
+                                    <span
+                                      css={css`
+                                        font-weight: bold;
+                                      `}
+                                    >
+                                      {""}{" "}
+                                      {formatearPresupuesto(
+                                        (parseInt(precio) * inversor.cubos) /
+                                          100
+                                      )}
+                                    </span>
+                                  </p>
+                                  <p>
+                                    Inversor:
+                                    <span
+                                      css={css`
+                                        font-weight: bold;
+                                      `}
+                                    >
+                                      {""} {inversor.usuarioNombre}
+                                    </span>
+                                  </p>
+                                  <p>
+                                    Descripción:
+                                    <span
+                                      css={css`
+                                        font-weight: bold;
+                                      `}
+                                    >
+                                      {""} {inversor.descripcion}
+                                    </span>
+                                  </p>
+                                  <p>
+                                    Categoria:
+                                    <span
+                                      css={css`
+                                        font-weight: bold;
+                                      `}
+                                    >
+                                      {""} {inversor.categoria}
+                                    </span>
+                                  </p>
+                                  {esCreadorInversor(inversor.usuarioId) && (
+                                    <CreadorProducto>
+                                      Tu inversión
+                                    </CreadorProducto>
+                                  )}
+                                </div>
+                              </ListaComentario>
                             )}
                           </div>
                         ))}

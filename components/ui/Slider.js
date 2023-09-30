@@ -5,15 +5,20 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/css";
 
 const Contenedor = styled.div`
-  width: 100%;
+  width: 70%;
+  margin-left: 30%;
   height: 500px;
-  background: lightgray;
+  background: black;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   @media (max-width: 500px) {
     height: 300px;
+  }
+  @media (min-width: 1000px) {
+    margin-left: 300px;
+    width: calc(100% - 300px);
   }
 `;
 const Image = styled.img`

@@ -6,7 +6,7 @@ import Link from "next/link";
 const Producto = styled.li`
   padding: 1.5rem;
   border-radius: 20px;
-  border: 5px solid #d4d3d2;
+  border: 0.8px solid #d4d3d2;
   margin-bottom: 7px;
   background-color: #0e1010;
 
