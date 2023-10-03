@@ -648,12 +648,14 @@ const Producto = () => {
         ) : (
           <div
             css={css`
-              margin-left: 30%;
               padding-left: 20px;
               padding-right: 20px;
               color: white;
               @media (min-width: 1000px) {
                 margin-left: 300px;
+              }
+              @media (max-width: 1000px) {
+                margin-bottom: 60px;
               }
             `}
           >
@@ -758,14 +760,23 @@ const Producto = () => {
                 <Precio>
                   <span>Precio: </span> {formatearPresupuesto(parseInt(precio))}
                 </Precio>
-                <img
-                  src={urlimagen}
+                <div
                   css={css`
-                    border-radius: 20px;
-                    box-shadow: 0 0 10px 1px black;
-                    margin-bottom: 5px;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
                   `}
-                />
+                >
+                  <img
+                    src={urlimagen}
+                    css={css`
+                      border-radius: 20px;
+                      box-shadow: 0 0 10px 1px white;
+                      margin-bottom: 5px;
+                    `}
+                  />
+                </div>
+
                 <p>{descripcion}</p>
 
                 {usuario && (
