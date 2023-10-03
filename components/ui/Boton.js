@@ -17,9 +17,8 @@ const Boton = styled.button`
   }
   @media (max-width: 490px) {
     padding: 0.8rem 0rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 `;
-
 
 export default Boton;

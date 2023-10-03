@@ -651,6 +651,7 @@ const Producto = () => {
               margin-left: 30%;
               padding-left: 20px;
               padding-right: 20px;
+              color: white;
               @media (min-width: 1000px) {
                 margin-left: 300px;
               }

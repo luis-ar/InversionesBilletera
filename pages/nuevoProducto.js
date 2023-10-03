@@ -124,11 +124,18 @@ const nuevoProducto = () => {
         {!usuario ? (
           <Error404 />
         ) : (
-          <>
+          <div
+            css={css`
+              @media (min-width: 1000px) {
+                margin-left: 300px;
+              }
+            `}
+          >
             <h1
               css={css`
                 text-align: center;
                 margin-top: 5rem;
+                color: white;
               `}
             >
               Nuevo Producto
@@ -273,7 +280,7 @@ const nuevoProducto = () => {
                 `}
               />
             </Formulario>
-          </>
+          </div>
         )}
       </Layout>
     </div>

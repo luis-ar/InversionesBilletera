@@ -12,8 +12,10 @@ const Barra = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  display: none;
   @media (min-width: 1000px) {
     width: 300px;
+    display: block;
   }
 `;
 const Logo = styled.div`

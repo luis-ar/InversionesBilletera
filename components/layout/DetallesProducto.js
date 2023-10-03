@@ -9,27 +9,16 @@ const Producto = styled.li`
   border: 0.8px solid #d4d3d2;
   margin-bottom: 7px;
   background-color: #0e1010;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   :last-child {
-    margin-bottom: 5px;
-  }
-
-  @media (min-width: 700px) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  @media (max-width: 550px) {
-    padding-top: 1em;
-    padding-bottom: 1em;
+    margin-bottom: 15px;
   }
 `;
 const DescripcionProducto = styled.div`
-  flex: 0 1 600px;
-  display: grid;
+  flex: 0 1;
   color: white;
-
-  grid-template-columns: 1fr 3fr;
   column-gap: 2rem;
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
@@ -50,12 +39,9 @@ const Titulo = styled.a`
   }
 `;
 const Precio = styled.p`
-  font-size: 30px;
+  font-size: 22px;
   font-weight: bold;
-  margin-top: 5px;
-  span {
-    font-size: 15px;
-  }
+  margin-bottom: 5px;
   @media (max-width: 550px) {
     font-size: 15px;
     span {
@@ -106,11 +92,20 @@ const Comentarios = styled.div`
       font-size: 1.2rem;
     }
   }
+
   .corazon {
     cursor: pointer;
   }
   .bx {
     margin-right: 5px;
+    cursor: pointer;
+  }
+  .bx-map {
+    color: #dc2626;
+    cursor: pointer;
+  }
+  .bxl-whatsapp {
+    color: #3ff71a;
   }
 `;
 
@@ -155,6 +150,7 @@ const ContenedorImagen = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 10px;
   width: 200px;
   height: 200px;
 `;
@@ -169,6 +165,7 @@ const ContenedorDatos = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
 `;
 const RedesSociales = styled.div`
   display: flex;
@@ -215,18 +212,16 @@ const DetallesProducto = ({ producto }) => {
   return (
     <>
       <Producto>
+        <ContenedorImagen>
+          <Imagen src={urlimagen} />
+        </ContenedorImagen>
         <DescripcionProducto>
-          <ContenedorImagen>
-            <Imagen src={urlimagen} />
-          </ContenedorImagen>
           <ContenedorDatos>
             <Link href="/productos/[id]" as={`/productos/${id}`}>
               <Titulo>{nombre}</Titulo>
             </Link>
             {/* <TextoDescripcion>{descripcion}</TextoDescripcion> */}
-            <Precio>
-              <span>Precio: </span> {formatearPresupuesto(parseInt(precio))}
-            </Precio>
+            <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
             <Comentarios>
               <div>
                 <i class="bx bx-message-rounded-dots"></i>{" "}
@@ -236,21 +231,20 @@ const DetallesProducto = ({ producto }) => {
                 <i className="bx bx-heart"></i>
                 <p>{votos}</p>
               </div>
+              <div className="ubicacion">
+                <i class="bx bx-map"></i>
+              </div>
+              <div className="whatsapp">
+                <i class="bx bxl-whatsapp"></i>
+              </div>
             </Comentarios>
             <Publicado>
-              Publicado hace :{" "}
+              Publicado hace{" "}
               {formatDistanceToNow(new Date(creado), { locale: es })}
             </Publicado>
           </ContenedorDatos>
         </DescripcionProducto>
-        <RedesSociales>
-          <div className="ubicacion">
-            <i class="bx bx-map"></i>
-          </div>
-          <div className="whatsapp">
-            <i class="bx bxl-whatsapp"></i>
-          </div>
-        </RedesSociales>
+
         {/* <Votos>
           <div>&#9650;</div>
           <p>{votos}</p>

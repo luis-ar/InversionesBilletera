@@ -30,6 +30,7 @@ const Layout = (props) => {
             font-size: 1.6rem;
             line-height: 1.5;
             font-family: "PT Sans", sans-serif;
+            background-color: #272828;
           }
           h1,
           h2,

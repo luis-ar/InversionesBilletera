@@ -9,6 +9,11 @@ export const Formulario = styled.form`
     border: 1px solid #e1e1e1;
     font-size: 2rem;
     padding: 2rem;
+    background-color: #a6abab;
+  }
+  legend {
+    color: white;
+    font-size: 2rem;
   }
 `;
 

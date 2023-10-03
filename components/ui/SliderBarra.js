@@ -21,6 +21,7 @@ const Lista = styled.div`
 `;
 const Content = styled.div`
   margin-top: 10vh;
+  background-color: white;
   .css-qen1cq-SliderBarra {
     height: auto;
   }

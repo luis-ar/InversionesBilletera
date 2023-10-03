@@ -5,7 +5,7 @@ import { FirebaseContext } from "@/firebase";
 import { useRouter } from "next/router";
 const Contenedor = styled.div`
   position: relative;
-  width: 70vw;
+  width: 100vw;
   height: 48px;
   background-color: #b5b3b3;
   display: flex;

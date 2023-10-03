@@ -5,8 +5,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/css";
 
 const Contenedor = styled.div`
-  width: 70%;
-  margin-left: 30%;
+  width: 100%;
   height: 500px;
   background: black;
   display: flex;

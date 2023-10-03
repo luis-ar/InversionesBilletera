@@ -11,7 +11,7 @@ import BarraSimple from "../ui/BarraSimple";
 import BarraRedes from "../ui/BarraRedes";
 import BarraLateral from "../ui/BarraLateral";
 const ContenedorHeader = styled.div`
-  width: 70%;
+  width: 100%;
   margin: 0 auto;
   position: fixed;
   height: 10vh;
@@ -61,6 +61,9 @@ const Logo = styled.div`
       margin-left: 5px;
     }
   }
+  @media (min-width: 1000px) {
+    display: none;
+  }
 `;
 
 const Header = () => {
@@ -71,7 +74,6 @@ const Header = () => {
       <BarraLateral />
       <div
         css={css`
-          margin-left: 30%;
           @media (min-width: 1000px) {
             margin-left: 300px;
           }
@@ -85,7 +87,7 @@ const Header = () => {
                 align-items: center;
               `}
             >
-              {/* <Link
+              <Link
                 href="/"
                 onClick={() => {
                   localStorage.clear();
@@ -98,7 +100,7 @@ const Header = () => {
                     className="iconoEscritorio"
                   />
                 </Logo>
-              </Link> */}
+              </Link>
               {/* Buscador aqui */}
               <Buscar />
 
@@ -123,6 +125,9 @@ const Header = () => {
                       @media (max-width: 490px) {
                         font-size: 1.1rem;
                         margin-right: 2rem;
+                      }
+                      @media (max-width: 750px) {
+                        display: none;
                       }
                     `}
                   >

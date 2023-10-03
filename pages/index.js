@@ -22,14 +22,21 @@ export default function Home() {
         <div
           className="listado-productos"
           css={css`
-            margin-left: 30%;
             @media (min-width: 1000px) {
               margin-left: 300px;
             }
           `}
         >
           <div className="contenedor">
-            <ul>
+            <ul
+              css={css`
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+              `}
+            >
               {datosFiltrados.map((producto) => (
                 <DetallesProducto key={producto.id} producto={producto} />
               ))}
