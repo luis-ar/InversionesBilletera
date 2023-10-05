@@ -32,7 +32,7 @@ export default function Home() {
               css={css`
                 width: 100%;
                 display: grid;
-                gap: 2rem;
+                gap: 60px;
                 grid-auto-rows: auto;
                 grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
                 /* display: flex;

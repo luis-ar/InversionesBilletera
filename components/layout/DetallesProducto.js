@@ -4,7 +4,7 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 const Producto = styled.li`
-  padding: 1.5rem;
+  padding: 1.2rem;
   border-radius: 20px;
   border: 0.8px solid #d4d3d2;
   margin-bottom: 7px;
@@ -12,9 +12,7 @@ const Producto = styled.li`
   display: flex;
   flex-direction: column;
   align-items: center;
-  :last-child {
-    margin-bottom: 15px;
-  }
+  
 `;
 const DescripcionProducto = styled.div`
   flex: 0 1;
@@ -26,7 +24,7 @@ const DescripcionProducto = styled.div`
   }
 `;
 const Titulo = styled.a`
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: white;
   margin: 0;
@@ -39,7 +37,7 @@ const Titulo = styled.a`
   }
 `;
 const Precio = styled.p`
-  font-size: 22px;
+  font-size: 17px;
   font-weight: bold;
   margin-bottom: 5px;
   @media (max-width: 550px) {
@@ -71,6 +69,8 @@ const Comentarios = styled.div`
     padding: 0.3rem 1rem;
     margin-right: 2rem;
     height: 30px;
+    border-radius: 5px;
+    background-color: var(--grisBotones);
   }
 
   img {
@@ -115,7 +115,6 @@ const Imagen = styled.img`
   height: 100%;
   object-fit: fill;
   border-radius: 15px;
-  box-shadow: 0 0 5px 1px white;
   @media (max-width: 550px) {
     width: 150px;
   }
@@ -151,12 +150,11 @@ const ContenedorImagen = styled.div`
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 150px;
 `;
 
 const Publicado = styled.p`
-  margin-bottom: 5px;
   @media (max-width: 550px) {
     font-size: 12px;
   }

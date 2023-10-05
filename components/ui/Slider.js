@@ -6,7 +6,7 @@ import "@splidejs/splide/css";
 
 const Contenedor = styled.div`
   width: 100%;
-  height: 500px;
+  height: 310px;
   background: black;
   display: flex;
   justify-content: center;
@@ -22,7 +22,7 @@ const Contenedor = styled.div`
 `;
 const Image = styled.img`
   width: 100%;
-  height: 460px;
+  height: 300px;
   object-fit: cover;
   cursor: pointer;
   @media (max-width: 500px) {
