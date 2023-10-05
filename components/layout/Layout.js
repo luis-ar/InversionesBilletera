@@ -13,7 +13,11 @@ const Layout = (props) => {
             --gris2: #6f6f6f;
             --gris3: #e1e1e1;
             --naranja: #da552f;
-            --grisBotones: 1e2229;
+            --grisBotones: #1e2229;
+            --contBoton: #13161c;
+            --colorBarraSuperior: #13161c;
+            --contCard: #1e2229;
+            --colorBuscar:#010101;
           }
           html {
             font-size: 62.5%;
@@ -31,7 +35,7 @@ const Layout = (props) => {
             font-size: 1.6rem;
             line-height: 1.5;
             font-family: "PT Sans", sans-serif;
-            background-color: #272828;
+            background-color: var(--contCard);
           }
           h1,
           h2,

@@ -8,11 +8,10 @@ const Producto = styled.li`
   border-radius: 20px;
   border: 0.8px solid #d4d3d2;
   margin-bottom: 7px;
-  background-color: #0e1010;
+  background-color: var(--contBoton);
   display: flex;
   flex-direction: column;
   align-items: center;
-  
 `;
 const DescripcionProducto = styled.div`
   flex: 0 1;

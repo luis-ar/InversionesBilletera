@@ -8,7 +8,13 @@ import { useRouter } from "next/router";
 const Lista = styled.div`
   /* border-bottom: 4px solid blue; */
   text-align: center;
-
+  height: 45px;
+  color: white;
+  width: 100px;
+  background-color: var(--colorBarraSuperior);
+  :hover {
+    background-color: #9858ff;
+  }
   i {
     font-size: 15px;
     margin-top: 6px;
@@ -21,7 +27,7 @@ const Lista = styled.div`
 `;
 const Content = styled.div`
   margin-top: 10vh;
-  background-color: white;
+  background-color: var(--colorBuscar);
   .css-qen1cq-SliderBarra {
     height: auto;
   }
@@ -41,9 +47,9 @@ const Content = styled.div`
     }
 
     li {
-      :hover {
-        background-color: #f0f0f0;
-      }
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 `;

@@ -1,5 +1,5 @@
 .listado-productos {
-  background-color: #272828;
+  background-color: var(--contCard);
 }
 .contenedor {
   max-width: 1200px;

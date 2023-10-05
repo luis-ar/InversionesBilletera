@@ -4,8 +4,8 @@ import { css } from "@emotion/react";
 import Router from "next/router";
 
 const InputText = styled.input`
-  color: black;
-  background-color: white;
+  color: #d6d5d5;
+  background-color: var(--colorBuscar);
   border: 1px solid var(--gris3);
   padding: 1rem;
   width: 180px;
@@ -23,19 +23,19 @@ const InputSubmit = styled.button`
   height: 3rem;
   width: 3rem;
   display: block;
-  background-size: 4rem;
-  background-image: url("/static/img/buscar.png");
+  background-size: 3rem;
+  background-image: url("/static/img/lupa.png");
   background-repeat: no-repeat;
   position: absolute;
+  color: white;
   right: 1rem;
-  top: 1px;
-  background-color: white;
+  top: 5px;
   border: none;
+  background-color: transparent;
   text-indent: -9999px;
   &:hover {
     cursor: pointer;
   }
-  
 `;
 
 const Buscar = () => {

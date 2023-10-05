@@ -18,7 +18,7 @@ const ContenedorHeader = styled.div`
   border-bottom: 4px solid black;
   z-index: 5;
   top: 0;
-  background-color: #021414;
+  background-color: var(--colorBarraSuperior);
   display: flex;
   justify-content: space-between;
   color: white;
