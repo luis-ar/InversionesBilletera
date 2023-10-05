@@ -663,6 +663,7 @@ const Producto = () => {
             <h1
               css={css`
                 text-align: center;
+                margin-top: 15px;
               `}
             >
               {nombre}

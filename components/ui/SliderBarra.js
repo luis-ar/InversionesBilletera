@@ -28,6 +28,7 @@ const Lista = styled.div`
 const Content = styled.div`
   margin-top: 10vh;
   background-color: var(--colorBuscar);
+  padding: 5px;
   .css-qen1cq-SliderBarra {
     height: auto;
   }
