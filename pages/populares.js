@@ -23,10 +23,10 @@ export default function populares() {
             <ul
               css={css`
                 width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
+                display: grid;
+                gap: 2rem;
+                grid-auto-rows: auto;
+                grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
               `}
             >
               {productos.map((producto) => (

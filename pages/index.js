@@ -31,10 +31,14 @@ export default function Home() {
             <ul
               css={css`
                 width: 100%;
-                display: flex;
+                display: grid;
+                gap: 2rem;
+                grid-auto-rows: auto;
+                grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+                /* display: flex;
                 flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
+                justify-content: space-around;
+                gap: 15px; */
               `}
             >
               {datosFiltrados.map((producto) => (

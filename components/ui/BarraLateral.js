@@ -41,6 +41,7 @@ const Logo = styled.div`
 const ContenedorEnlaces = styled.div`
   color: white;
   font-size: 20px;
+  padding-left: 30px;
   .bx {
     font-size: 30px;
     margin-right: 5px;

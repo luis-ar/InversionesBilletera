@@ -54,6 +54,7 @@ const contenedorBarra = styled.div`
   width: 300px;
 `;
 const Mapa = styled.div`
+  z-index: 1;
   width: 100%;
   height: 300px;
   border: 4px solid black;
