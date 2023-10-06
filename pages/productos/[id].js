@@ -34,7 +34,7 @@ import Mensaje from "@/components/ui/Mensaje";
 const ContenedorProducto = styled.div`
   @media (min-width: 768px) {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 3fr 2fr;
     column-gap: 2rem;
   }
 `;
@@ -46,6 +46,9 @@ const CreadorProducto = styled.p`
   font-weight: bold;
   display: inline-block;
   text-align: center;
+  position: absolute;
+  bottom: 25px;
+  right: 5px;
 `;
 const contenedorBarra = styled.div`
   margin-top: 20px !important;
@@ -193,13 +196,12 @@ const Publicado = styled.p`
 `;
 const ListaComentario = styled.li`
   display: grid;
-  grid-template-columns: 1fr 5fr;
+  grid-template-columns: 0.5fr 5fr;
   .contenedorPerfil {
     display: flex;
     align-items: center;
     justify-content: center;
     img {
-      width: 100%;
       border-radius: 100%;
       height: 50px;
       width: 50px;
@@ -578,6 +580,7 @@ const Producto = () => {
           descripcion: inputDesInversor,
           categoria: inputCategoriaInversor,
           cubos: inputCuboInversor,
+          fecha: Date.now(),
         };
         const indice = inversores.findIndex(
           (inversor) => inversor.usuarioId === usuario.uid
@@ -602,6 +605,7 @@ const Producto = () => {
         inver.usuarioId = usuario.uid;
         inver.usuarioNombre = usuario.displayName;
         inver.icono = usuario.photoURL;
+        inver.fecha = Date.now();
         //copia de inversores
         if (inversores != undefined) {
           const nuevosInversores = [...inversores, inver];
@@ -811,7 +815,13 @@ const Producto = () => {
                   Comentarios
                 </h2>
                 {comentarios.length === 0 ? (
-                  "Aún no hay comentarios"
+                  <p
+                    css={css`
+                      margin-bottom: 2rem;
+                    `}
+                  >
+                    Aún no hay comentarios
+                  </p>
                 ) : (
                   <ul>
                     {comentarios.map((comentario, i) => (
@@ -820,6 +830,7 @@ const Producto = () => {
                         css={css`
                           border: 1px solid #e1e1e1;
                           padding: 2rem;
+                          margin-bottom: 2rem;
                         `}
                       >
                         <div className="contenedorPerfil">
@@ -959,8 +970,14 @@ const Producto = () => {
                                       padding: 2rem;
                                       width: 100%;
                                       margin-bottom: 20px;
+                                      background-color: var(--grisBotones);
                                     `}
                                   >
+                                    {esCreadorInversor(inversor.usuarioId) && (
+                                      <CreadorProducto>
+                                        Tu inversión
+                                      </CreadorProducto>
+                                    )}
                                     <div className="contenedorPerfil">
                                       <img
                                         src={
@@ -973,71 +990,108 @@ const Producto = () => {
 
                                     <div
                                       css={css`
-                                        padding-left: 20px;
+                                        margin-left: 10px;
+                                        display: grid;
+                                        grid-template-columns: 1fr 1fr;
                                       `}
                                     >
-                                      <p>
-                                        Cantidad de Cubos:{" "}
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.cubos}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Inversión:{" "}
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""}{" "}
-                                          {formatearPresupuesto(
-                                            (parseInt(precio) *
-                                              inversor.cubos) /
-                                              100
+                                      <div>
+                                        <p>
+                                          Inversor:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""} {inversor.usuarioNombre}
+                                          </span>
+                                        </p>
+
+                                        <p>
+                                          Descripción:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""} {inversor.descripcion}
+                                          </span>
+                                        </p>
+
+                                        <p>
+                                          Categoria:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""} {inversor.categoria}
+                                          </span>
+                                        </p>
+
+                                        <Publicado>
+                                          Publicado hace :{" "}
+                                          {formatDistanceToNow(
+                                            new Date(inversor.fecha),
+                                            {
+                                              locale: es,
+                                            }
                                           )}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Inversor:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.usuarioNombre}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Descripción:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.descripcion}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Categoria:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.categoria}
-                                        </span>
-                                      </p>
-                                      {esCreadorInversor(
-                                        inversor.usuarioId
-                                      ) && (
-                                        <CreadorProducto>
-                                          Tu inversión
-                                        </CreadorProducto>
-                                      )}
+                                        </Publicado>
+                                      </div>
+                                      <div
+                                        css={css`
+                                          display: grid;
+                                          grid-template-columns: 1fr 2fr;
+
+                                          div {
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            flex-direction: column;
+                                            gap: 5px;
+                                            div {
+                                              display: flex;
+                                              align-items: center;
+                                              padding: 8px;
+                                              border-radius: 6px;
+                                              background-color: var(
+                                                --contBoton
+                                              );
+                                            }
+                                          }
+                                        `}
+                                      >
+                                        <div>
+                                          <div>
+                                            <i class="bx bx-cube"></i>
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                              `}
+                                            >
+                                              {inversor.cubos}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <div>
+                                            <i class="bx bx-money-withdraw"></i>
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                              `}
+                                            >
+                                              {""}{" "}
+                                              {formatearPresupuesto(
+                                                (parseInt(precio) *
+                                                  inversor.cubos) /
+                                                  100
+                                              )}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
                                   </ListaComentario>
                                 </SwipeableListItem>
@@ -1061,70 +1115,109 @@ const Producto = () => {
                                     }
                                   />
                                 </div>
+
                                 <div
                                   css={css`
-                                    padding-left: 20px;
+                                    margin-left: 10px;
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
                                   `}
                                 >
-                                  <p>
-                                    Cantidad de Cubos:{" "}
-                                    <span
-                                      css={css`
-                                        font-weight: bold;
-                                      `}
-                                    >
-                                      {""} {inversor.cubos}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    Inversión:{" "}
-                                    <span
-                                      css={css`
-                                        font-weight: bold;
-                                      `}
-                                    >
-                                      {""}{" "}
-                                      {formatearPresupuesto(
-                                        (parseInt(precio) * inversor.cubos) /
-                                          100
+                                  <div>
+                                    <p>
+                                      Inversor:
+                                      <span
+                                        css={css`
+                                          font-weight: bold;
+                                        `}
+                                      >
+                                        {""} {inversor.usuarioNombre}
+                                      </span>
+                                    </p>
+
+                                    <p>
+                                      Descripción:
+                                      <span
+                                        css={css`
+                                          font-weight: bold;
+                                        `}
+                                      >
+                                        {""} {inversor.descripcion}
+                                      </span>
+                                    </p>
+
+                                    <p>
+                                      Categoria:
+                                      <span
+                                        css={css`
+                                          font-weight: bold;
+                                        `}
+                                      >
+                                        {""} {inversor.categoria}
+                                      </span>
+                                    </p>
+                                    <Publicado>
+                                      Publicado hace :{" "}
+                                      {formatDistanceToNow(
+                                        new Date(inversor.fecha),
+                                        {
+                                          locale: es,
+                                        }
                                       )}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    Inversor:
-                                    <span
-                                      css={css`
-                                        font-weight: bold;
-                                      `}
-                                    >
-                                      {""} {inversor.usuarioNombre}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    Descripción:
-                                    <span
-                                      css={css`
-                                        font-weight: bold;
-                                      `}
-                                    >
-                                      {""} {inversor.descripcion}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    Categoria:
-                                    <span
-                                      css={css`
-                                        font-weight: bold;
-                                      `}
-                                    >
-                                      {""} {inversor.categoria}
-                                    </span>
-                                  </p>
-                                  {esCreadorInversor(inversor.usuarioId) && (
-                                    <CreadorProducto>
-                                      Tu inversión
-                                    </CreadorProducto>
-                                  )}
+                                    </Publicado>
+                                  </div>
+                                  <div
+                                    css={css`
+                                      display: grid;
+                                      grid-template-columns: 1fr 2fr;
+                                      gap: 10px;
+
+                                      div {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        flex-direction: column;
+                                        gap: 5px;
+                                        div {
+                                          display: flex;
+                                          align-items: center;
+                                          padding: 8px;
+                                          border-radius: 6px;
+                                          background-color: var(--contBoton);
+                                        }
+                                      }
+                                    `}
+                                  >
+                                    <div>
+                                      <div>
+                                        <i class="bx bx-cube"></i>
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {inversor.cubos}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div>
+                                        <i class="bx bx-money-withdraw"></i>
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""}{" "}
+                                          {formatearPresupuesto(
+                                            (parseInt(precio) *
+                                              inversor.cubos) /
+                                              100
+                                          )}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                               </ListaComentario>
                             )}

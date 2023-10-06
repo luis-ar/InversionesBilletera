@@ -30,6 +30,7 @@ export default function Home() {
           <div className="contenedor">
             <ul
               css={css`
+                margin-bottom: 60px;
                 width: 100%;
                 display: grid;
                 gap: 60px;
