@@ -1072,7 +1072,11 @@ const Producto = () => {
                               }
                             />
                           </div>
-                          <div>
+                          <div
+                            css={css`
+                              margin-left: 10px;
+                            `}
+                          >
                             <p>{comentario.mensaje}</p>
                             <p>
                               Escrito por:
