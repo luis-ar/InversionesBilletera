@@ -1057,8 +1057,12 @@ const Producto = () => {
                             padding: 2rem;
                             margin-bottom: 2rem;
                             border-radius: 10px;
+                            position: relative;
                           `}
                         >
+                          {esCreador(comentario.usuarioId) && (
+                            <CreadorProducto>Es Creador</CreadorProducto>
+                          )}
                           <div className="contenedorPerfil">
                             <img
                               src={
@@ -1086,9 +1090,6 @@ const Producto = () => {
                                 locale: es,
                               })}
                             </Publicado>
-                            {esCreador(comentario.usuarioId) && (
-                              <CreadorProducto>Es Creador</CreadorProducto>
-                            )}
                           </div>
                         </ListaComentario>
                       ))}
