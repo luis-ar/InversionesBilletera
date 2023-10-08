@@ -34,10 +34,24 @@ const Navegacion = () => {
       >
         Inicio
       </Link> */}
-      <Link href="/populares">Populares</Link>
+      <Link
+        href="/populares"
+        onClick={() => {
+          localStorage.clear();
+        }}
+      >
+        Populares
+      </Link>
       {usuario && (
         <>
-          <Link href="/nuevoProducto">Nuevo Producto</Link>
+          <Link
+            href="/nuevoProducto"
+            onClick={() => {
+              localStorage.clear();
+            }}
+          >
+            Nuevo Producto
+          </Link>
         </>
       )}
       {/* <Link href="/nosotros">Nosotros</Link> */}

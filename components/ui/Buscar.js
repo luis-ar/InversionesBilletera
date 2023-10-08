@@ -10,7 +10,7 @@ const InputText = styled.input`
   padding: 1rem;
   width: 180px;
   margin-left: 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   @media (min-width: 550px) {
     min-width: 300px;
   }

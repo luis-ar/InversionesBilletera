@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import { useRouter } from "next/router";
 import DetallesProducto from "../components/layout/DetallesProducto";
 import useProductos from "../Hooks/useProductos";
-import BarraRedes from "@/components/ui/BarraRedes";
+import { css } from "@emotion/react";
 const filtro = () => {
   //leer lo q me manda del querry en el link
 
@@ -24,9 +24,24 @@ const filtro = () => {
   return (
     <div>
       <Layout>
-        <div className="listado-productos">
+        <div
+          className="listado-productos"
+          css={css`
+            @media (min-width: 1000px) {
+              margin-left: 300px;
+            }
+          `}
+        >
           <div className="contenedor">
-            <ul className="bg-white">
+            <ul
+              css={css`
+                width: 100%;
+                display: grid;
+                gap: 2rem;
+                grid-auto-rows: auto;
+                grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+              `}
+            >
               {resultado.map((producto) => (
                 <DetallesProducto key={producto.id} producto={producto} />
               ))}

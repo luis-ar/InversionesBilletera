@@ -34,7 +34,7 @@ import Mensaje from "@/components/ui/Mensaje";
 const ContenedorProducto = styled.div`
   @media (min-width: 768px) {
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: 5fr 4fr;
     column-gap: 2rem;
   }
 `;
@@ -59,8 +59,9 @@ const contenedorBarra = styled.div`
 const Mapa = styled.div`
   z-index: 1;
   width: 100%;
-  height: 300px;
-  border: 4px solid black;
+  height: 400px;
+  border: 1px solid #e1e1e1;
+  margin-bottom: 20px;
 `;
 //estilo modal
 const Contenedor = styled.div`
@@ -155,6 +156,7 @@ const Contenedor = styled.div`
 
 //estilo precio
 const Precio = styled.p`
+  margin-top: 10px;
   font-size: 30px;
   margin-bottom: 10px;
   span {
@@ -207,6 +209,161 @@ const ListaComentario = styled.li`
       width: 50px;
     }
   }
+`;
+
+const GeneralDescripcion = styled.div`
+  position: relative;
+  border: 1px solid #e1e1e1;
+  background-color: var(--colorBarraSuperior);
+  margin-top: 20px;
+  margin-bottom: 30px;
+  padding: 50px;
+
+  .nombreProducto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .iconoProducto {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+  }
+  .bx {
+    font-size: 30px;
+    cursor: pointer;
+  }
+  .bx-map {
+    color: #dc2626;
+    cursor: pointer;
+  }
+  .bxl-whatsapp {
+    color: #3ff71a;
+  }
+  .iconosExtra {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    div {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      padding: 8px;
+      border-radius: 6px;
+      background-color: var(--grisBotones);
+    }
+  }
+  .botones {
+    position: absolute;
+    right: 50px;
+    bottom: 50px;
+    button {
+      background-color: var(--botones);
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 20px;
+      color: white;
+      border-radius: 10px;
+      text-align: center;
+      text-transform: uppercase;
+      font-family: "PT Sans", sans-serif;
+
+      :last-child {
+        margin-left: 30px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      margin-top: 20px;
+      position: static;
+      button {
+        padding: 5px 10px;
+        font-size: 15px;
+
+        :last-child {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+`;
+const Comentarios = styled.div`
+  height: 160px;
+  background-color: var(--colorBarraSuperior);
+  padding: 20px;
+  margin-bottom: 15px;
+  input[type="submit"] {
+    background-color: var(--botones);
+    width: 50%;
+    padding: 1.5rem;
+    text-align: center;
+    color: #fff;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    border: none;
+    font-family: "PT Sans", sans-serif;
+    font-weight: 700;
+    &:hover {
+      cursor: pointer;
+    }
+
+    @media (max-width: 1200px) {
+      width: 100%;
+    }
+  }
+  .enviarComentario {
+    display: flex;
+    justify-content: center;
+  }
+`;
+const RutaWeb = styled.div`
+  height: 160px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--colorBarraSuperior);
+  padding: 20px;
+  margin-bottom: 15px;
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    color: white;
+  }
+  .cantVotos {
+    background-color: var(--grisBotones);
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 0;
+    border-radius: 10px 10px 0 0;
+  }
+  .votarUsuario {
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+  }
+`;
+const ListaComentarios = styled.div`
+  padding: 30px;
+  border: 1px solid #e1e1e1;
+`;
+const BotonVotar = styled.a`
+  display: block;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-top: 1px solid #d1d1d1;
+  padding: 0.8rem 2rem;
+  text-align: center;
+  background-color: var(--botones);
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
 `;
 const Producto = () => {
   //state del componente
@@ -645,6 +802,12 @@ const Producto = () => {
       </SwipeAction>
     </TrailingActions>
   );
+  const scrollToSection = () => {
+    const sectionDestino = document.getElementById("mapaProducto");
+    if (sectionDestino) {
+      sectionDestino.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <Layout>
       <>
@@ -664,14 +827,6 @@ const Producto = () => {
               }
             `}
           >
-            <h1
-              css={css`
-                text-align: center;
-                margin-top: 15px;
-              `}
-            >
-              {nombre}
-            </h1>
             {paseModal && (
               <Contenedor className="modal">
                 <div className="cerrar-modal">
@@ -754,8 +909,82 @@ const Producto = () => {
                 </form>
               </Contenedor>
             )}
+            <GeneralDescripcion>
+              <div
+                css={css`
+                  width: 100%;
+                  display: flex;
+                  justify-content: center;
+                `}
+              >
+                <img
+                  src={urlimagen}
+                  css={css`
+                    width: 80%;
+                    height: 350px;
+                    border-radius: 20px;
+                    margin-bottom: 5px;
+                  `}
+                />
+              </div>
+              <div className="nombreProducto">
+                <div
+                  css={css`
+                    font-size: 20px;
+                  `}
+                >
+                  {nombre}
+                </div>
+                <div className="iconoProducto">
+                  <div className="ubicacion">
+                    <i class="bx bx-map"></i>
+                  </div>
+                  <div className="whatsapp">
+                    <i class="bx bxl-whatsapp"></i>
+                  </div>
+                </div>
+              </div>
+
+              <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
+              <div className="iconosExtra">
+                <div>
+                  <i class="bx bx-message-rounded-dots"></i>{" "}
+                  <p>{comentarios.length}</p>
+                </div>
+                <div className="corazon">
+                  <i className="bx bx-heart"></i>
+                  <p>{votos}</p>
+                </div>
+                <div className="corazon">
+                  <i class="bx bx-cube"></i>
+                  <p>{100 - totalCubos}</p>
+                </div>
+              </div>
+
+              <p
+                css={css`
+                  font-size: 15px;
+                `}
+              >
+                Publicado hace :{" "}
+                {formatDistanceToNow(new Date(creado), { locale: es })}
+              </p>
+              <div className="botones">
+                <button onClick={scrollToSection}>Plano</button>
+
+                {usuario && (
+                  <>
+                    {pase == false && (
+                      <button onClick={handleNuevaInversion}>Invertir</button>
+                    )}
+                  </>
+                )}
+              </div>
+            </GeneralDescripcion>
+
             <ContenedorProducto>
               <div>
+                {/*{" "}
                 <p>
                   Publicado hace :{" "}
                   {formatDistanceToNow(new Date(creado), { locale: es })}
@@ -782,17 +1011,9 @@ const Producto = () => {
                     `}
                   />
                 </div>
-
-                <p>{descripcion}</p>
-
+                <p>{descripcion}</p> */}
                 {usuario && (
-                  <>
-                    {pase == false && (
-                      <Invertir onClick={handleNuevaInversion}>
-                        Invertir
-                      </Invertir>
-                    )}
-                    <h2>Agrega tu comentario</h2>
+                  <Comentarios>
                     <form onSubmit={agregarComentario}>
                       <Campo>
                         <input
@@ -800,434 +1021,472 @@ const Producto = () => {
                           name="mensaje"
                           value={inputComentario}
                           onChange={comentariosChange}
+                          placeholder="Escribe tu comentario"
                         />
                       </Campo>
-                      <InputSubmit type="submit" value="Agregar Comentario" />
+                      <div className="enviarComentario">
+                        <input type="submit" value="Agregar Comentario" />
+                      </div>
                     </form>
-                  </>
+                  </Comentarios>
                 )}
 
-                <h2
-                  css={css`
-                    margin: 2rem 0;
-                  `}
-                >
-                  Comentarios
-                </h2>
-                {comentarios.length === 0 ? (
-                  <p
-                    css={css`
-                      margin-bottom: 2rem;
-                    `}
-                  >
-                    Aún no hay comentarios
-                  </p>
-                ) : (
-                  <ul>
-                    {comentarios.map((comentario, i) => (
-                      <ListaComentario
-                        key={`${comentario.usuarioId}-${i}`}
-                        css={css`
-                          border: 1px solid #e1e1e1;
-                          padding: 2rem;
-                          margin-bottom: 2rem;
-                        `}
-                      >
-                        <div className="contenedorPerfil">
-                          <img
-                            src={
-                              comentario.icono != null
-                                ? comentario.icono
-                                : "/static/img/imagenPerfil.png"
-                            }
-                          />
-                        </div>
-                        <div>
-                          <p>{comentario.mensaje}</p>
-                          <p>
-                            Escrito por:
-                            <span
-                              css={css`
-                                font-weight: bold;
-                              `}
-                            >
-                              {""} {comentario.usuarioNombre}
-                            </span>
-                          </p>
-                          <Publicado>
-                            Publicado hace :{" "}
-                            {formatDistanceToNow(new Date(comentario.fecha), {
-                              locale: es,
-                            })}
-                          </Publicado>
-                          {esCreador(comentario.usuarioId) && (
-                            <CreadorProducto>Es Creador</CreadorProducto>
-                          )}
-                        </div>
-                      </ListaComentario>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <aside>
-                <Boton target="_blank" bgColor="true" href={url}>
-                  Visitar URL
-                </Boton>
-                <div
-                  css={css`
-                    margin-top: 5rem;
-                  `}
-                >
-                  <p
+                <ListaComentarios>
+                  <h2
                     css={css`
                       text-align: center;
                     `}
                   >
-                    {votos} Votos
-                  </p>
-                  {usuario && <Boton onClick={votarProducto}>Votar</Boton>}
-                </div>
-                <Mapa>
+                    Comentarios
+                  </h2>
+                  {comentarios.length === 0 ? (
+                    <p
+                      css={css`
+                        margin-bottom: 2rem;
+                      `}
+                    >
+                      Aún no hay comentarios
+                    </p>
+                  ) : (
+                    <ul>
+                      {comentarios.map((comentario, i) => (
+                        <ListaComentario
+                          key={`${comentario.usuarioId}-${i}`}
+                          css={css`
+                            border: 1px solid #e1e1e1;
+                            padding: 2rem;
+                            margin-bottom: 2rem;
+                            border-radius: 10px;
+                          `}
+                        >
+                          <div className="contenedorPerfil">
+                            <img
+                              src={
+                                comentario.icono != null
+                                  ? comentario.icono
+                                  : "/static/img/imagenPerfil.png"
+                              }
+                            />
+                          </div>
+                          <div>
+                            <p>{comentario.mensaje}</p>
+                            <p>
+                              Escrito por:
+                              <span
+                                css={css`
+                                  font-weight: bold;
+                                `}
+                              >
+                                {""} {comentario.usuarioNombre}
+                              </span>
+                            </p>
+                            <Publicado>
+                              Publicado hace :{" "}
+                              {formatDistanceToNow(new Date(comentario.fecha), {
+                                locale: es,
+                              })}
+                            </Publicado>
+                            {esCreador(comentario.usuarioId) && (
+                              <CreadorProducto>Es Creador</CreadorProducto>
+                            )}
+                          </div>
+                        </ListaComentario>
+                      ))}
+                    </ul>
+                  )}
+                </ListaComentarios>
+              </div>
+              <aside>
+                <RutaWeb>
+                  <a
+                    target="_blank"
+                    bgColor="true"
+                    href={url}
+                    css={css`
+                      background-color: var(--grisBotones);
+                      padding: 10px;
+                      border-radius: 10px;
+                      height: 100px;
+                    `}
+                  >
+                    <img src="/static/img/ruta.png" />
+                    <span>Visitar Web</span>
+                  </a>
+                  <div className="votarUsuario">
+                    <div className="cantVotos">
+                      <i className="bx bx-heart"></i>
+                      <p>{votos}</p>
+                    </div>
+                    {usuario && (
+                      <BotonVotar onClick={votarProducto}>Votar</BotonVotar>
+                    )}
+                  </div>
+                </RutaWeb>
+                {/* <Mapa>
                   <MapPage cordenadas={cordenadas} />
-                </Mapa>
-                {categoria === "habilitacionUrbana" && <MapaAnimada />}
+                </Mapa> */}
+                {/* {categoria === "habilitacionUrbana" && <MapaAnimada />} */}
+
                 <div
+                  className="grupoInversores"
                   css={css`
-                    width: 60%;
-                    margin: 0 auto;
-                    margin-top: 20px;
+                    padding: 30px;
+                    border: 1px solid #e1e1e1;
                     margin-bottom: 20px;
                   `}
                 >
-                  <CircularProgressbar
-                    value={totalCubos}
-                    styles={buildStyles({
-                      pathColor: totalCubos < 100 ? "#3B82F6" : "#DC2626",
-                      textColor: totalCubos < 100 ? "#3B82F6" : "#DC2626",
-                      trailColor: "#eee",
-                      strokeLinecap: "butt",
-                    })}
-                    text={`${totalCubos}%`}
-                  />
-                </div>
-                {inversores != undefined && inversores.length === 0 ? (
-                  <p
+                  <div
                     css={css`
-                      text-align: center;
-                      font-weight: bold;
+                      width: 50%;
+                      margin: 0 auto;
+                      margin-top: 10px;
+                      margin-bottom: 20px;
                     `}
                   >
-                    Aún no hay inversores
-                  </p>
-                ) : (
-                  <>
-                    <Precio
+                    <CircularProgressbar
+                      value={totalCubos}
+                      styles={buildStyles({
+                        pathColor: totalCubos < 100 ? "#3B82F6" : "#DC2626",
+                        textColor: totalCubos < 100 ? "#3B82F6" : "#DC2626",
+                        trailColor: "#eee",
+                        strokeLinecap: "butt",
+                      })}
+                      text={`${totalCubos}%`}
+                    />
+                  </div>
+                  {inversores != undefined && inversores.length === 0 ? (
+                    <p
                       css={css`
                         text-align: center;
+                        font-weight: bold;
+                        margin: 30px;
                       `}
                     >
-                      <span>Total Recaudado: </span>{" "}
-                      {formatearPresupuesto(
-                        (parseInt(precio) * totalCubos) / 100
-                      )}
-                    </Precio>{" "}
-                    <ul
-                      css={css`
-                        .swipe-action__leading {
-                          background-color: #3b82f6;
-                          color: white;
-                          margin-bottom: 20px;
-                        }
+                      Aún no hay inversores
+                    </p>
+                  ) : (
+                    <>
+                      <Precio
+                        css={css`
+                          text-align: center;
+                        `}
+                      >
+                        <span>Total Recaudado: </span>{" "}
+                        {formatearPresupuesto(
+                          (parseInt(precio) * totalCubos) / 100
+                        )}
+                      </Precio>
+                      <p
+                        css={css`
+                          font-weight: bold;
+                          margin-bottom: 10px;
+                        `}
+                      >
+                        Lista de Inversores{" "}
+                      </p>
+                      <ul
+                        css={css`
+                          .swipe-action__leading {
+                            background-color: #3b82f6;
+                            color: white;
+                            margin-bottom: 20px;
+                          }
 
-                        .swipe-action__trailing {
-                          background-color: #db2777;
-                          color: white;
-                          margin-bottom: 20px;
-                        }
+                          .swipe-action__trailing {
+                            background-color: #db2777;
+                            color: white;
+                            margin-bottom: 20px;
+                          }
 
-                        .swipeable-list .swipe-action {
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
-                          font-size: 2.4rem;
-                          text-align: right;
-                        }
-                      `}
-                    >
-                      {inversores &&
-                        inversores.map((inversor, i) => (
-                          <div>
-                            {esCreadorInversor(inversor.usuarioId) ? (
-                              <SwipeableList>
-                                <SwipeableListItem
-                                  leadingActions={leadingActions()}
-                                  trailingActions={trailingActions()}
-                                >
-                                  <ListaComentario
-                                    key={`${inversor.usuarioId}-${i}`}
-                                    css={css`
-                                      border: 1px solid #e1e1e1;
-                                      padding: 2rem;
-                                      width: 100%;
-                                      margin-bottom: 20px;
-                                      background-color: var(--grisBotones);
-                                    `}
+                          .swipeable-list .swipe-action {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            font-size: 2.4rem;
+                            text-align: right;
+                          }
+                        `}
+                      >
+                        {inversores &&
+                          inversores.map((inversor, i) => (
+                            <div>
+                              {esCreadorInversor(inversor.usuarioId) ? (
+                                <SwipeableList>
+                                  <SwipeableListItem
+                                    leadingActions={leadingActions()}
+                                    trailingActions={trailingActions()}
                                   >
-                                    {esCreadorInversor(inversor.usuarioId) && (
-                                      <CreadorProducto>
-                                        Tu inversión
-                                      </CreadorProducto>
-                                    )}
-                                    <div className="contenedorPerfil">
-                                      <img
-                                        src={
-                                          inversor.icono != null
-                                            ? inversor.icono
-                                            : "/static/img/imagenPerfil.png"
-                                        }
-                                      />
-                                    </div>
-
-                                    <div
+                                    <ListaComentario
+                                      key={`${inversor.usuarioId}-${i}`}
                                       css={css`
-                                        margin-left: 10px;
-                                        display: grid;
-                                        grid-template-columns: 1fr 1fr;
+                                        border: 1px solid #e1e1e1;
+                                        padding: 2rem;
+                                        width: 100%;
+                                        margin-bottom: 20px;
+                                        background-color: var(--grisBotones);
                                       `}
                                     >
-                                      <div>
-                                        <p>
-                                          Inversor:
-                                          <span
-                                            css={css`
-                                              font-weight: bold;
-                                            `}
-                                          >
-                                            {""} {inversor.usuarioNombre}
-                                          </span>
-                                        </p>
-
-                                        <p>
-                                          Descripción:
-                                          <span
-                                            css={css`
-                                              font-weight: bold;
-                                            `}
-                                          >
-                                            {""} {inversor.descripcion}
-                                          </span>
-                                        </p>
-
-                                        <p>
-                                          Categoria:
-                                          <span
-                                            css={css`
-                                              font-weight: bold;
-                                            `}
-                                          >
-                                            {""} {inversor.categoria}
-                                          </span>
-                                        </p>
-
-                                        <Publicado>
-                                          Publicado hace :{" "}
-                                          {formatDistanceToNow(
-                                            new Date(inversor.fecha),
-                                            {
-                                              locale: es,
-                                            }
-                                          )}
-                                        </Publicado>
+                                      {esCreadorInversor(
+                                        inversor.usuarioId
+                                      ) && (
+                                        <CreadorProducto>
+                                          Tu inversión
+                                        </CreadorProducto>
+                                      )}
+                                      <div className="contenedorPerfil">
+                                        <img
+                                          src={
+                                            inversor.icono != null
+                                              ? inversor.icono
+                                              : "/static/img/imagenPerfil.png"
+                                          }
+                                        />
                                       </div>
+
                                       <div
                                         css={css`
+                                          margin-left: 10px;
                                           display: grid;
-                                          grid-template-columns: 1fr 2fr;
+                                          grid-template-columns: 1fr 1fr;
+                                        `}
+                                      >
+                                        <div>
+                                          <p>
+                                            Inversor:
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                              `}
+                                            >
+                                              {""} {inversor.usuarioNombre}
+                                            </span>
+                                          </p>
 
-                                          div {
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: center;
-                                            flex-direction: column;
-                                            gap: 5px;
+                                          <p>
+                                            Descripción:
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                              `}
+                                            >
+                                              {""} {inversor.descripcion}
+                                            </span>
+                                          </p>
+
+                                          <p>
+                                            Categoria:
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                              `}
+                                            >
+                                              {""} {inversor.categoria}
+                                            </span>
+                                          </p>
+
+                                          <Publicado>
+                                            Publicado hace :{" "}
+                                            {formatDistanceToNow(
+                                              new Date(inversor.fecha),
+                                              {
+                                                locale: es,
+                                              }
+                                            )}
+                                          </Publicado>
+                                        </div>
+                                        <div
+                                          css={css`
+                                            display: grid;
+                                            grid-template-columns: 1fr 2fr;
+
                                             div {
                                               display: flex;
                                               align-items: center;
-                                              padding: 8px;
-                                              border-radius: 6px;
-                                              background-color: var(
-                                                --contBoton
-                                              );
+                                              justify-content: center;
+                                              flex-direction: column;
+                                              gap: 5px;
+                                              div {
+                                                display: flex;
+                                                align-items: center;
+                                                padding: 8px;
+                                                border-radius: 6px;
+                                                background-color: var(
+                                                  --contBoton
+                                                );
+                                              }
                                             }
-                                          }
-                                        `}
-                                      >
-                                        <div>
+                                          `}
+                                        >
                                           <div>
-                                            <i class="bx bx-cube"></i>
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {inversor.cubos}
-                                            </span>
+                                            <div>
+                                              <i class="bx bx-cube"></i>
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {inversor.cubos}
+                                              </span>
+                                            </div>
                                           </div>
-                                        </div>
-                                        <div>
                                           <div>
-                                            <i class="bx bx-money-withdraw"></i>
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""}{" "}
-                                              {formatearPresupuesto(
-                                                (parseInt(precio) *
-                                                  inversor.cubos) /
-                                                  100
-                                              )}
-                                            </span>
+                                            <div>
+                                              <i class="bx bx-money-withdraw"></i>
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {""}{" "}
+                                                {formatearPresupuesto(
+                                                  (parseInt(precio) *
+                                                    inversor.cubos) /
+                                                    100
+                                                )}
+                                              </span>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  </ListaComentario>
-                                </SwipeableListItem>
-                              </SwipeableList>
-                            ) : (
-                              <ListaComentario
-                                key={`${inversor.usuarioId}-${i}`}
-                                css={css`
-                                  border: 1px solid #e1e1e1;
-                                  padding: 2rem;
-                                  width: 100%;
-                                  margin-bottom: 20px;
-                                `}
-                              >
-                                <div className="contenedorPerfil">
-                                  <img
-                                    src={
-                                      inversor.icono != null
-                                        ? inversor.icono
-                                        : "/static/img/imagenPerfil.png"
-                                    }
-                                  />
-                                </div>
-
-                                <div
+                                    </ListaComentario>
+                                  </SwipeableListItem>
+                                </SwipeableList>
+                              ) : (
+                                <ListaComentario
+                                  key={`${inversor.usuarioId}-${i}`}
                                   css={css`
-                                    margin-left: 10px;
-                                    display: grid;
-                                    grid-template-columns: 1fr 1fr;
+                                    border: 1px solid #e1e1e1;
+                                    padding: 2rem;
+                                    width: 100%;
+                                    margin-bottom: 20px;
                                   `}
                                 >
-                                  <div>
-                                    <p>
-                                      Inversor:
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.usuarioNombre}
-                                      </span>
-                                    </p>
-
-                                    <p>
-                                      Descripción:
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.descripcion}
-                                      </span>
-                                    </p>
-
-                                    <p>
-                                      Categoria:
-                                      <span
-                                        css={css`
-                                          font-weight: bold;
-                                        `}
-                                      >
-                                        {""} {inversor.categoria}
-                                      </span>
-                                    </p>
-                                    <Publicado>
-                                      Publicado hace :{" "}
-                                      {formatDistanceToNow(
-                                        new Date(inversor.fecha),
-                                        {
-                                          locale: es,
-                                        }
-                                      )}
-                                    </Publicado>
+                                  <div className="contenedorPerfil">
+                                    <img
+                                      src={
+                                        inversor.icono != null
+                                          ? inversor.icono
+                                          : "/static/img/imagenPerfil.png"
+                                      }
+                                    />
                                   </div>
+
                                   <div
                                     css={css`
+                                      margin-left: 10px;
                                       display: grid;
-                                      grid-template-columns: 1fr 2fr;
-                                      gap: 10px;
-
-                                      div {
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        flex-direction: column;
-                                        gap: 5px;
-                                        div {
-                                          display: flex;
-                                          align-items: center;
-                                          padding: 8px;
-                                          border-radius: 6px;
-                                          background-color: var(--contBoton);
-                                        }
-                                      }
+                                      grid-template-columns: 1fr 1fr;
                                     `}
                                   >
                                     <div>
-                                      <div>
-                                        <i class="bx bx-cube"></i>
+                                      <p>
+                                        Inversor:
                                         <span
                                           css={css`
                                             font-weight: bold;
                                           `}
                                         >
-                                          {inversor.cubos}
+                                          {""} {inversor.usuarioNombre}
                                         </span>
-                                      </div>
+                                      </p>
+
+                                      <p>
+                                        Descripción:
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""} {inversor.descripcion}
+                                        </span>
+                                      </p>
+
+                                      <p>
+                                        Categoria:
+                                        <span
+                                          css={css`
+                                            font-weight: bold;
+                                          `}
+                                        >
+                                          {""} {inversor.categoria}
+                                        </span>
+                                      </p>
+                                      <Publicado>
+                                        Publicado hace :{" "}
+                                        {formatDistanceToNow(
+                                          new Date(inversor.fecha),
+                                          {
+                                            locale: es,
+                                          }
+                                        )}
+                                      </Publicado>
                                     </div>
-                                    <div>
+                                    <div
+                                      css={css`
+                                        display: grid;
+                                        grid-template-columns: 1fr 2fr;
+                                        gap: 10px;
+
+                                        div {
+                                          display: flex;
+                                          align-items: center;
+                                          justify-content: center;
+                                          flex-direction: column;
+                                          gap: 5px;
+                                          div {
+                                            display: flex;
+                                            align-items: center;
+                                            padding: 8px;
+                                            border-radius: 6px;
+                                            background-color: var(--contBoton);
+                                          }
+                                        }
+                                      `}
+                                    >
                                       <div>
-                                        <i class="bx bx-money-withdraw"></i>
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""}{" "}
-                                          {formatearPresupuesto(
-                                            (parseInt(precio) *
-                                              inversor.cubos) /
-                                              100
-                                          )}
-                                        </span>
+                                        <div>
+                                          <i class="bx bx-cube"></i>
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {inversor.cubos}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <div>
+                                          <i class="bx bx-money-withdraw"></i>
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""}{" "}
+                                            {formatearPresupuesto(
+                                              (parseInt(precio) *
+                                                inversor.cubos) /
+                                                100
+                                            )}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              </ListaComentario>
-                            )}
-                          </div>
-                        ))}
-                    </ul>
-                  </>
-                )}
+                                </ListaComentario>
+                              )}
+                            </div>
+                          ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
               </aside>
             </ContenedorProducto>
+            <Mapa id="mapaProducto">
+              <MapPage cordenadas={cordenadas} />
+            </Mapa>
             {puedeBorrar() && (
               <Boton onClick={eliminarProducto}>Eliminar Producto</Boton>
             )}

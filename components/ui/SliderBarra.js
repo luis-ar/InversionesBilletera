@@ -33,7 +33,7 @@ const Content = styled.div`
     height: auto;
   }
   .nuevo {
-    background-color: #eaeae9 !important;
+    background-color: #9858ff !important;
     border-bottom: 6px solid black !important;
   }
   .splide__arrows {
