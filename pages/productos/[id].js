@@ -984,34 +984,6 @@ const Producto = () => {
 
             <ContenedorProducto>
               <div>
-                {/*{" "}
-                <p>
-                  Publicado hace :{" "}
-                  {formatDistanceToNow(new Date(creado), { locale: es })}
-                </p>
-                <p>
-                  Por: {creador.nombre} de {empresa}
-                </p>
-                <Precio>
-                  <span>Precio: </span> {formatearPresupuesto(parseInt(precio))}
-                </Precio>
-                <div
-                  css={css`
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                  `}
-                >
-                  <img
-                    src={urlimagen}
-                    css={css`
-                      border-radius: 20px;
-                      box-shadow: 0 0 10px 1px white;
-                      margin-bottom: 5px;
-                    `}
-                  />
-                </div>
-                <p>{descripcion}</p> */}
                 {usuario && (
                   <Comentarios>
                     <form onSubmit={agregarComentario}>
@@ -1061,7 +1033,18 @@ const Producto = () => {
                           `}
                         >
                           {esCreador(comentario.usuarioId) && (
-                            <CreadorProducto>Es Creador</CreadorProducto>
+                            <CreadorProducto
+                              css={css`
+                                @media (max-width: 500px) {
+                                  bottom: 5px;
+                                  right: 5px;
+                                  font-size: 10px;
+                                  padding: 0.2rem 1rem;
+                                }
+                              `}
+                            >
+                              Es Creador
+                            </CreadorProducto>
                           )}
                           <div className="contenedorPerfil">
                             <img
@@ -1229,12 +1212,23 @@ const Producto = () => {
                                         width: 100%;
                                         margin-bottom: 20px;
                                         background-color: var(--grisBotones);
+                                        @media (max-width: 500px) {
+                                          font-size: 10px;
+                                          padding: 0.6rem;
+                                        }
                                       `}
                                     >
                                       {esCreadorInversor(
                                         inversor.usuarioId
                                       ) && (
-                                        <CreadorProducto>
+                                        <CreadorProducto
+                                          css={css`
+                                            @media (max-width: 500px) {
+                                              font-size: 10px;
+                                              padding: 0.2rem 1rem;
+                                            }
+                                          `}
+                                        >
                                           Tu inversión
                                         </CreadorProducto>
                                       )}
