@@ -36,19 +36,29 @@ const misInversiones = () => {
         <ContenedorInversiones className="listado-productos">
           <h3>Mis Inversiones</h3>
           <div className="contenedor">
-            <ul
-              css={css`
-                width: 100%;
-                display: grid;
-                gap: 2rem;
-                grid-auto-rows: auto;
-                grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-              `}
-            >
-              {inversiones.map((producto) => (
-                <DetallesProducto key={producto.id} producto={producto} />
-              ))}
-            </ul>
+            {inversiones.length == 0 ? (
+              <h2
+                css={css`
+                  text-align: center;
+                `}
+              >
+                "Aun no tiene inversiones"
+              </h2>
+            ) : (
+              <ul
+                css={css`
+                  width: 100%;
+                  display: grid;
+                  gap: 2rem;
+                  grid-auto-rows: auto;
+                  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+                `}
+              >
+                {inversiones.map((producto) => (
+                  <DetallesProducto key={producto.id} producto={producto} />
+                ))}
+              </ul>
+            )}
           </div>
         </ContenedorInversiones>
       </Layout>
