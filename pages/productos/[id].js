@@ -32,10 +32,12 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Mensaje from "@/components/ui/Mensaje";
 const ContenedorProducto = styled.div`
-  @media (min-width: 768px) {
-    display: grid;
-    grid-template-columns: 5fr 4fr;
-    column-gap: 2rem;
+  display: grid;
+  gap: 60px;
+  grid-auto-rows: auto;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  @media (max-width: 550px) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 `;
 const CreadorProducto = styled.p`
@@ -1035,7 +1037,7 @@ const Producto = () => {
                           {esCreador(comentario.usuarioId) && (
                             <CreadorProducto
                               css={css`
-                                @media (max-width: 500px) {
+                                @media (max-width: 550px) {
                                   bottom: 5px;
                                   right: 5px;
                                   font-size: 10px;
@@ -1223,7 +1225,7 @@ const Producto = () => {
                                       ) && (
                                         <CreadorProducto
                                           css={css`
-                                            @media (max-width: 500px) {
+                                            @media (max-width: 550px) {
                                               font-size: 10px;
                                               padding: 0.2rem 1rem;
                                             }

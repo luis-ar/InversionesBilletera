@@ -186,6 +186,7 @@ const Header = () => {
             position: fixed;
             bottom: 0;
             z-index: 1;
+            width: 100%;
           `}
         >
           <BarraSimple />

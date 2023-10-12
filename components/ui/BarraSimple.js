@@ -5,7 +5,7 @@ import { FirebaseContext } from "@/firebase";
 import { useRouter } from "next/router";
 const Contenedor = styled.div`
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 48px;
   background-color: #b5b3b3;
   display: flex;
@@ -29,7 +29,7 @@ const Contenedor = styled.div`
     text-decoration: none;
     display: grid;
     text-align: center;
-    font-size: 12px;
+    font-size: 10px;
     color: black;
   }
   .activo {
@@ -96,22 +96,56 @@ const BarraSimple = () => {
         </li>
 
         {usuario && (
-          <li>
-            <a
-              href="/nuevoProducto"
-              className={isActive == "lista3" ? "activo" : ""}
-              onClick={(e) => {
-                setIsActive("lista3");
-                localStorage.setItem("clave", "lista3");
-                localStorage.removeItem("indice");
-              }}
-            >
-              <span className="icon">
-                <i className="bx bx-news"></i>
-              </span>
-              <span className="text">Nuevo Producto</span>
-            </a>
-          </li>
+          <>
+            <li>
+              <a
+                href="/nuevoProducto"
+                className={isActive == "lista3" ? "activo" : ""}
+                onClick={(e) => {
+                  setIsActive("lista3");
+                  localStorage.setItem("clave", "lista3");
+                  localStorage.removeItem("indice");
+                }}
+              >
+                <span className="icon">
+                  <i className="bx bx-news"></i>
+                </span>
+                <span className="text">Nuevo Producto</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/misInversiones"
+                className={isActive == "lista4" ? "activo" : ""}
+                onClick={(e) => {
+                  setIsActive("lista4");
+                  localStorage.setItem("clave", "lista4");
+                  localStorage.removeItem("indice");
+                }}
+              >
+                <span className="icon">
+                  <i className="bx bx-news"></i>
+                </span>
+                <span className="text">Mis Inversiones</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/billetera"
+                className={isActive == "lista5" ? "activo" : ""}
+                onClick={(e) => {
+                  setIsActive("lista5");
+                  localStorage.setItem("clave", "lista5");
+                  localStorage.removeItem("indice");
+                }}
+              >
+                <span className="icon">
+                  <i className="bx bx-news"></i>
+                </span>
+                <span className="text">Billetera</span>
+              </a>
+            </li>
+          </>
         )}
         {/* <li>
           <a

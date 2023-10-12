@@ -3,7 +3,6 @@ import React, { useEffect, useState, useContext } from "react";
 import DetallesProducto from "../components/layout/DetallesProducto";
 import useProductos from "../Hooks/useProductos";
 import Slider from "@/components/ui/Slider";
-import BarraLateral from "@/components/ui/BarraLateral";
 // npm i @emotion/core @emotio/styled babel-plugin-emotion @emotion/babel-preset-css-prop
 // npm install @emotion/core @emotion/styled babel-plugin-emotion @emotion/babel-preset-css-prop @babel-core @emotion/react –save
 import { css } from "@emotion/react";

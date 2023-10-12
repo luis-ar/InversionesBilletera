@@ -17,6 +17,21 @@ const Barra = styled.div`
     width: 300px;
     display: block;
   }
+  a {
+    font-size: 1.8rem;
+    margin-left: 2rem;
+    color: white;
+    font-family: "PT Sans", sans-serif;
+    &:first-of-type {
+      margin-left: 0rem;
+    }
+    &:last-of-type {
+      margin-right: 0rem;
+    }
+    @media (max-width: 1000px) {
+      display: none;
+    }
+  }
 `;
 const Logo = styled.div`
   margin-bottom: 20px;
@@ -66,17 +81,39 @@ const BarraLateral = () => {
         </Logo>
       </Link>
       <ContenedorEnlaces>
-        <div>
-          <i class="bx bx-home"></i>
-          <span>Inicio</span>
-        </div>
-        <div>
-          <i class="bx bx-objects-vertical-bottom"></i>
-          <span>Mis Inversiones</span>
-        </div>
-        <div>
-          <i class="bx bx-checkbox-minus"></i> <span>Invertir</span>
-        </div>
+        <Link
+          href="/"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
+          <div>
+            <i class="bx bx-home"></i>
+            <span>Inicio</span>
+          </div>
+        </Link>
+
+        <Link
+          href="/misInversiones"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
+          <div>
+            <i class="bx bx-objects-vertical-bottom"></i>
+            <span>Mis Inversiones</span>
+          </div>
+        </Link>
+        <Link
+          href="/billetera"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
+          <div>
+            <i class="bx bx-checkbox-minus"></i> <span>Billetera</span>
+          </div>
+        </Link>
       </ContenedorEnlaces>
     </Barra>
   );

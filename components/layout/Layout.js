@@ -68,7 +68,10 @@ const Layout = (props) => {
 
       <Head>
         <title>Product Hunt Firebase Next</title>
-
+        <script
+          src="https://kit.fontawesome.com/9199bd82d8.js"
+          crossorigin="anonymous"
+        ></script>
         <link
           href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
           rel="stylesheet"
@@ -86,10 +89,6 @@ const Layout = (props) => {
           crossOrigin="anonymous"
           referrerpolicy="no-referrer"
         />
-        <script
-          src="https://kit.fontawesome.com/01f495c2af.js"
-          crossorigin="anonymous"
-        ></script>
       </Head>
 
       <Header />
