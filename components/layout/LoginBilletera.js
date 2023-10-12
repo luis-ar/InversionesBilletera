@@ -35,6 +35,10 @@ const Contenedor = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+
+    @media (max-width: 1000px) {
+      height: 70px;
+    }
   }
   .teclas1 {
     width: 70px;
