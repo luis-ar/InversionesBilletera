@@ -21,7 +21,7 @@ const validarCrearUsuarioBilletera = (valores) => {
   if (!valores.password) {
     errores.password = "El password es obligatorio";
   } else if (valores.password.length < 6) {
-    errores.password = "El password debe tener al menos 6 caracteres";
+    errores.password = "El password debe tener 6 caracteres";
   }
   // validar el telefono
   if (!valores.telefono) {

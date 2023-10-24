@@ -17,11 +17,11 @@ const useValidacion = (stateInicial, validar, fn) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // if (name === "password") {
-    //   if (!isNumeric(value) && value !== "") {
-    //     return;
-    //   }
-    // }
+    if (name === "password") {
+      if (!isNumeric(value) && value !== "") {
+        return;
+      }
+    }
 
     if (name === "telefono") {
       if (!isNumeric(value) && value !== "") {

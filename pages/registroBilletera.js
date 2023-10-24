@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import Router from "next/router";
 import { FirebaseContext } from "@/firebase";
@@ -13,17 +13,29 @@ import {
 
 import useValidacion from "../Hooks/useValidacion";
 import validarCrearUsuarioBilletera from "@/Validacion/validarCrearUsuarioBilletera";
+const STATE_INICIAL = {
+  nombre: "",
+  email: "",
+  apellido: "",
+  password: "",
+  telefono: "",
+};
 const registroBilletera = () => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [error, guardarError] = useState(false);
-
-  const STATE_INICIAL = {
-    nombre: "",
-    email: "",
-    apellido: "",
-    password: "",
-    telefono: "",
-  };
+  const [datosUsuario, setDatosUsuario] = useState(STATE_INICIAL);
+  useEffect(() => {
+    if (usuario) {
+      console.log("Datos del usuario:", usuario);
+      setDatosUsuario({
+        nombre: usuario.displayName || "",
+        email: usuario.email || "",
+        apellido: "",
+        password: "",
+        telefono: "",
+      });
+    }
+  }, [usuario]);
   const crearCuenta = async () => {
     const data = {
       names: nombre,
@@ -79,8 +91,11 @@ const registroBilletera = () => {
       console.error("Error al enviar los datos:", error);
     }
   };
+
+  // Destructuración de valores y funciones de useValidacion
   const { valores, errores, handleSumit, handleChange, handleBlur } =
-    useValidacion(STATE_INICIAL, validarCrearUsuarioBilletera, crearCuenta);
+    useValidacion(datosUsuario, validarCrearUsuarioBilletera, crearCuenta);
+
   const { nombre, apellido, email, telefono, password } = valores;
 
   return (
@@ -166,7 +181,7 @@ const registroBilletera = () => {
             <label htmlFor="nombre">Contraseña</label>
             <input
               type="password"
-              /* maxlength="6" */
+              maxlength="6"
               id="password"
               name="password"
               placeholder="Tu Contraseña"
