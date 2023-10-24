@@ -14,15 +14,32 @@ const useValidacion = (stateInicial, validar, fn) => {
     }
   }, [errores]);
 
-  //Funcion que se ejecuta conforme el usuario escriba algo
-
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // if (name === "password") {
+    //   if (!isNumeric(value) && value !== "") {
+    //     return;
+    //   }
+    // }
+
+    if (name === "telefono") {
+      if (!isNumeric(value) && value !== "") {
+        return;
+      }
+    }
+
+    // Actualizar el estado del formulario
     guardarValores({
       ...valores,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
+  // Función para verificar si una cadena es numérica
+  const isNumeric = (str) => {
+    return /^\d+$/.test(str);
+  };
   // Funcion que se ejecuta cuando el usuario hace submit
   const handleSumit = (e) => {
     e.preventDefault();

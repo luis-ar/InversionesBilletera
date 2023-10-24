@@ -31,7 +31,7 @@ const Contenedor = styled.div`
   }
   .teclas {
     width: 100%;
-    height: 80px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -60,8 +60,8 @@ const Contenedor = styled.div`
     justify-content: space-evenly;
     padding: 0 30px;
     div {
-      height: 20px;
-      width: 20px;
+      height: 10px;
+      width: 10px;
       border-radius: 50px;
       background-color: white;
     }
@@ -71,6 +71,13 @@ const Contenedor = styled.div`
   }
   img {
     margin-bottom: 10px;
+  }
+  .nuevoRegistro {
+    color: white;
+    margin-top: 10px;
+    a {
+      color: blue;
+    }
   }
 `;
 const LoginBilletera = () => {
@@ -226,6 +233,11 @@ const LoginBilletera = () => {
               ></button>
             </div>
           </div>
+        </div>
+        <div className="nuevoRegistro">
+          <h3>
+            ¿No tienes Cuenta? <a href="/registroBilletera">Registrate aqui</a>
+          </h3>
         </div>
       </Contenedor>
     </>

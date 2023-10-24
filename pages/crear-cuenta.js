@@ -16,6 +16,7 @@ const STATE_INICIAL = {
   nombre: "",
   email: "",
   password: "",
+  telefono: "",
 };
 
 const crearCuenta = () => {
@@ -23,7 +24,7 @@ const crearCuenta = () => {
   const [imagen, setImagen] = useState("");
   const crearCuenta = async () => {
     try {
-      await firebase.registrar(nombre, email, password, imagen);
+      await firebase.registrar(nombre, email, password, imagen, telefono);
       Router.push("/");
     } catch (error) {
       console.error("hubo un error al crear el usuario", error.message);
@@ -33,11 +34,18 @@ const crearCuenta = () => {
   const { valores, errores, handleSumit, handleChange, handleBlur } =
     useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
   //OnBlur -> cuando salgo del input lo valida sin la necesidad de presion el boton de crear cuenta
-  const { nombre, email, password } = valores;
+  const { nombre, email, password, telefono } = valores;
   return (
     <div>
       <Layout>
-        <>
+        <div
+          css={css`
+            color: white;
+            @media (min-width: 1000px) {
+              margin-left: 300px;
+            }
+          `}
+        >
           <h1
             css={css`
               text-align: center;
@@ -48,7 +56,6 @@ const crearCuenta = () => {
           </h1>
           <Formulario onSubmit={handleSumit} noValidate>
             {errores.nombre && <ErrorMostrar>{errores.nombre}</ErrorMostrar>}
-
             <Campo>
               <label htmlFor="nombre">Nombre</label>
               <input
@@ -62,7 +69,6 @@ const crearCuenta = () => {
               />
             </Campo>
             {errores.email && <ErrorMostrar>{errores.email}</ErrorMostrar>}
-
             <Campo>
               <label htmlFor="email">Email</label>
               <input
@@ -78,7 +84,6 @@ const crearCuenta = () => {
             {errores.password && (
               <ErrorMostrar>{errores.password}</ErrorMostrar>
             )}
-
             <Campo>
               <label htmlFor="password">Password</label>
               <input
@@ -91,6 +96,23 @@ const crearCuenta = () => {
                 onBlur={handleBlur}
               />
             </Campo>
+            {/*{" "}
+            {errores.telefono && (
+              <ErrorMostrar>{errores.telefono}</ErrorMostrar>
+            )}
+            <Campo>
+              <label htmlFor="telefono">Telefono</label>
+              <input
+                type="telefono"
+                id="telefono"
+                name="telefono"
+                placeholder="Tu telefono"
+                value={telefono}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </Campo>{" "}
+            */}
             {errores.imagen && <ErrorMostrar>{errores.imagen}</ErrorMostrar>}
             <Campo>
               <label htmlFor="imagen">Imagen</label>
@@ -106,7 +128,7 @@ const crearCuenta = () => {
             {error && <ErrorMostrar>{error}</ErrorMostrar>}
             <InputSubmit type="submit" value="Crear Cuenta" />
           </Formulario>
-        </>
+        </div>
       </Layout>
     </div>
   );
