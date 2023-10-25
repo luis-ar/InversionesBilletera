@@ -11,12 +11,11 @@ const Contenedor = styled.div`
   position: relative;
   flex-direction: column;
   .caja1 {
-    background-color: #747474;
+    background-color: var(--fondoBilletera);
     min-width: 300px;
     height: 420px;
     border-radius: 15px;
     padding: 15px;
-    border: solid 5px rgb(21, 20, 22);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -32,8 +31,9 @@ const Contenedor = styled.div`
   }
   .teclas {
     width: 100%;
-    height: 70px;
+    height: 60px;
     display: flex;
+    gap: 5px;
     align-items: center;
     justify-content: space-evenly;
 
@@ -42,16 +42,16 @@ const Contenedor = styled.div`
     }
   }
   .teclas1 {
-    width: 70px;
+    width: 85px;
     height: 50px;
     border-radius: 15px;
     font-size: 30px;
-    border: solid 3px rgb(21, 20, 22);
-    box-shadow: black 0 0 5px;
+    color: #e7e6e8;
+    border: solid 0.5px #5b02da;
     cursor: pointer;
-    background-color: rgb(0, 0, 0, 0.2);
+    background-color: var(--botonesBilletera);
     :hover {
-      background-color: rgb(0, 0, 0, 0.4);
+      background-color: rgb(0, 0, 0, 0.7);
     }
   }
   .panelContra {
@@ -64,7 +64,7 @@ const Contenedor = styled.div`
       height: 10px;
       width: 10px;
       border-radius: 50px;
-      background-color: white;
+      background-color: #cbcacc;
     }
   }
   .pintado {
@@ -168,15 +168,16 @@ const LoginBilletera = () => {
   return (
     <>
       <Contenedor className="contenedor">
-        <h3
-          css={css`
-            color: white;
-          `}
-        >
-          Ingresa tu clave de Yape
-        </h3>
         <img width="100" src="/static/img/yape.png" />
         <div className="caja1">
+          <span
+            css={css`
+              color: white;
+              text-align: center;
+            `}
+          >
+            Ingresa tu clave de Cass
+          </span>
           <div className="panelContra" id="panelContra">
             <div className="circuloContra"></div>
             <div className="circuloContra"></div>

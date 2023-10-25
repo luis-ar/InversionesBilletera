@@ -6,7 +6,7 @@ import Link from "next/link";
 const Producto = styled.li`
   padding: 1.2rem;
   border-radius: 20px;
-  border: 0.8px solid #d4d3d2;
+  border: 0.2px solid #4b4b4b;
   margin-bottom: 7px;
   background-color: var(--contBoton);
   display: flex;
@@ -15,7 +15,7 @@ const Producto = styled.li`
 `;
 const DescripcionProducto = styled.div`
   flex: 0 1;
-  color: white;
+  color: #e1e1e1;
   column-gap: 2rem;
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
@@ -25,7 +25,7 @@ const DescripcionProducto = styled.div`
 const Titulo = styled.a`
   font-size: 1.8rem;
   font-weight: bold;
-  color: white;
+  color: #e1e1e1;
   margin: 0;
   :hover {
     cursor: pointer;
@@ -64,7 +64,7 @@ const Comentarios = styled.div`
   div {
     display: flex;
     align-items: center;
-    border: 1px solid #e1e1e1;
+    border: 0.2px solid #4e4f50;
     padding: 0.3rem 1rem;
     margin-right: 2rem;
     height: 30px;
@@ -114,9 +114,6 @@ const Imagen = styled.img`
   height: 100%;
   object-fit: fill;
   border-radius: 15px;
-  @media (max-width: 550px) {
-    width: 150px;
-  }
 `;
 
 const Votos = styled.div`

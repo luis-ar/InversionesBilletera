@@ -19,6 +19,8 @@ const Layout = (props) => {
             --contCard: #1e2229;
             --colorBuscar: #010101;
             --botones: #9858ff;
+            --fondoBilletera: #3700b3;
+            --botonesBilletera: #6200ee;
           }
           html {
             font-size: 62.5%;

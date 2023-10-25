@@ -13,7 +13,7 @@ const Contenedor = styled.div`
   align-items: center;
   padding: 20px;
   @media (max-width: 500px) {
-    height: 300px;
+    height: 200px;
   }
   @media (min-width: 1000px) {
     margin-left: 300px;
@@ -26,7 +26,7 @@ const Image = styled.img`
   object-fit: cover;
   cursor: pointer;
   @media (max-width: 500px) {
-    height: 280px;
+    height: 180px;
   }
 `;
 const TextoInformativo = styled.div`
