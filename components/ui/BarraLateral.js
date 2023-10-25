@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "@emotion/styled";
 import Link from "next/link";
-
+import { FirebaseContext } from "@/firebase";
 const Barra = styled.div`
   background-color: black;
   z-index: 100;
@@ -67,6 +67,8 @@ const ContenedorEnlaces = styled.div`
   }
 `;
 const BarraLateral = () => {
+  const { firebase, usuario } = useContext(FirebaseContext);
+
   return (
     <Barra>
       <Link
@@ -93,27 +95,31 @@ const BarraLateral = () => {
           </div>
         </Link>
 
-        <Link
-          href="/misInversiones"
-          onClick={() => {
-            localStorage.clear();
-          }}
-        >
-          <div>
-            <i class="bx bx-objects-vertical-bottom"></i>
-            <span>Mis Inversiones</span>
-          </div>
-        </Link>
-        <Link
-          href="/billetera"
-          onClick={() => {
-            localStorage.clear();
-          }}
-        >
-          <div>
-            <i class="bx bx-checkbox-minus"></i> <span>Billetera</span>
-          </div>
-        </Link>
+        {usuario && (
+          <>
+            <Link
+              href="/misInversiones"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              <div>
+                <i class="bx bx-objects-vertical-bottom"></i>
+                <span>Mis Inversiones</span>
+              </div>
+            </Link>
+            <Link
+              href="/billetera"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              <div>
+                <i class="bx bx-checkbox-minus"></i> <span>Billetera</span>
+              </div>
+            </Link>
+          </>
+        )}
       </ContenedorEnlaces>
     </Barra>
   );

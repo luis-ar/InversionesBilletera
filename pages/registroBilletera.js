@@ -23,6 +23,7 @@ const registroBilletera = () => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [error, guardarError] = useState(false);
   const [datosUsuario, setDatosUsuario] = useState(STATE_INICIAL);
+  const [pase, guardarPase] = useState(false);
   // useEffect(() => {
   //   if (usuario) {
   //     console.log("Datos del usuario:", usuario);
@@ -62,8 +63,10 @@ const registroBilletera = () => {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Respuesta de la API:", responseData);
-        alert("cuenta creado con exito");
-        Router.push("/principalBilletera");
+        guardarPase(true);
+        setTimeout(() => {
+          Router.push("/principalBilletera");
+        }, 1000);
       } else {
         console.error(
           "Error al enviar los datos:",
@@ -107,6 +110,8 @@ const registroBilletera = () => {
           }
         `}
       >
+        {pase && <Spinner />}
+
         <h2
           css={css`
             text-align: center;
