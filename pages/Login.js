@@ -34,7 +34,14 @@ const Login = () => {
   return (
     <div>
       <Layout>
-        <>
+        <div
+          css={css`
+            color: white;
+            @media (min-width: 1000px) {
+              margin-left: 300px;
+            }
+          `}
+        >
           <h1
             css={css`
               text-align: center;
@@ -77,7 +84,7 @@ const Login = () => {
             {error && <ErrorMostrar>{error}</ErrorMostrar>}
             <InputSubmit type="submit" value="Iniciar Sesión" />
           </Formulario>
-        </>
+        </div>
       </Layout>
     </div>
   );

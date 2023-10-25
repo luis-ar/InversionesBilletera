@@ -13,9 +13,8 @@ import {
 
 import useValidacion from "../Hooks/useValidacion";
 import validarCrearUsuarioBilletera from "@/Validacion/validarCrearUsuarioBilletera";
+import Spinner from "@/components/ui/Spinner";
 const STATE_INICIAL = {
-  nombre: "",
-  email: "",
   apellido: "",
   password: "",
   telefono: "",
@@ -24,23 +23,24 @@ const registroBilletera = () => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [error, guardarError] = useState(false);
   const [datosUsuario, setDatosUsuario] = useState(STATE_INICIAL);
-  useEffect(() => {
-    if (usuario) {
-      console.log("Datos del usuario:", usuario);
-      setDatosUsuario({
-        nombre: usuario.displayName || "",
-        email: usuario.email || "",
-        apellido: "",
-        password: "",
-        telefono: "",
-      });
-    }
-  }, [usuario]);
+  // useEffect(() => {
+  //   if (usuario) {
+  //     console.log("Datos del usuario:", usuario);
+  //     setDatosUsuario({
+  //       nombre: usuario.displayName || "",
+  //       email: usuario.email || "",
+  //       apellido: "",
+  //       password: "",
+  //       telefono: "",
+  //     });
+  //   }
+  // }, [usuario]);
+
   const crearCuenta = async () => {
     const data = {
-      names: nombre,
+      names: usuario.displayName,
       lastname: apellido,
-      email: email,
+      email: usuario.email,
       password: password,
       phone: telefono,
     };
@@ -92,11 +92,10 @@ const registroBilletera = () => {
     }
   };
 
-  // Destructuración de valores y funciones de useValidacion
   const { valores, errores, handleSumit, handleChange, handleBlur } =
     useValidacion(datosUsuario, validarCrearUsuarioBilletera, crearCuenta);
 
-  const { nombre, apellido, email, telefono, password } = valores;
+  const { apellido, telefono, password } = valores;
 
   return (
     <Layout>
@@ -122,7 +121,20 @@ const registroBilletera = () => {
 
           <Campo>
             <label htmlFor="nombre">Nombre</label>
-            <input
+
+            {usuario && (
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Tu Nombre"
+                value={usuario.displayName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            )}
+
+            {/* <input
               type="text"
               id="nombre"
               name="nombre"
@@ -130,7 +142,7 @@ const registroBilletera = () => {
               value={nombre}
               onChange={handleChange}
               onBlur={handleBlur}
-            />
+            /> */}
           </Campo>
           {errores.apellido && <ErrorMostrar>{errores.apellido}</ErrorMostrar>}
 
@@ -150,7 +162,19 @@ const registroBilletera = () => {
 
           <Campo>
             <label htmlFor="nombre">Correo</label>
-            <input
+
+            {usuario && (
+              <input
+                type="text"
+                id="email"
+                name="email"
+                placeholder="Tu Correo"
+                value={usuario.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            )}
+            {/* <input
               type="text"
               id="email"
               name="email"
@@ -158,7 +182,7 @@ const registroBilletera = () => {
               value={email}
               onChange={handleChange}
               onBlur={handleBlur}
-            />
+            /> */}
           </Campo>
           {errores.telefono && <ErrorMostrar>{errores.telefono}</ErrorMostrar>}
 

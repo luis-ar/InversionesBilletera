@@ -3,19 +3,19 @@ const validarCrearUsuarioBilletera = (valores) => {
   const regex = /^9\d{8}$/;
 
   //validar nombre del usuario
-  if (!valores.nombre) {
-    errores.nombre = "El nombre es obligatorio";
-  }
+  // if (!valores.nombre) {
+  //   errores.nombre = "El nombre es obligatorio";
+  // }
   //validar apellido del usuario
   if (!valores.apellido) {
     errores.apellido = "El apellido es obligatorio";
   }
   //validar email
-  if (!valores.email) {
-    errores.email = "El email es obligatorio";
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(valores.email)) {
-    errores.email = "Email no válido";
-  }
+  // if (!valores.email) {
+  //   errores.email = "El email es obligatorio";
+  // } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(valores.email)) {
+  //   errores.email = "Email no válido";
+  // }
 
   //validar el password
   if (!valores.password) {

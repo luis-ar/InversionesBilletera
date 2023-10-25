@@ -133,14 +133,17 @@ const Header = () => {
                   >
                     Hola: {usuario.displayName}
                   </p>
-                  <Boton
-                    bgColor="true"
-                    onClick={() => {
-                      firebase.cerrarSesion();
-                    }}
-                  >
-                    Cerrar Sesión
-                  </Boton>
+                  <Link href="/Login">
+                    <Boton
+                      bgColor="true"
+                      onClick={() => {
+                        firebase.cerrarSesion();
+                      }}
+                    >
+                      Cerrar Sesión
+                    </Boton>
+                  </Link>
+
                   <div className="contenedorImagen">
                     <img
                       src={
