@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-
+import { FirebaseContext } from "@/firebase";
+import Router from "next/router";
 const Contenedor = styled.div`
   background-color: var(--contCard);
   display: flex;
@@ -82,7 +83,7 @@ const Contenedor = styled.div`
 `;
 const LoginBilletera = () => {
   const [clave, guardarClave] = useState("");
-
+  const { firebase, usuario } = useContext(FirebaseContext);
   // Actualizar círculos al cambiar la clave
   useEffect(() => {
     const circuloContra = document.querySelectorAll(".circuloContra");
@@ -92,7 +93,58 @@ const LoginBilletera = () => {
     }
   }, [clave]);
 
-  const enviarClave = (e) => {
+  const crearCuenta = async (password) => {
+    const data = {
+      email: usuario.email,
+      password: password,
+    };
+    console.log("Datos a enviar:", data);
+    try {
+      const response = await fetch(
+        "https://billapp-5d53d479ff62.herokuapp.com/api/user/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Respuesta de la API:", responseData);
+        alert("abriendo el menu");
+        Router.push("/principalBilletera");
+      } else {
+        console.error(
+          "Error al enviar los datos:",
+          response.status,
+          response.statusText
+        );
+
+        // Imprimir más detalles sobre la respuesta
+        const responseBody = await response.json();
+        console.log("Cuerpo de la respuesta:", responseBody);
+
+        // Acceder al valor de la propiedad 'data'
+        if (responseBody && responseBody.data) {
+          console.log('Contenido de la propiedad "data":', responseBody.data);
+
+          if (Array.isArray(responseBody.data)) {
+            guardarError(responseBody.data[0]);
+            setTimeout(() => {
+              guardarError("");
+            }, 2000);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
+  };
+
+  const enviarClave = async (e) => {
     if (clave.length < 6) {
       const nuevo = clave + e.target.value;
       if (nuevo.length < 6) {
@@ -102,11 +154,12 @@ const LoginBilletera = () => {
       if (nuevo.length == 6) {
         guardarClave(nuevo);
         console.log("enviando");
+        console.log(nuevo);
+        await crearCuenta(nuevo);
         return;
       }
       return;
     }
-    console.log(clave);
   };
 
   const borrarDigito = () => {
