@@ -3,6 +3,9 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { FirebaseContext } from "@/firebase";
 import Router from "next/router";
+import Spinner from "../ui/Spinner";
+import { ErrorMostrar } from "../ui/Formulario";
+
 const Contenedor = styled.div`
   background-color: var(--contCard);
   display: flex;
@@ -13,14 +16,14 @@ const Contenedor = styled.div`
   .caja1 {
     background-color: var(--fondoBilletera);
     min-width: 300px;
-    height: 420px;
+    height: 400px;
     border-radius: 15px;
     padding: 15px;
     display: flex;
     flex-direction: column;
-    flex: 1;
     gap: 10px;
   }
+
   .botones {
     height: 85%;
     width: 100%;
@@ -84,6 +87,8 @@ const Contenedor = styled.div`
 const LoginBilletera = () => {
   const [clave, guardarClave] = useState("");
   const { firebase, usuario } = useContext(FirebaseContext);
+  const [error, guardarError] = useState();
+  const [pase, guardarPase] = useState(false);
   // Actualizar círculos al cambiar la clave
   useEffect(() => {
     const circuloContra = document.querySelectorAll(".circuloContra");
@@ -114,8 +119,10 @@ const LoginBilletera = () => {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Respuesta de la API:", responseData);
-        alert("abriendo el menu");
-        Router.push("/principalBilletera");
+        guardarPase(true);
+        setTimeout(() => {
+          Router.push("/principalBilletera");
+        }, 1000);
       } else {
         console.error(
           "Error al enviar los datos:",
@@ -130,13 +137,10 @@ const LoginBilletera = () => {
         // Acceder al valor de la propiedad 'data'
         if (responseBody && responseBody.data) {
           console.log('Contenido de la propiedad "data":', responseBody.data);
-
-          if (Array.isArray(responseBody.data)) {
-            guardarError(responseBody.data[0]);
-            setTimeout(() => {
-              guardarError("");
-            }, 2000);
-          }
+          guardarError(responseBody.data);
+          setTimeout(() => {
+            guardarError("");
+          }, 2000);
         }
       }
     } catch (error) {
@@ -167,8 +171,11 @@ const LoginBilletera = () => {
   };
   return (
     <>
+      {pase && <Spinner />}
       <Contenedor className="contenedor">
         <img width="100" src="/static/img/yape.png" />
+        {error && <ErrorMostrar>{error}</ErrorMostrar>}
+
         <div className="caja1">
           <span
             css={css`

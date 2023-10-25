@@ -23,7 +23,14 @@ const Spinner = () => {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 90vh;
+        height: 80vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        width: 100%;
+        z-index: 200;
+        @media (min-width: 1000px) {
+          width: calc(100% - 300px);
+        }
       `}
     >
       <AnimatedBox />
