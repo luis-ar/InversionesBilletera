@@ -118,10 +118,10 @@ const LoginBilletera = () => {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Respuesta de la API:", responseData);
         guardarPase(true);
+        const token = responseData.data.accessToken;
         setTimeout(() => {
-          Router.push("/principalBilletera");
+          Router.push(`/usuarios/${token}`);
         }, 1000);
       } else {
         console.error(
