@@ -93,34 +93,12 @@ const InicioBilletera = ({ token }) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      // Aquí puedes trabajar con los datos de respuesta de la API
       setHistoriales(data["data"]["WalletHistrial"]);
-      // console.log("paso1", data["data"]["WalletHistrial"]);
-      // console.log("paso2", data["data"]["WalletHistrial"][1]["DepositUser"]);
-      // console.log(
-      //   "paso3",
-      //   data["data"]["WalletHistrial"][0]["DepositUser"]["names"]
-      // );
-      // console.log(
-      //   "paso4",
-      //   data["data"]["WalletHistrial"][0]["DepositUser"]["lastname"]
-      // );
-      // console.log(
-      //   "paso5",
-      //   data["data"]["WalletHistrial"][0]["DepositUser"]["phone"]
-      // );
       setSaldo(data["data"]["cash"]);
     })
     .catch((error) => {
-      // Manejo de errores
       console.error(error);
     });
-  // if (historiales) {
-  //   historiales.map((historial) => {
-  //     console.log(historial);
-  //   });
-  // }
-
   return (
     <div
       css={css`
@@ -181,14 +159,24 @@ const InicioBilletera = ({ token }) => {
           Movimientos
         </p>
 
-        <div className="contenedor">
+        <div>
           <ul>
-            {historiales && (
+            {historiales ? (
               <>
                 {historiales.map((historial) => (
                   <DatosBilletera historial={historial} />
                 ))}
               </>
+            ) : (
+              <p
+                css={css`
+                  font-weight: bold;
+                  font-size: 12px;
+                  padding: 0 20px;
+                `}
+              >
+                "Aún no tiene historial"
+              </p>
             )}
           </ul>
         </div>
