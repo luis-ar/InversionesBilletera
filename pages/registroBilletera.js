@@ -14,6 +14,8 @@ import {
 import useValidacion from "../Hooks/useValidacion";
 import validarCrearUsuarioBilletera from "@/Validacion/validarCrearUsuarioBilletera";
 import Spinner from "@/components/ui/Spinner";
+import { convertirUsuarioBilletera } from "@/Validacion/convertirUsuarioBilletera";
+
 const STATE_INICIAL = {
   apellido: "",
   password: "",
@@ -24,18 +26,51 @@ const registroBilletera = () => {
   const [error, guardarError] = useState(false);
   const [datosUsuario, setDatosUsuario] = useState(STATE_INICIAL);
   const [pase, guardarPase] = useState(false);
-  // useEffect(() => {
-  //   if (usuario) {
-  //     console.log("Datos del usuario:", usuario);
-  //     setDatosUsuario({
-  //       nombre: usuario.displayName || "",
-  //       email: usuario.email || "",
-  //       apellido: "",
-  //       password: "",
-  //       telefono: "",
-  //     });
-  //   }
-  // }, [usuario]);
+
+  const crearToken = async (password) => {
+    let token;
+    const data = {
+      email: usuario.email,
+      password: password,
+    };
+    try {
+      const response = await fetch(
+        "https://billapp-5d53d479ff62.herokuapp.com/api/user/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        token = responseData.data.accessToken;
+      } else {
+        console.error(
+          "Error al enviar los datos:",
+          response.status,
+          response.statusText
+        );
+
+        // Imprimir más detalles sobre la respuesta
+        const responseBody = await response.json();
+
+        // Acceder al valor de la propiedad 'data'
+        if (responseBody && responseBody.data) {
+          guardarError(responseBody.data);
+          setTimeout(() => {
+            guardarError("");
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
+    return token;
+  };
 
   const crearCuenta = async () => {
     const data = {
@@ -45,8 +80,6 @@ const registroBilletera = () => {
       password: password,
       phone: telefono,
     };
-
-    console.log("Datos a enviar:", data);
 
     try {
       const response = await fetch(
@@ -62,10 +95,11 @@ const registroBilletera = () => {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Respuesta de la API:", responseData);
+        const token = await crearToken(password);
+        await convertirUsuarioBilletera(token);
         guardarPase(true);
         setTimeout(() => {
-          Router.push("/principalBilletera");
+          Router.push(`/usuarios/${token}`);
         }, 1000);
       } else {
         console.error(
@@ -76,12 +110,9 @@ const registroBilletera = () => {
 
         // Imprimir más detalles sobre la respuesta
         const responseBody = await response.json();
-        console.log("Cuerpo de la respuesta:", responseBody);
 
         // Acceder al valor de la propiedad 'data'
         if (responseBody && responseBody.data) {
-          console.log('Contenido de la propiedad "data":', responseBody.data);
-
           if (Array.isArray(responseBody.data)) {
             guardarError(responseBody.data[0]);
             setTimeout(() => {

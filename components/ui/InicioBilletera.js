@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { FirebaseContext } from "@/firebase";
 import SliderBilletera from "./SliderBilletera";
+import DatosBilletera from "./DatosBilletera";
 const Contenedor = styled.div`
   background-color: var(--fondoBilletera);
   height: 500px;
@@ -49,7 +50,7 @@ const Contenedor = styled.div`
       p,
       span {
         font-weight: bold;
-        font-size: 12px;
+        font-size: 14px;
       }
       img {
         width: 20px;
@@ -69,6 +70,7 @@ const InicioBilletera = ({ token }) => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
   const [saldo, setSaldo] = useState(0);
+  const [historiales, setHistoriales] = useState();
   const retornoSaldo = () => {
     if (mostrarSaldo) {
       setMostrarSaldo(false);
@@ -92,12 +94,33 @@ const InicioBilletera = ({ token }) => {
     .then((response) => response.json())
     .then((data) => {
       // Aquí puedes trabajar con los datos de respuesta de la API
+      setHistoriales(data["data"]["WalletHistrial"]);
+      // console.log("paso1", data["data"]["WalletHistrial"]);
+      // console.log("paso2", data["data"]["WalletHistrial"][1]["DepositUser"]);
+      // console.log(
+      //   "paso3",
+      //   data["data"]["WalletHistrial"][0]["DepositUser"]["names"]
+      // );
+      // console.log(
+      //   "paso4",
+      //   data["data"]["WalletHistrial"][0]["DepositUser"]["lastname"]
+      // );
+      // console.log(
+      //   "paso5",
+      //   data["data"]["WalletHistrial"][0]["DepositUser"]["phone"]
+      // );
       setSaldo(data["data"]["cash"]);
     })
     .catch((error) => {
       // Manejo de errores
       console.error(error);
     });
+  // if (historiales) {
+  //   historiales.map((historial) => {
+  //     console.log(historial);
+  //   });
+  // }
+
   return (
     <div
       css={css`
@@ -147,6 +170,27 @@ const InicioBilletera = ({ token }) => {
               </>
             )}
           </div>
+        </div>
+        <p
+          css={css`
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 12px;
+          `}
+        >
+          Movimientos
+        </p>
+
+        <div className="contenedor">
+          <ul>
+            {historiales && (
+              <>
+                {historiales.map((historial) => (
+                  <DatosBilletera historial={historial} />
+                ))}
+              </>
+            )}
+          </ul>
         </div>
       </Contenedor>
     </div>

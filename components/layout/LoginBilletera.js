@@ -103,7 +103,6 @@ const LoginBilletera = () => {
       email: usuario.email,
       password: password,
     };
-    console.log("Datos a enviar:", data);
     try {
       const response = await fetch(
         "https://billapp-5d53d479ff62.herokuapp.com/api/user/token",
@@ -132,11 +131,9 @@ const LoginBilletera = () => {
 
         // Imprimir más detalles sobre la respuesta
         const responseBody = await response.json();
-        console.log("Cuerpo de la respuesta:", responseBody);
 
         // Acceder al valor de la propiedad 'data'
         if (responseBody && responseBody.data) {
-          console.log('Contenido de la propiedad "data":', responseBody.data);
           guardarError(responseBody.data);
           setTimeout(() => {
             guardarError("");
@@ -157,8 +154,6 @@ const LoginBilletera = () => {
       }
       if (nuevo.length == 6) {
         guardarClave(nuevo);
-        console.log("enviando");
-        console.log(nuevo);
         await crearCuenta(nuevo);
         return;
       }

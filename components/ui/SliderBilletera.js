@@ -23,9 +23,6 @@ const Image = styled.img`
   height: 50px;
   object-fit: cover;
   cursor: pointer;
-  @media (max-width: 500px) {
-    height: 180px;
-  }
 `;
 const SliderBilletera = () => {
   return (
