@@ -33,6 +33,8 @@ const Layout = (props) => {
             padding: 0;
             margin: 0;
             box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: #888 transparent;
           }
           body {
             font-size: 1.6rem;

@@ -9,8 +9,7 @@ const Contenedor = styled.div`
   justify-content: space-between;
   align-items: center;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
-  margin-bottom: 15px;
-
+  margin-bottom: 13px;
   .datosPersonales {
     display: flex;
     flex-direction: column;
@@ -28,7 +27,6 @@ const DatosBilletera = ({ historial }) => {
   const { extra } = Operation;
   const { symbol, description } = extra;
   const monto = symbol + amount;
-  console.log(symbol);
   const formatearPresupuesto = (cantidad) => {
     return cantidad.toLocaleString("es-PE", {
       style: "currency",

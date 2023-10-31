@@ -6,29 +6,6 @@ import SliderBilletera from "./SliderBilletera";
 import DatosBilletera from "./DatosBilletera";
 import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
-
-const Pie = styled.div`
-  background-color: var(--botonesBilletera);
-  height: 10%;
-  border-bottom-right-radius: 15px;
-  border-bottom-left-radius: 15px;
-  text-transform: uppercase;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  div {
-    background-color: var(--fondoBilletera);
-    width: 42%;
-    padding: 7px 0;
-    text-align: center;
-    border-radius: 5px;
-    i {
-      margin-right: 5px;
-    }
-  }
-`;
-
 const MostrarError = styled.div`
   width: 300px;
   height: 505px;
@@ -72,12 +49,19 @@ const Contenedor = styled.div`
     display: flex;
     gap: 10px;
     align-items: center;
+    a {
+      color: white;
+    }
     i {
       font-size: 30px;
+      font-weight: bold;
     }
     p {
       font-weight: bold;
       font-size: 20px;
+    }
+    div {
+      display: flex;
     }
   }
   .saldo {
@@ -119,13 +103,13 @@ const Contenedor = styled.div`
     }
   }
 `;
-const InicioBilletera = ({ token }) => {
+const HistorialCompleto = ({ token }) => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
   const [saldo, setSaldo] = useState(0);
   const [historiales, setHistoriales] = useState();
-  const [error, setError] = useState();
   const [loading, setLoading] = useState(true); // Estado de carga
+  const [error, setError] = useState();
   const retornoSaldo = () => {
     if (mostrarSaldo) {
       setMostrarSaldo(false);
@@ -139,6 +123,7 @@ const InicioBilletera = ({ token }) => {
       currency: "PEN",
     });
   };
+
   useEffect(() => {
     // Realiza la petición a la API
     fetch("https://billapp-5d53d479ff62.herokuapp.com/api/wallet", {
@@ -181,75 +166,26 @@ const InicioBilletera = ({ token }) => {
             </div>
           </MostrarError>
         )}
-
         <div
           css={css`
-            height: 40%;
+            height: 10%;
           `}
         >
           <div className="encabezado">
             <div>
-              <i class="bx bx-menu"></i>
+              <div>
+                <Link href={`/usuarios/${token}`}>
+                  <i class="bx bx-x"></i>
+                </Link>
+              </div>
+              <div>{usuario && <p>Movimientos</p>}</div>
             </div>
-            <div>
-              {usuario && (
-                <p>
-                  Hola, <span>{usuario.displayName}</span>
-                </p>
-              )}
-            </div>
-          </div>
-          <SliderBilletera />
-          <div className="saldo">
-            <div className="mostrarSaldo" onClick={retornoSaldo}>
-              {mostrarSaldo ? (
-                <>
-                  <div className="visualizarSaldo">
-                    <div>
-                      <i class="bx bxs-low-vision"></i> <p>Ocultar Saldo</p>
-                    </div>
-                    <div>
-                      <span>{formatearPresupuesto(parseInt(saldo))}</span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="ocultarSaldo">
-                    <img src="/static/img/ojo.png" />
-                    <p>Mostrar Saldo</p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-          <div
-            css={css`
-              a {
-                color: white;
-                font-weight: bold;
-                padding: 10px 20px;
-              }
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              font-size: 14px;
-            `}
-          >
-            <p
-              css={css`
-                padding: 10px 20px;
-                font-weight: bold;
-              `}
-            >
-              Últimos Movimientos
-            </p>
-            <Link href={`/historial/${token}`}>Ver Todos</Link>
           </div>
         </div>
+
         <div
           css={css`
-            height: 50%;
+            height: 90%;
           `}
         >
           {loading && <SpinnerHistorial />}
@@ -257,8 +193,8 @@ const InicioBilletera = ({ token }) => {
           <ul
             css={css`
               height: 100%;
-              overflow: hidden;
               margin-top: 5px;
+              overflow-y: auto;
             `}
           >
             {historiales ? (
@@ -280,19 +216,9 @@ const InicioBilletera = ({ token }) => {
             )}
           </ul>
         </div>
-        <Pie>
-          <div>
-            <i class="bx bx-qr"></i>
-            escanear qr
-          </div>
-          <div>
-            <i class="bx bx-paper-plane"></i>
-            Yapear
-          </div>
-        </Pie>
       </Contenedor>
     </div>
   );
 };
 
-export default InicioBilletera;
+export default HistorialCompleto;
