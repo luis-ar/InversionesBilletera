@@ -125,24 +125,38 @@ const HistorialCompleto = ({ token }) => {
   };
 
   useEffect(() => {
-    // Realiza la petición a la API
-    fetch("https://billapp-5d53d479ff62.herokuapp.com/api/wallet", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Cuando los datos se cargan con éxito, actualiza el estado y oculta el spinner
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://billapp-5d53d479ff62.herokuapp.com/api/wallet",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Error de servidor");
+        }
+
         setHistoriales(data["data"]["WalletHistrial"]);
         setSaldo(data["data"]["cash"]);
         setLoading(false); // Marca como cargado
-      })
-      .catch((error) => {
-        setError("Acabo su tiempo de sesión");
-        setLoading(false); // Marca como cargado incluso en caso de error
-      });
+      } catch (error) {
+        // En caso de error, maneja el error y oculta el spinner
+        // console.error("Error al obtener datos:", error.message);
+        if (error.messsage == "Unauthorized, token expirado") {
+          setError("Sesión Expirada");
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchData(); // Llama a la función asincrónica
   }, [token]);
   return (
     <div

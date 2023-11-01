@@ -14,12 +14,6 @@ const Contenedor = styled.div`
     display: flex;
     flex-direction: column;
   }
-  .nombre {
-    font-weight: bold;
-  }
-  .cantidad {
-    font-weight: bold;
-  }
 `;
 const DatosBilletera = ({ historial }) => {
   const { DepositUser, Operation, amount, createdAt } = historial;

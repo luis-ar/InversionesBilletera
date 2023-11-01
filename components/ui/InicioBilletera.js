@@ -163,10 +163,10 @@ const InicioBilletera = ({ token }) => {
         setLoading(false); // Marca como cargado
       } catch (error) {
         // En caso de error, maneja el error y oculta el spinner
-        // console.error("Error al obtener datos:", error.message);
-        if (error.messsage == "Unauthorized, token expirado") {
-          setError("Sesión Expirada");
-        }
+        console.error("Error al obtener datos:", error.message);
+        setError(error.message);
+        console.log("entro");
+
         setLoading(false);
       }
     };
