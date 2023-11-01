@@ -7,7 +7,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import firebaseConfig from "./config";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+
 import {
   getStorage,
   ref,
@@ -43,10 +44,18 @@ class Firebase {
     } else {
       imagenPerfilURL = "";
     }
-    return await updateProfile(nuevoUsuario.user, {
+    await updateProfile(nuevoUsuario.user, {
       displayName: nombre,
       photoURL: imagenPerfilURL,
     });
+
+    const db = getFirestore();
+    const usuarioDocRef = doc(db, "usuarios", nuevoUsuario.user.uid);
+    await setDoc(usuarioDocRef, {
+      saldo: 0,
+    });
+
+    return nuevoUsuario.user;
   }
   //Inicia Sesion del usuario
   async login(email, password) {

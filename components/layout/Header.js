@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Buscar from "../ui/Buscar";
 import Navegacion from "./Navegacion";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import SliderBarra from "../ui/SliderBarra";
 import BarraSimple from "../ui/BarraSimple";
 import BarraRedes from "../ui/BarraRedes";
 import BarraLateral from "../ui/BarraLateral";
+import obtenerSaldo from "@/Validacion/obtenerSaldo";
 const ContenedorHeader = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -35,6 +36,11 @@ const ContenedorHeader = styled.div`
       height: 100%;
       border-radius: 100%;
       object-fit: cover;
+    }
+
+    @media (max-width: 750px) {
+      width: 30px;
+      height: 30px;
     }
   }
 `;
@@ -68,7 +74,21 @@ const Logo = styled.div`
 
 const Header = () => {
   const { usuario, firebase } = useContext(FirebaseContext);
+  const [saldo, setSaldo] = useState();
 
+  const recuperarSaldo = async () => {
+    if (usuario) {
+      const saldoUsuario = await obtenerSaldo(usuario.uid);
+      setSaldo(saldoUsuario);
+    }
+  };
+  const formatearPresupuesto = (cantidad) => {
+    return cantidad.toLocaleString("es-PE", {
+      style: "currency",
+      currency: "PEN",
+    });
+  };
+  recuperarSaldo();
   return (
     <>
       <BarraLateral />
@@ -103,9 +123,8 @@ const Header = () => {
               </Link>
               {/* Buscador aqui */}
               <Buscar />
-
               {/* Nav aqui */}
-              <Navegacion />
+              {/* <Navegacion /> */}
             </div>
 
             <div
@@ -120,7 +139,6 @@ const Header = () => {
                   {/* Menu de administracion */}
                   <p
                     css={css`
-                      margin-right: 2rem;
                       text-align: center;
                       @media (max-width: 490px) {
                         font-size: 1.1rem;
@@ -133,12 +151,34 @@ const Header = () => {
                   >
                     Hola: {usuario.displayName}
                   </p>
+
+                  {saldo >= 0 && (
+                    <p
+                      css={css`
+                        margin-left: 10px;
+                        text-align: center;
+                        @media (max-width: 600px) {
+                          font-size: 10px;
+                        }
+                      `}
+                    >
+                      Saldo:{" "}
+                      <span>{formatearPresupuesto(parseInt(saldo))}</span>
+                    </p>
+                  )}
+
                   <Link href="/Login">
                     <Boton
                       bgColor="true"
                       onClick={() => {
                         firebase.cerrarSesion();
                       }}
+                      css={css`
+                        margin-left: 10px !important;
+                        @media (max-width: 750px) {
+                          font-size: 10px !important;
+                        }
+                      `}
                     >
                       Cerrar Sesión
                     </Boton>

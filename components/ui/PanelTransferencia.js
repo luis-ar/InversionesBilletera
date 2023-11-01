@@ -6,39 +6,28 @@ import SliderBilletera from "./SliderBilletera";
 import DatosBilletera from "./DatosBilletera";
 import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
-
-const Pie = styled.div`
-  background-color: var(--botonesBilletera);
-  height: 10%;
-  border-bottom-right-radius: 15px;
-  border-bottom-left-radius: 15px;
-  text-transform: uppercase;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  a {
-    width: 42%;
-    div {
-      width: 100%;
-      justify-content: center;
-      display: flex;
-      align-items: center;
-    }
-    color: white;
+const BuscarTelefono = styled.div`
+height: 8%;
+  .contenedorTelefono {
+    position: relative;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
   }
-  div {
-    background-color: var(--fondoBilletera);
-    width: 42%;
-    padding: 7px 0;
-    text-align: center;
+  i {
+    position: absolute;
+    color: black;
+    margin-left: 2px;
+  }
+  input{
+    width: 100%;
+    height: 35px;
+    padding-left:20px ;
+    padding-right: 5px;
+    font-size: 12px;
     border-radius: 5px;
-    i {
-      margin-right: 5px;
-    }
   }
 `;
-
 const MostrarError = styled.div`
   width: 300px;
   height: 505px;
@@ -82,12 +71,19 @@ const Contenedor = styled.div`
     display: flex;
     gap: 10px;
     align-items: center;
+    a {
+      color: white;
+    }
     i {
       font-size: 30px;
+      font-weight: bold;
     }
     p {
       font-weight: bold;
       font-size: 20px;
+    }
+    div {
+      display: flex;
     }
   }
   .saldo {
@@ -129,13 +125,13 @@ const Contenedor = styled.div`
     }
   }
 `;
-const InicioBilletera = ({ token }) => {
+const PanelTransferencia = ({ token }) => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
   const [saldo, setSaldo] = useState(0);
   const [historiales, setHistoriales] = useState();
-  const [error, setError] = useState();
   const [loading, setLoading] = useState(true); // Estado de carga
+  const [error, setError] = useState();
   const retornoSaldo = () => {
     if (mostrarSaldo) {
       setMostrarSaldo(false);
@@ -149,6 +145,7 @@ const InicioBilletera = ({ token }) => {
       currency: "PEN",
     });
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -172,9 +169,7 @@ const InicioBilletera = ({ token }) => {
         setSaldo(data["data"]["cash"]);
         setLoading(false); // Marca como cargado
       } catch (error) {
-        // En caso de error, maneja el error y oculta el spinner
-        console.error("Error al obtener datos:", error.message);
-        // console.log(error.message.length);
+        // console.error("Error al obtener datos:", error.message);
         if (error.message.length === 29) {
           setError(error.message);
           setLoading(false);
@@ -200,7 +195,6 @@ const InicioBilletera = ({ token }) => {
         align-items: center;
         @media (max-width: 1000px) {
           height: calc(90vh - 103px);
-          margin-bottom: 60px;
         }
       `}
     >
@@ -213,75 +207,33 @@ const InicioBilletera = ({ token }) => {
             </div>
           </MostrarError>
         )}
-
         <div
           css={css`
-            height: 40%;
+            height: 10%;
           `}
         >
           <div className="encabezado">
             <div>
-              <i class="bx bx-menu"></i>
+              <div>
+                <Link href={`/usuarios/${token}`}>
+                  <i class="bx bx-x"></i>
+                </Link>
+              </div>
+              <div>{usuario && <p>Yapear</p>}</div>
             </div>
-            <div>
-              {usuario && (
-                <p>
-                  Hola, <span>{usuario.displayName}</span>
-                </p>
-              )}
-            </div>
-          </div>
-          <SliderBilletera />
-          <div className="saldo">
-            <div className="mostrarSaldo" onClick={retornoSaldo}>
-              {mostrarSaldo ? (
-                <>
-                  <div className="visualizarSaldo">
-                    <div>
-                      <i class="bx bxs-low-vision"></i> <p>Ocultar Saldo</p>
-                    </div>
-                    <div>
-                      <span>{formatearPresupuesto(parseInt(saldo))}</span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="ocultarSaldo">
-                    <img src="/static/img/ojo.png" />
-                    <p>Mostrar Saldo</p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-          <div
-            css={css`
-              a {
-                color: white;
-                font-weight: bold;
-                padding: 10px 20px;
-              }
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              font-size: 14px;
-            `}
-          >
-            <p
-              css={css`
-                padding: 10px 20px;
-                font-weight: bold;
-              `}
-            >
-              Últimos Movimientos
-            </p>
-            <Link href={`/historial/${token}`}>Ver Todos</Link>
           </div>
         </div>
+
+        <BuscarTelefono>
+          <div className="contenedorTelefono">
+            <i class="bx bx-search-alt bx-rotate-90"></i>
+            <input type="text" placeholder="Ingrese el celular" />
+          </div>
+        </BuscarTelefono>
+
         <div
           css={css`
-            height: 50%;
+            height: 80%;
           `}
         >
           {loading && <SpinnerHistorial />}
@@ -289,8 +241,8 @@ const InicioBilletera = ({ token }) => {
           <ul
             css={css`
               height: 100%;
-              overflow: hidden;
               margin-top: 5px;
+              overflow-y: auto;
             `}
           >
             {historiales ? (
@@ -300,33 +252,23 @@ const InicioBilletera = ({ token }) => {
                 ))}
               </>
             ) : (
-              <p
-                css={css`
-                  font-weight: bold;
-                  font-size: 12px;
-                  padding: 0 20px;
-                `}
-              >
-                "Aún no tiene historial"
-              </p>
+              !loading && (
+                <p
+                  css={css`
+                    font-weight: bold;
+                    font-size: 12px;
+                    padding: 0 20px;
+                  `}
+                >
+                  "Aún no tiene historial"
+                </p>
+              )
             )}
           </ul>
         </div>
-        <Pie>
-          <div>
-            <i class="bx bx-qr"></i>
-            escanear qr
-          </div>
-          <Link href={`/transferencia/${token}`}>
-            <div>
-              <i class="bx bx-paper-plane"></i>
-              Yapear
-            </div>
-          </Link>
-        </Pie>
       </Contenedor>
     </div>
   );
 };
 
-export default InicioBilletera;
+export default PanelTransferencia;

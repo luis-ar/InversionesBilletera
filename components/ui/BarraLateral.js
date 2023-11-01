@@ -95,8 +95,29 @@ const BarraLateral = () => {
           </div>
         </Link>
 
+        <Link
+          href="/populares"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
+          <div>
+            <i class="bx bx-star"></i> <span>Populares</span>
+          </div>
+        </Link>
+
         {usuario && (
           <>
+            <Link
+              href="/nuevoProducto"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              <div>
+                <i class="bx bx-folder-plus"></i> <span>Nuevo Producto</span>
+              </div>
+            </Link>
             <Link
               href="/misInversiones"
               onClick={() => {
