@@ -147,7 +147,14 @@ const HistorialCompleto = ({ token }) => {
         setSaldo(data["data"]["cash"]);
         setLoading(false); // Marca como cargado
       } catch (error) {
-        console.error("Error al obtener datos:", error.message);
+        // console.error("Error al obtener datos:", error.message);
+        if (
+          (error.message =
+            "Cannot read properties of null (reading 'WalletHistrial')")
+        ) {
+          setLoading(false);
+        }
+
         if (error.message === "Unauthorized, token expirado.") {
           setError(error.message);
           setLoading(false);
@@ -217,15 +224,17 @@ const HistorialCompleto = ({ token }) => {
                 ))}
               </>
             ) : (
-              <p
-                css={css`
-                  font-weight: bold;
-                  font-size: 12px;
-                  padding: 0 20px;
-                `}
-              >
-                "Aún no tiene historial"
-              </p>
+              !loading && (
+                <p
+                  css={css`
+                    font-weight: bold;
+                    font-size: 12px;
+                    padding: 0 20px;
+                  `}
+                >
+                  "Aún no tiene historial"
+                </p>
+              )
             )}
           </ul>
         </div>

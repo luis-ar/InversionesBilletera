@@ -163,7 +163,14 @@ const InicioBilletera = ({ token }) => {
         setLoading(false); // Marca como cargado
       } catch (error) {
         // En caso de error, maneja el error y oculta el spinner
-        console.error("Error al obtener datos:", error.message);
+        // console.error("Error al obtener datos:", error.message);
+        if (
+          (error.message =
+            "Cannot read properties of null (reading 'WalletHistrial')")
+        ) {
+          setLoading(false);
+        }
+
         if (error.message === "Unauthorized, token expirado.") {
           setError(error.message);
           setLoading(false);
