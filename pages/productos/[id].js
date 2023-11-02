@@ -31,6 +31,8 @@ import MapaAnimada from "@/components/ui/MapaAnimada";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Mensaje from "@/components/ui/Mensaje";
+import restarSaldo from "@/Validacion/restarSaldo";
+import sumarSaldo from "@/Validacion/actualizarSaldo";
 const ContenedorProducto = styled.div`
   display: grid;
   gap: 60px;
@@ -479,6 +481,12 @@ const Producto = () => {
           (inversor) => inversor.usuarioId !== usuario.uid
         );
 
+        const inversorEliminado = inversores.filter(
+          (inversor) => inversor.usuarioId === usuario.uid
+        );
+        const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
+        sumarSaldo(usuario.uid, aumento);
+
         // Actualizar el documento con el nuevo array de inversores
         await updateDoc(docRef, { inversores: nuevoInversores });
         //actualizar el state
@@ -715,7 +723,7 @@ const Producto = () => {
       }
     }
 
-    guardarModal(false);
+    // guardarModal(false);
     const docRef = doc(firebase.db, "productos", `${id}`);
     const docSnap = await getDoc(docRef);
     if (!usuario) {
@@ -744,39 +752,68 @@ const Producto = () => {
         const indice = inversores.findIndex(
           (inversor) => inversor.usuarioId === usuario.uid
         );
-        if (indice !== -1) {
-          // Actualiza los campos del elemento con los nuevos valores
-          if (inversores != undefined) {
-            inversores[indice] = { ...inversores[indice], ...nuevosCampos };
-            const nuevos = [...inversores];
+        const valorViejo =
+          (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
+        await sumarSaldo(usuario.uid, valorViejo);
+        const nuevaResta = (inputCuboInversor * precio) / 100;
+        const mensajeRespuesta = await restarSaldo(usuario.uid, nuevaResta);
+        if (mensajeRespuesta) {
+          console.log(mensajeRespuesta);
+          setMensaje(mensajeRespuesta);
+          setTimeout(() => {
+            setMensaje("");
+          }, 2000);
+          return;
+        } else {
+          if (indice !== -1) {
+            // Actualiza los campos del elemento con los nuevos valores
+            if (inversores != undefined) {
+              inversores[indice] = { ...inversores[indice], ...nuevosCampos };
+              const nuevos = [...inversores];
 
-            // Actualiza el documento con el array actualizado
-            await updateDoc(docRef, { inversores });
-            guardarProducto({
-              ...producto,
-              inversores: nuevos,
-            });
-            console.log("Elemento actualizado con éxito");
+              // Actualiza el documento con el array actualizado
+              await updateDoc(docRef, { inversores });
+              guardarProducto({
+                ...producto,
+                inversores: nuevos,
+              });
+              console.log("Elemento actualizado con éxito");
+            }
+            guardarModal(false);
           }
         }
       } else {
         //informacion extra
-        inver.usuarioId = usuario.uid;
-        inver.usuarioNombre = usuario.displayName;
-        inver.icono = usuario.photoURL;
-        inver.fecha = Date.now();
-        //copia de inversores
-        if (inversores != undefined) {
-          const nuevosInversores = [...inversores, inver];
-          //actualizar la bd
-          updateDoc(docRef, {
-            inversores: nuevosInversores,
-          });
-          //actulizar el state
-          guardarProducto({
-            ...producto,
-            inversores: nuevosInversores,
-          });
+        let resta = (inputCuboInversor * precio) / 100;
+        const respuesta = await restarSaldo(usuario.uid, resta);
+        if (respuesta) {
+          console.log(respuesta);
+          setMensaje(respuesta);
+          setTimeout(() => {
+            setMensaje("");
+          }, 2000);
+          return;
+        } else {
+          guardarModal(false);
+
+          inver.usuarioId = usuario.uid;
+          inver.usuarioNombre = usuario.displayName;
+          inver.icono = usuario.photoURL;
+          inver.fecha = Date.now();
+
+          //copia de inversores
+          if (inversores != undefined) {
+            const nuevosInversores = [...inversores, inver];
+            //actualizar la bd
+            updateDoc(docRef, {
+              inversores: nuevosInversores,
+            });
+            //actulizar el state
+            guardarProducto({
+              ...producto,
+              inversores: nuevosInversores,
+            });
+          }
         }
       }
     }
