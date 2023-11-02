@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Buscar from "../ui/Buscar";
 import Navegacion from "./Navegacion";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import BarraSimple from "../ui/BarraSimple";
 import BarraRedes from "../ui/BarraRedes";
 import BarraLateral from "../ui/BarraLateral";
 import obtenerSaldo from "@/Validacion/obtenerSaldo";
+import { doc, onSnapshot } from "firebase/firestore";
 const ContenedorHeader = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -82,6 +83,27 @@ const Header = () => {
       setSaldo(saldoUsuario);
     }
   };
+  useEffect(() => {
+    if (usuario) {
+      // Suscribirse a cambios en el documento individual del usuario
+      const usuarioDocRef = doc(firebase.db, "usuarios", usuario.uid);
+
+      const unsuscribeUsuario = onSnapshot(usuarioDocRef, (usuarioDoc) => {
+        // Lógica para manejar cambios en el documento individual del usuario
+        console.log("El documento del usuario ha cambiado:", usuarioDoc.data());
+
+        // Asegúrate de que el campo 'saldo' esté presente antes de intentar recuperarlo
+        if (usuarioDoc.exists() && usuarioDoc.data().saldo !== undefined) {
+          recuperarSaldo();
+        }
+      });
+
+      // La función de limpieza se ejecutará al desmontar el componente
+      return () => {
+        unsuscribeUsuario();
+      };
+    }
+  }, [usuario]);
   const formatearPresupuesto = (cantidad) => {
     return cantidad.toLocaleString("es-PE", {
       style: "currency",
@@ -157,13 +179,26 @@ const Header = () => {
                       css={css`
                         margin-left: 10px;
                         text-align: center;
+                        display: flex;
+                        flex-direction: column;
+
                         @media (max-width: 600px) {
                           font-size: 10px;
                         }
                       `}
                     >
-                      Saldo:{" "}
-                      <span>{formatearPresupuesto(parseInt(saldo))}</span>
+                      <span>
+                        Saldo: {formatearPresupuesto(parseInt(saldo))}
+                      </span>
+                      <Link
+                        href="/recargarBilletera"
+                        css={css`
+                          color: white;
+                          background-color: #019f09;
+                        `}
+                      >
+                        Recargar
+                      </Link>
                     </p>
                   )}
 

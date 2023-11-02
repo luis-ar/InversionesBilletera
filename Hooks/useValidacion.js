@@ -28,6 +28,11 @@ const useValidacion = (stateInicial, validar, fn) => {
         return;
       }
     }
+    if (name === "monto") {
+      if (!isNumeric(value) && value !== "") {
+        return;
+      }
+    }
 
     // Actualizar el estado del formulario
     guardarValores({

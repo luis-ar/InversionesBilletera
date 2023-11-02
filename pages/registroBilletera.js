@@ -136,6 +136,7 @@ const registroBilletera = () => {
       <div
         css={css`
           color: white;
+          margin-bottom: 45px;
           @media (min-width: 1000px) {
             margin-left: 300px;
           }
