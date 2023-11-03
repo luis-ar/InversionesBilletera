@@ -23,7 +23,7 @@ const STATE_INICIAL = {
 };
 const recargarBilletera = () => {
   const { firebase, usuario } = useContext(FirebaseContext);
-  const [error, guardarError] = useState(false);
+  const [error, guardarError] = useState();
   const [datosUsuario, setDatosUsuario] = useState(STATE_INICIAL);
   const [pase, guardarPase] = useState(false);
 
@@ -91,8 +91,15 @@ const recargarBilletera = () => {
       .then((response) => response.json())
       .then((result) => {
         console.log("Respuesta:", result);
-        sumarSaldo(usuario.uid, monto);
-        Router.push("/");
+        if (result["error"]) {
+          guardarError(result["data"][0]);
+          setTimeout(() => {
+            guardarError("");
+          }, 2000);
+        } else {
+          sumarSaldo(usuario.uid, monto);
+          Router.push("/");
+        }
       })
       .catch((error) => {
         console.error("Error:", error);

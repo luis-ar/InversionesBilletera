@@ -90,7 +90,7 @@ const Header = () => {
 
       const unsuscribeUsuario = onSnapshot(usuarioDocRef, (usuarioDoc) => {
         // Lógica para manejar cambios en el documento individual del usuario
-        console.log("El documento del usuario ha cambiado:", usuarioDoc.data());
+        // console.log("El documento del usuario ha cambiado:", usuarioDoc.data());
 
         // Asegúrate de que el campo 'saldo' esté presente antes de intentar recuperarlo
         if (usuarioDoc.exists() && usuarioDoc.data().saldo !== undefined) {
@@ -188,7 +188,7 @@ const Header = () => {
                       `}
                     >
                       <span>
-                        Saldo: {formatearPresupuesto(parseFloat(saldo))}
+                        Saldo: {formatearPresupuesto(parseInt(saldo))}
                       </span>
                       <Link
                         href="/recargarBilletera"
