@@ -16,16 +16,22 @@ import Spinner from "@/components/ui/Spinner";
 import { convertirUsuarioBilletera } from "@/Validacion/convertirUsuarioBilletera";
 import validarRecargarBilletera from "@/Validacion/validarRecargarBilletera";
 import sumarSaldo from "@/Validacion/actualizarSaldo";
+import recuperarDatosUsuario from "@/Validacion/recuperarDatosUsuario";
+import enviarDineroPropia from "@/Validacion/enviarDineroPropia";
+import obtenerSaldo from "@/Validacion/obtenerSaldo";
+import restarSaldoCreador from "@/Validacion/restarSaldoCreador";
+import Mensaje from "@/components/ui/Mensaje";
 
 const STATE_INICIAL = {
   password: "",
   monto: "",
 };
-const recargarBilletera = () => {
+const retirarBilletera = () => {
   const { firebase, usuario } = useContext(FirebaseContext);
-  const [error, guardarError] = useState();
+  const [error, guardarError] = useState("");
   const [datosUsuario, setDatosUsuario] = useState(STATE_INICIAL);
   const [pase, guardarPase] = useState(false);
+  const [mensaje, setMensaje] = useState();
 
   const crearToken = async () => {
     let token;
@@ -60,6 +66,7 @@ const recargarBilletera = () => {
 
         // Acceder al valor de la propiedad 'data'
         if (responseBody && responseBody.data) {
+          console.log(responseBody.data);
           guardarError(responseBody.data);
           setTimeout(() => {
             guardarError("");
@@ -72,38 +79,43 @@ const recargarBilletera = () => {
     return token;
   };
 
+  const Retiro = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: -15px;
+    z-index: 200;
+    width: 100%;
+    height: 81vh;
+    font-size: 40px;
+    font-weight: bold;
+  `;
   const recarga = async () => {
-    const url = "https://billapp-5d53d479ff62.herokuapp.com/api/wallet/send";
     const token = await crearToken();
-    const data = {
-      depositUserID: "c1ce7e34-7398-4ef5-a841-2217644d242c",
-      amount: parseInt(monto),
-    };
+    if (error == "") {
+      const respuesta = await recuperarDatosUsuario(token);
+      const id = respuesta["data"]["id"];
+      const saldo = await obtenerSaldo(usuario.uid);
+      if (saldo >= monto) {
+        const res = await enviarDineroPropia(token, monto, id);
+        await restarSaldoCreador(usuario.uid, monto);
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("Respuesta:", result);
-        if (result["error"]) {
-          guardarError(result["data"][0]);
+        if (!res["error"]) {
+          setMensaje("Retiro con exito");
           setTimeout(() => {
-            guardarError("");
-          }, 2000);
-        } else {
-          sumarSaldo(usuario.uid, monto);
-          Router.push("/");
+            setMensaje("");
+            Router.push(`/`);
+          }, 1500);
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      } else {
+        guardarError("El monto excede al saldo");
+        setTimeout(() => {
+          guardarError("");
+        }, 1500);
+      }
+    }
   };
 
   const { valores, errores, handleSumit, handleChange, handleBlur } =
@@ -117,20 +129,21 @@ const recargarBilletera = () => {
         css={css`
           color: white;
           margin-bottom: 45px;
+          position: relative;
           @media (min-width: 1000px) {
             margin-left: 300px;
           }
         `}
       >
         {pase && <Spinner />}
-
+        {mensaje && <Retiro>{mensaje}</Retiro>}
         <h2
           css={css`
             text-align: center;
             margin-top: 15px;
           `}
         >
-          Recargar Saldo{" "}
+          Retirar Saldo
         </h2>
 
         <Formulario onSubmit={handleSumit} noValidate>
@@ -171,7 +184,7 @@ const recargarBilletera = () => {
               type="text"
               id="monto"
               name="monto"
-              placeholder="Ingrese el monto a recargar"
+              placeholder="Ingrese el monto a retirar"
               value={monto}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -179,11 +192,11 @@ const recargarBilletera = () => {
           </Campo>
 
           {error && <ErrorMostrar>{error}</ErrorMostrar>}
-          <InputSubmit type="submit" value="Recargar Saldo" />
+          <InputSubmit type="submit" value="Retirar Saldo" />
         </Formulario>
       </div>
     </Layout>
   );
 };
 
-export default recargarBilletera;
+export default retirarBilletera;

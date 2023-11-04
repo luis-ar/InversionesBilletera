@@ -33,6 +33,9 @@ import "react-circular-progressbar/dist/styles.css";
 import Mensaje from "@/components/ui/Mensaje";
 import restarSaldo from "@/Validacion/restarSaldo";
 import sumarSaldo from "@/Validacion/actualizarSaldo";
+import restarSaldoCreador from "@/Validacion/restarSaldoCreador";
+import SpinnerPrincipal from "@/components/ui/SpinnerPrincipal";
+import enviarGanancia from "@/Validacion/enviarGanancia";
 const ContenedorProducto = styled.div`
   display: grid;
   gap: 60px;
@@ -262,6 +265,10 @@ const GeneralDescripcion = styled.div`
     position: absolute;
     right: 50px;
     bottom: 50px;
+    display: flex;
+    justify-content: space-around;
+    gap: 5px;
+
     button {
       background-color: var(--botones);
       cursor: pointer;
@@ -273,21 +280,25 @@ const GeneralDescripcion = styled.div`
       text-transform: uppercase;
       font-family: "PT Sans", sans-serif;
 
+      /* 
       :last-child {
-        margin-left: 30px;
+        margin-left: 10px;
       }
+      :nth-child(2) {
+        margin-left: 10px;
+      } */
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 850px) {
       margin-top: 20px;
       position: static;
       button {
         padding: 5px 10px;
         font-size: 15px;
 
-        :last-child {
+        /* :last-child {
           margin-left: 10px;
-        }
+        } */
       }
     }
   }
@@ -379,10 +390,12 @@ const Producto = () => {
 
   const [consultarDB, guardarConsultarDB] = useState(true);
   const [paseModal, guardarModal] = useState(false);
+  const [paseModalGanancia, guardarPaseModalGanancia] = useState(false);
   //state inversores
   const [inver, guardarinver] = useState({});
   const [inputDesInversor, setInputDesInversor] = useState("");
   const [inputCuboInversor, setInputCuboInversor] = useState("");
+  const [inputGanancia, setInputGanancia] = useState("");
   const [inputCategoriaInversor, setInputCategoriaInversor] = useState();
   const [pase, setPase] = useState(false);
   const [numElementos, setNumElementos] = useState(0); // Nuevo estado para el número de elementos
@@ -415,6 +428,7 @@ const Producto = () => {
     categoria,
     inversores,
     precio,
+    estado,
   } = producto;
 
   //elimina un producto de la bd
@@ -435,7 +449,6 @@ const Producto = () => {
   };
   const actualizarInversorPorId = async () => {
     const docRef = doc(firebase.db, "productos", `${id}`);
-    console.log(usuario);
     try {
       // Obtiene el documento actual
       guardarModal(true);
@@ -485,7 +498,8 @@ const Producto = () => {
           (inversor) => inversor.usuarioId === usuario.uid
         );
         const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
-        sumarSaldo(usuario.uid, aumento);
+        await sumarSaldo(usuario.uid, aumento);
+        await restarSaldoCreador(usuario.uid, aumento);
 
         // Actualizar el documento con el nuevo array de inversores
         await updateDoc(docRef, { inversores: nuevoInversores });
@@ -562,7 +576,7 @@ const Producto = () => {
     sumaTotal();
   }, [producto, numElementos, totalCubos]);
 
-  if (Object.keys(producto).length === 0 && !error) return <Spinner />;
+  if (Object.keys(producto).length === 0 && !error) return <SpinnerPrincipal />;
 
   //administrar y validar votos
   const votarProducto = () => {
@@ -616,6 +630,13 @@ const Producto = () => {
       [e.target.name]: Number(e.target.value),
     });
     setInputCuboInversor(Number(e.target.value));
+  };
+  const gananciaChange = (e) => {
+    setInputGanancia({
+      ...inver,
+      [e.target.name]: Number(e.target.value),
+    });
+    setInputGanancia(Number(e.target.value));
   };
   const inversorCategoriaChange = (e) => {
     guardarinver({
@@ -684,11 +705,14 @@ const Producto = () => {
   //nueva inversion
   const handleNuevaInversion = () => {
     guardarModal(true);
-    console.log(usuario);
+  };
+  const handleGanancia = () => {
+    guardarPaseModalGanancia(true);
   };
   //funcion ocultarmodal
   const ocultarModal = () => {
     guardarModal(false);
+    guardarPaseModalGanancia(false);
   };
   //funcion submit
   const handleSubmit = async (e) => {
@@ -755,8 +779,13 @@ const Producto = () => {
         const valorViejo =
           (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
         await sumarSaldo(usuario.uid, valorViejo);
+        await restarSaldoCreador(creador.id, valorViejo);
         const nuevaResta = (inputCuboInversor * precio) / 100;
-        const mensajeRespuesta = await restarSaldo(usuario.uid, nuevaResta);
+        const mensajeRespuesta = await restarSaldo(
+          usuario.uid,
+          creador.id,
+          nuevaResta
+        );
         if (mensajeRespuesta) {
           console.log(mensajeRespuesta);
           setMensaje(mensajeRespuesta);
@@ -785,7 +814,7 @@ const Producto = () => {
       } else {
         //informacion extra
         let resta = (inputCuboInversor * precio) / 100;
-        const respuesta = await restarSaldo(usuario.uid, resta);
+        const respuesta = await restarSaldo(usuario.uid, creador.id, resta);
         if (respuesta) {
           console.log(respuesta);
           setMensaje(respuesta);
@@ -847,6 +876,36 @@ const Producto = () => {
       sectionDestino.scrollIntoView({ behavior: "smooth" });
     }
   };
+  const hadleRepartirGanancia = async (e) => {
+    e.preventDefault();
+    console.log("su inversion", inputGanancia);
+    console.log("lista", inversores);
+    try {
+      const docRef = doc(firebase.db, "productos", `${id}`);
+
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        // Obtener el array de inversores del documento
+        const estado = docSnap.data().estado;
+
+        // Filtrar el array para eliminar el elemento con el idUsuario deseado
+        await updateDoc(docRef, {
+          estado: false,
+        });
+        console.log("actualizado con exito el estado");
+        guardarProducto({
+          ...producto,
+          estado: false,
+        });
+        guardarConsultarDB(true);
+      } else {
+        console.log("El documento no existe");
+      }
+    } catch (error) {}
+    await enviarGanancia(inversores, inputGanancia);
+
+    guardarPaseModalGanancia(false);
+  };
   return (
     <Layout>
       <>
@@ -866,6 +925,54 @@ const Producto = () => {
               }
             `}
           >
+            {paseModalGanancia && (
+              <Contenedor className="modal">
+                <div className="cerrar-modal">
+                  <img
+                    src="/static/img/cerrar.svg"
+                    alt="cerrar modal"
+                    onClick={ocultarModal}
+                  />
+                </div>
+
+                <form className="formulario" onSubmit={hadleRepartirGanancia}>
+                  <legend>Repartir Ganancia</legend>
+                  <div
+                    css={css`
+                      margin-bottom: 5px;
+                      color: white;
+                      font-size: 20px;
+                      text-align: center;
+                      span {
+                        color: #3b82f6;
+                        font-size: 25px;
+                      }
+                    `}
+                  >
+                    Cantidad de inversores
+                    <span> {inversores.length}</span>
+                  </div>
+                  {mensaje && <Mensaje tipo="error">{mensaje}</Mensaje>}
+
+                  <div className="campo">
+                    <label htmlFor="cantidad">Monto total</label>
+                    <input
+                      autocomplete="off"
+                      id="cantidad"
+                      type="number"
+                      name="ganancia"
+                      placeholder="Añade el monto total recaudado"
+                      min={1}
+                      value={inputGanancia}
+                      onChange={gananciaChange}
+                    />
+                  </div>
+
+                  <input type="submit" value="Enviar Ganancia" />
+                </form>
+              </Contenedor>
+            )}
+
             {paseModal && (
               <Contenedor className="modal">
                 <div className="cerrar-modal">
@@ -1013,8 +1120,13 @@ const Producto = () => {
 
                 {usuario && (
                   <>
-                    {pase == false && (
+                    {pase == false && estado && (
                       <button onClick={handleNuevaInversion}>Invertir</button>
+                    )}
+                    {estado && esCreador(usuario.uid) && totalCubos === 100 && (
+                      <button onClick={handleGanancia}>
+                        Finalizar Proyecto
+                      </button>
                     )}
                   </>
                 )}
@@ -1237,7 +1349,8 @@ const Producto = () => {
                         {inversores &&
                           inversores.map((inversor, i) => (
                             <div>
-                              {esCreadorInversor(inversor.usuarioId) ? (
+                              {esCreadorInversor(inversor.usuarioId) &&
+                              estado ? (
                                 <SwipeableList>
                                   <SwipeableListItem
                                     leadingActions={leadingActions()}
@@ -1397,8 +1510,29 @@ const Producto = () => {
                                     padding: 2rem;
                                     width: 100%;
                                     margin-bottom: 20px;
+                                    position: relative;
                                   `}
                                 >
+                                  {esCreadorInversor(inversor.usuarioId) && (
+                                    <div
+                                      css={css`
+                                        padding: 0.5rem 2rem;
+                                        background-color: #da552f;
+                                        color: #fff;
+                                        position: absolute;
+                                        right: 15px;
+                                        bottom: 10px;
+                                        text-transform: uppercase;
+                                        font-weight: bold;
+                                        @media (max-width: 550px) {
+                                          font-size: 10px;
+                                          padding: 0.2rem 1rem;
+                                        }
+                                      `}
+                                    >
+                                      Tu inversion
+                                    </div>
+                                  )}
                                   <div className="contenedorPerfil">
                                     <img
                                       src={
@@ -1408,7 +1542,6 @@ const Producto = () => {
                                       }
                                     />
                                   </div>
-
                                   <div
                                     css={css`
                                       margin-left: 10px;

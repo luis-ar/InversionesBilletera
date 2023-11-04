@@ -63,8 +63,8 @@ const Logo = styled.div`
 
     .iconoCelular {
       display: block;
-      width: 30px;
-      margin-right: 40px;
+      width: 20px;
+      margin-right: 15px;
       margin-left: 5px;
     }
   }
@@ -190,15 +190,40 @@ const Header = () => {
                       <span>
                         Saldo: {formatearPresupuesto(parseInt(saldo))}
                       </span>
-                      <Link
-                        href="/recargarBilletera"
+                      <div
                         css={css`
-                          color: white;
-                          background-color: #019f09;
+                          a {
+                            width: 100%;
+                          }
+                          @media (max-width: 480px) {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 5px;
+                          }
                         `}
                       >
-                        Recargar
-                      </Link>
+                        <Link
+                          href="/recargarBilletera"
+                          css={css`
+                            color: white;
+                            background-color: #019f09;
+                            margin-right: 10px;
+                            padding: 0 5px;
+                          `}
+                        >
+                          Recargar
+                        </Link>
+                        <Link
+                          href="/retirarBilletera"
+                          css={css`
+                            color: white;
+                            background-color: #d82918;
+                            padding: 0 5px;
+                          `}
+                        >
+                          Retirar
+                        </Link>
+                      </div>
                     </p>
                   )}
 

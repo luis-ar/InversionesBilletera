@@ -15,6 +15,7 @@ import useValidacion from "../Hooks/useValidacion";
 import validarCrearUsuarioBilletera from "@/Validacion/validarCrearUsuarioBilletera";
 import Spinner from "@/components/ui/Spinner";
 import { convertirUsuarioBilletera } from "@/Validacion/convertirUsuarioBilletera";
+import activarAgente from "@/Validacion/activarAgente";
 
 const STATE_INICIAL = {
   apellido: "",
@@ -97,6 +98,7 @@ const registroBilletera = () => {
         const responseData = await response.json();
         const token = await crearToken(password);
         await convertirUsuarioBilletera(token);
+        await activarAgente(token, usuario.displayName, telefono);
         guardarPase(true);
         setTimeout(() => {
           Router.push(`/usuarios/${token}`);

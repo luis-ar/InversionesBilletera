@@ -1,19 +1,25 @@
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 
-async function restarSaldo(uid, cantidadAdicional) {
+async function restarSaldo(uid, uidCreador, cantidadAdicional) {
   try {
     const db = getFirestore();
     const usuarioDocRef = doc(db, "usuarios", uid);
+    const creadorDocRef = doc(db, "usuarios", uidCreador);
 
     // Obtener el saldo actual del usuario
     const usuarioSnapshot = await getDoc(usuarioDocRef);
+    const creadorSnapshot = await getDoc(creadorDocRef);
 
-    if (usuarioSnapshot.exists()) {
+    if (usuarioSnapshot.exists() && creadorSnapshot.exists()) {
       const saldoActual = usuarioSnapshot.data().saldo;
+      const saldoActualCreador = creadorSnapshot.data().saldo;
 
       // Sumar la cantidad adicional al saldo actual
       const nuevoSaldo =
         parseFloat(saldoActual) - parseFloat(cantidadAdicional);
+
+      const nuevoSaldoCreador =
+        parseFloat(saldoActualCreador) + parseFloat(cantidadAdicional);
 
       // Actualizar el campo "saldo" en el documento del usuario
       if (nuevoSaldo >= 0) {
@@ -21,10 +27,18 @@ async function restarSaldo(uid, cantidadAdicional) {
           saldo: nuevoSaldo,
         });
 
-        console.log(
-          "Saldo actualizado correctamente. Nuevo saldo:",
-          nuevoSaldo
-        );
+        await updateDoc(creadorDocRef, {
+          saldo: nuevoSaldoCreador,
+        });
+
+        // console.log(
+        //   "Saldo actualizado correctamente. Nuevo saldo:",
+        //   nuevoSaldo
+        // );
+        // console.log(
+        //   "Saldo actualizado correctamente. Nuevo saldo creador:",
+        //   nuevoSaldoCreador
+        // );
       } else {
         const mensaje = "saldo insuficiente";
         return mensaje;

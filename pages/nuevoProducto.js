@@ -69,6 +69,7 @@ const nuevoProducto = () => {
       precio,
       cordenadas,
       inversores: [],
+      estado: true,
     };
     //insertarlo en la base de datos
     // firebase.db.collection("productos").add(producto);
@@ -245,7 +246,6 @@ const nuevoProducto = () => {
                     onBlur={handleBlur}
                   />
                 </Campo>
-                {console.log(cordenadas)}
                 <Campo>
                   <label htmlFor="url">Ubicación</label>
                   <Mapa>
