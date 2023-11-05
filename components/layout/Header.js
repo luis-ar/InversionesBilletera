@@ -188,7 +188,7 @@ const Header = () => {
                       `}
                     >
                       <span>
-                        Saldo: {formatearPresupuesto(parseInt(saldo))}
+                        Saldo: {formatearPresupuesto(parseFloat(saldo))}
                       </span>
                       <div
                         css={css`
