@@ -20,7 +20,10 @@ async function sumarSaldo(uid, cantidadAdicional) {
         saldo: nuevoSaldo,
       });
 
-      console.log("Saldo actualizado correctamente. Nuevo saldo:", nuevoSaldo);
+      console.log(
+        "Saldo actualizado correctamente. Nuevo saldo ganancia:",
+        nuevoSaldo
+      );
     } else {
       console.error(
         'El usuario no tiene un documento en la colección "usuarios".'

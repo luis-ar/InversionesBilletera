@@ -907,10 +907,9 @@ const Producto = () => {
         console.log("El documento no existe");
       }
     } catch (error) {}
-    await enviarGanancia(inversores, inputGanancia);
     const montoRestar = (parseInt(precio) * totalCubos) / 100;
-    console.log(montoRestar);
-    await restarSaldo(creador.id, creador.id, montoRestar);
+    await restarSaldo(usuario.uid, creador.id, montoRestar);
+    await enviarGanancia(inversores, inputGanancia);
     guardarPaseModalGanancia(false);
   };
   const recuperarCubos = () => {
