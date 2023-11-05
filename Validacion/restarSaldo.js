@@ -18,10 +18,12 @@ async function restarSaldo(uid, uidCreador, cantidadAdicional) {
       // Sumar la cantidad adicional al saldo actual
       const nuevoSaldo =
         parseFloat(saldoActual) - parseFloat(cantidadAdicional);
-      if (uid == uidCreador) {
-        console.log("dentroooooooo");
+      if (uid != uidCreador) {
         nuevoSaldoCreador =
           parseFloat(saldoActualCreador) + parseFloat(cantidadAdicional);
+      } else {
+        nuevoSaldoCreador =
+          parseFloat(nuevoSaldo) + parseFloat(cantidadAdicional);
       }
 
       // Actualizar el campo "saldo" en el documento del usuario
