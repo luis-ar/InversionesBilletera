@@ -909,8 +909,8 @@ const Producto = () => {
     } catch (error) {}
     await enviarGanancia(inversores, inputGanancia);
     const montoRestar = (parseInt(precio) * totalCubos) / 100;
-
-    await restarSaldo(creador.id, montoRestar);
+    console.log(montoRestar);
+    await restarSaldo(creador.id, creador.id, montoRestar);
     guardarPaseModalGanancia(false);
   };
   const recuperarCubos = () => {
