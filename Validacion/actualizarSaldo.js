@@ -12,7 +12,8 @@ async function sumarSaldo(uid, cantidadAdicional) {
       const saldoActual = usuarioSnapshot.data().saldo;
 
       // Sumar la cantidad adicional al saldo actual
-      const nuevoSaldo = parseInt(saldoActual) + parseInt(cantidadAdicional);
+      const nuevoSaldo =
+        parseFloat(saldoActual) + parseFloat(cantidadAdicional);
 
       // Actualizar el campo "saldo" en el documento del usuario
       await updateDoc(usuarioDocRef, {
