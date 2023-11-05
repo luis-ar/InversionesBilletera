@@ -18,7 +18,7 @@ async function restarSaldo(uid, uidCreador, cantidadAdicional) {
       // Sumar la cantidad adicional al saldo actual
       const nuevoSaldo =
         parseFloat(saldoActual) - parseFloat(cantidadAdicional);
-      if (uid != uidCreador) {
+      if (uid == uidCreador) {
         console.log("dentroooooooo");
         nuevoSaldoCreador =
           parseFloat(saldoActualCreador) + parseFloat(cantidadAdicional);
