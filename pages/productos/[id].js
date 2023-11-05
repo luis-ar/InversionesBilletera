@@ -499,7 +499,7 @@ const Producto = () => {
         );
         const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
         await sumarSaldo(usuario.uid, aumento);
-        await restarSaldoCreador(usuario.uid, aumento);
+        await restarSaldoCreador(creador.id, aumento);
 
         // Actualizar el documento con el nuevo array de inversores
         await updateDoc(docRef, { inversores: nuevoInversores });
