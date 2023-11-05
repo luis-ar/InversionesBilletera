@@ -76,7 +76,7 @@ const recargarBilletera = () => {
     const url = "https://billapp-5d53d479ff62.herokuapp.com/api/wallet/send";
     const token = await crearToken();
     const data = {
-      depositUserID: "c1ce7e34-7398-4ef5-a841-2217644d242c",
+      depositUserID: "bb9b1c0d-c664-4b12-b0de-00a77723edea",
       amount: parseInt(monto),
     };
 
