@@ -289,13 +289,12 @@ const GeneralDescripcion = styled.div`
       } */
     }
 
-    @media (max-width: 850px) {
+    @media (max-width: 1300px) {
       margin-top: 20px;
       position: static;
       button {
         padding: 5px 10px;
         font-size: 15px;
-
         /* :last-child {
           margin-left: 10px;
         } */
@@ -401,6 +400,7 @@ const Producto = () => {
   const [numElementos, setNumElementos] = useState(0); // Nuevo estado para el número de elementos
   const [editarInversion, setEditarInversion] = useState(true);
   const [inverEncontrado, setInverEncontrado] = useState();
+  const [depositarRecaudado, setDepositarRecaudado] = useState(false);
   //mensaje error
   const [mensaje, setMensaje] = useState("");
   //cantida de cubos
@@ -430,6 +430,7 @@ const Producto = () => {
     precio,
     estado,
     monto,
+    depositoRecaudado,
   } = producto;
 
   //elimina un producto de la bd
@@ -782,10 +783,7 @@ const Producto = () => {
         const valorViejo =
           (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
         await sumarSaldo(usuario.uid, valorViejo);
-        if (usuario.uid !== creador.id) {
-          console.log("dentro");
-          await restarSaldoCreador(creador.id, valorViejo);
-        }
+        // await restarSaldoCreador(creador.id, valorViejo);
         const nuevaResta = (inputCuboInversor * precio) / 100;
         const mensajeRespuesta = await restarSaldo(
           usuario.uid,
@@ -923,8 +921,34 @@ const Producto = () => {
     }
     return resultado;
   };
-  console.log("devil", recuperarCubos());
-  console.log("su precio", precio);
+
+  const handleRecaudado = async (e) => {
+    e.preventDefault();
+    try {
+      const docRef = doc(firebase.db, "productos", `${id}`);
+
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        // Obtener el array de inversores del documento
+        const depositoRecaudado = docSnap.data().depositoRecaudado;
+
+        // Filtrar el array para eliminar el elemento con el idUsuario deseado
+        await updateDoc(docRef, {
+          depositoRecaudado: true,
+        });
+        console.log("actualizado con exito el depositoRecaudado");
+        guardarProducto({
+          ...producto,
+          depositoRecaudado: true,
+        });
+        guardarConsultarDB(true);
+      } else {
+        console.log("El documento no existe");
+      }
+    } catch (error) {}
+    const montoDepositar = (parseInt(precio) * totalCubos) / 100;
+    sumarSaldo(creador.id, montoDepositar);
+  };
   return (
     <Layout>
       <>
@@ -1181,6 +1205,14 @@ const Producto = () => {
                     {pase == false && estado && (
                       <button onClick={handleNuevaInversion}>Invertir</button>
                     )}
+                    {estado &&
+                      esCreador(usuario.uid) &&
+                      totalCubos === 100 &&
+                      depositoRecaudado == false && (
+                        <button onClick={handleRecaudado}>
+                          Depositar lo Recaudado
+                        </button>
+                      )}
                     {estado && esCreador(usuario.uid) && totalCubos === 100 && (
                       <button onClick={handleGanancia}>
                         Finalizar Proyecto

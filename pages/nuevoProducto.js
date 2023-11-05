@@ -71,6 +71,7 @@ const nuevoProducto = () => {
       inversores: [],
       estado: true,
       monto: 0,
+      depositoRecaudado: false,
     };
     //insertarlo en la base de datos
     // firebase.db.collection("productos").add(producto);
