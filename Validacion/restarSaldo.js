@@ -13,13 +13,16 @@ async function restarSaldo(uid, uidCreador, cantidadAdicional) {
     if (usuarioSnapshot.exists() && creadorSnapshot.exists()) {
       const saldoActual = usuarioSnapshot.data().saldo;
       const saldoActualCreador = creadorSnapshot.data().saldo;
+      let nuevoSaldoCreador;
 
       // Sumar la cantidad adicional al saldo actual
       const nuevoSaldo =
         parseFloat(saldoActual) - parseFloat(cantidadAdicional);
-
-      const nuevoSaldoCreador =
-        parseFloat(saldoActualCreador) + parseFloat(cantidadAdicional);
+      if (uid != uidCreador) {
+        console.log("dentroooooooo");
+        nuevoSaldoCreador =
+          parseFloat(saldoActualCreador) + parseFloat(cantidadAdicional);
+      }
 
       // Actualizar el campo "saldo" en el documento del usuario
       if (nuevoSaldo >= 0) {

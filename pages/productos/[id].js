@@ -429,6 +429,7 @@ const Producto = () => {
     inversores,
     precio,
     estado,
+    monto,
   } = producto;
 
   //elimina un producto de la bd
@@ -499,7 +500,9 @@ const Producto = () => {
         );
         const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
         await sumarSaldo(usuario.uid, aumento);
-        await restarSaldoCreador(creador.id, aumento);
+        if (usuario.uid !== creador.id) {
+          await restarSaldoCreador(creador.id, aumento);
+        }
 
         // Actualizar el documento con el nuevo array de inversores
         await updateDoc(docRef, { inversores: nuevoInversores });
@@ -779,7 +782,10 @@ const Producto = () => {
         const valorViejo =
           (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
         await sumarSaldo(usuario.uid, valorViejo);
-        await restarSaldoCreador(creador.id, valorViejo);
+        if (usuario.uid !== creador.id) {
+          console.log("dentro");
+          await restarSaldoCreador(creador.id, valorViejo);
+        }
         const nuevaResta = (inputCuboInversor * precio) / 100;
         const mensajeRespuesta = await restarSaldo(
           usuario.uid,
@@ -853,9 +859,9 @@ const Producto = () => {
     setInputCategoriaInversor("");
   };
   const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("en-US", {
+    return cantidad.toLocaleString("es-PE", {
       style: "currency",
-      currency: "USD",
+      currency: "PEN",
     });
   };
   const leadingActions = () => (
@@ -878,8 +884,6 @@ const Producto = () => {
   };
   const hadleRepartirGanancia = async (e) => {
     e.preventDefault();
-    console.log("su inversion", inputGanancia);
-    console.log("lista", inversores);
     try {
       const docRef = doc(firebase.db, "productos", `${id}`);
 
@@ -887,15 +891,18 @@ const Producto = () => {
       if (docSnap.exists()) {
         // Obtener el array de inversores del documento
         const estado = docSnap.data().estado;
+        const monto = docSnap.data().monto;
 
         // Filtrar el array para eliminar el elemento con el idUsuario deseado
         await updateDoc(docRef, {
           estado: false,
+          monto: inputGanancia,
         });
         console.log("actualizado con exito el estado");
         guardarProducto({
           ...producto,
           estado: false,
+          monto: inputGanancia,
         });
         guardarConsultarDB(true);
       } else {
@@ -906,6 +913,18 @@ const Producto = () => {
 
     guardarPaseModalGanancia(false);
   };
+  const recuperarCubos = () => {
+    let resultado;
+    const respuesta = inversores.filter(
+      (inversor) => inversor.usuarioId === usuario.uid
+    );
+    if (respuesta.length > 0) {
+      resultado = respuesta[0]["cubos"];
+    }
+    return resultado;
+  };
+  console.log("devil", recuperarCubos());
+  console.log("su precio", precio);
   return (
     <Layout>
       <>
@@ -1092,18 +1111,57 @@ const Producto = () => {
               </div>
 
               <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
-              <div className="iconosExtra">
-                <div>
-                  <i class="bx bx-message-rounded-dots"></i>{" "}
-                  <p>{comentarios.length}</p>
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                  @media (max-width: 550px) {
+                    flex-direction: column;
+                  }
+                `}
+              >
+                <div className="iconosExtra">
+                  <div>
+                    <i class="bx bx-message-rounded-dots"></i>{" "}
+                    <p>{comentarios.length}</p>
+                  </div>
+                  <div className="corazon">
+                    <i className="bx bx-heart"></i>
+                    <p>{votos}</p>
+                  </div>
+                  <div className="corazon">
+                    <i class="bx bx-cube"></i>
+                    <p>{100 - totalCubos}</p>
+                  </div>
                 </div>
-                <div className="corazon">
-                  <i className="bx bx-heart"></i>
-                  <p>{votos}</p>
-                </div>
-                <div className="corazon">
-                  <i class="bx bx-cube"></i>
-                  <p>{100 - totalCubos}</p>
+                <div
+                  css={css`
+                    font-weight: bold;
+                    p {
+                      font-size: 20px;
+                    }
+                  `}
+                >
+                  {pase == true && estado == false && (
+                    <>
+                      <p>
+                        Tu Inversion:{" "}
+                        <span>
+                          {formatearPresupuesto(
+                            (recuperarCubos() * precio) / 100
+                          )}
+                        </span>
+                      </p>
+                      <p>
+                        Tu Ganancia:{" "}
+                        <span>
+                          {formatearPresupuesto(
+                            ((monto - precio) * recuperarCubos()) / 100
+                          )}
+                        </span>
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
 
