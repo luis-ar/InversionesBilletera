@@ -21,6 +21,7 @@ import enviarDineroPropia from "@/Validacion/enviarDineroPropia";
 import obtenerSaldo from "@/Validacion/obtenerSaldo";
 import restarSaldoCreador from "@/Validacion/restarSaldoCreador";
 import Mensaje from "@/components/ui/Mensaje";
+import enviarDineroGeneralUsuario from "@/Validacion/enviarDineroGeneralUsuario";
 
 const STATE_INICIAL = {
   password: "",
@@ -99,9 +100,9 @@ const retirarBilletera = () => {
       const id = respuesta["data"]["id"];
       const saldo = await obtenerSaldo(usuario.uid);
       if (saldo >= monto) {
-        const res = await enviarDineroPropia(token, monto, id);
+        const res = await enviarDineroGeneralUsuario(monto, id);
         await restarSaldoCreador(usuario.uid, monto);
-
+        console.log("desde retiro", res);
         if (!res["error"]) {
           setMensaje("Retiro con exito");
           setTimeout(() => {
