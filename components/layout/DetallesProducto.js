@@ -198,9 +198,9 @@ const DetallesProducto = ({ producto }) => {
   } = producto;
 
   const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("en-US", {
+    return cantidad.toLocaleString("es-PE", {
       style: "currency",
-      currency: "USD",
+      currency: "PEN",
     });
   };
   return (
