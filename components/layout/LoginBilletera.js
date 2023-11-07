@@ -135,8 +135,10 @@ const LoginBilletera = () => {
         // Acceder al valor de la propiedad 'data'
         if (responseBody && responseBody.data) {
           guardarError(responseBody.data);
+          console.log("errorrrr");
           setTimeout(() => {
             guardarError("");
+            guardarClave("");
           }, 2000);
         }
       }
