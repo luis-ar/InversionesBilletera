@@ -390,11 +390,13 @@ const Producto = () => {
   const [consultarDB, guardarConsultarDB] = useState(true);
   const [paseModal, guardarModal] = useState(false);
   const [paseModalGanancia, guardarPaseModalGanancia] = useState(false);
+  const [paseModalPrecio, guardarPaseModalPrecio] = useState(false);
   //state inversores
   const [inver, guardarinver] = useState({});
   const [inputDesInversor, setInputDesInversor] = useState("");
   const [inputCuboInversor, setInputCuboInversor] = useState("");
   const [inputGanancia, setInputGanancia] = useState("");
+  const [inputPrecio, setInputPrecio] = useState("");
   const [inputCategoriaInversor, setInputCategoriaInversor] = useState();
   const [pase, setPase] = useState(false);
   const [numElementos, setNumElementos] = useState(0); // Nuevo estado para el número de elementos
@@ -642,6 +644,7 @@ const Producto = () => {
     });
     setInputGanancia(Number(e.target.value));
   };
+
   const inversorCategoriaChange = (e) => {
     guardarinver({
       ...inver,
@@ -717,6 +720,7 @@ const Producto = () => {
   const ocultarModal = () => {
     guardarModal(false);
     guardarPaseModalGanancia(false);
+    guardarPaseModalPrecio(false);
   };
   //funcion submit
   const handleSubmit = async (e) => {
@@ -950,6 +954,35 @@ const Producto = () => {
     const montoDepositar = (parseInt(precio) * totalCubos) / 100;
     sumarSaldo(creador.id, montoDepositar);
   };
+
+  const handleModificarPrecio = () => {
+    guardarPaseModalPrecio(true);
+  };
+  const hadleModificarNuevoPreecio = async (e) => {
+    e.preventDefault();
+    try {
+      const docRef = doc(firebase.db, "productos", `${id}`);
+
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const precio = docSnap.data().precio;
+        await updateDoc(docRef, {
+          precio: inputPrecio,
+        });
+        console.log("actualizado con exito el estado");
+        guardarProducto({
+          ...producto,
+          precio: inputPrecio,
+        });
+        guardarConsultarDB(true);
+        setInputPrecio("");
+      } else {
+        console.log("El documento no existe");
+      }
+    } catch (error) {}
+
+    guardarPaseModalPrecio(false);
+  };
   return (
     <Layout>
       <>
@@ -969,6 +1002,44 @@ const Producto = () => {
               }
             `}
           >
+            {paseModalPrecio && (
+              <Contenedor className="modal">
+                <div className="cerrar-modal">
+                  <img
+                    src="/static/img/cerrar.svg"
+                    alt="cerrar modal"
+                    onClick={ocultarModal}
+                  />
+                </div>
+
+                <form
+                  className="formulario"
+                  onSubmit={hadleModificarNuevoPreecio}
+                >
+                  <legend>Modificar Precio</legend>
+
+                  {mensaje && <Mensaje tipo="error">{mensaje}</Mensaje>}
+
+                  <div className="campo">
+                    <label htmlFor="precio">Nuevo Precio</label>
+                    <input
+                      autocomplete="off"
+                      id="precio"
+                      type="number"
+                      name="precio"
+                      placeholder="Ingrese el nuevo precio"
+                      min={1}
+                      value={inputPrecio}
+                      onChange={(e) => {
+                        setInputPrecio(e.target.value);
+                      }}
+                    />
+                  </div>
+
+                  <input type="submit" value="Modificar Precio" />
+                </form>
+              </Contenedor>
+            )}
             {paseModalGanancia && (
               <Contenedor className="modal">
                 <div className="cerrar-modal">
@@ -1135,8 +1206,27 @@ const Producto = () => {
                   </div>
                 </div>
               </div>
-
-              <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
+              <div>
+                <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
+                {esCreador(usuario.uid) && (
+                  <button
+                    css={css`
+                      background-color: var(--botones);
+                      cursor: pointer;
+                      padding: 10px 20px;
+                      font-size: 20px;
+                      color: white;
+                      border-radius: 10px;
+                      text-align: center;
+                      text-transform: uppercase;
+                      margin-bottom: 10px;
+                    `}
+                    onClick={handleModificarPrecio}
+                  >
+                    Modificar Precio
+                  </button>
+                )}
+              </div>
               <div
                 css={css`
                   display: flex;

@@ -98,7 +98,7 @@ const registroBilletera = () => {
         const responseData = await response.json();
         const token = await crearToken(password);
         await convertirUsuarioBilletera(token);
-        await activarAgente(token, usuario.displayName, telefono);
+        // await activarAgente(token, usuario.displayName, telefono);
         guardarPase(true);
         setTimeout(() => {
           Router.push(`/usuarios/${token}`);
@@ -172,16 +172,6 @@ const registroBilletera = () => {
                 onBlur={handleBlur}
               />
             )}
-
-            {/* <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              placeholder="Tu Nombre"
-              value={nombre}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            /> */}
           </Campo>
           {errores.apellido && <ErrorMostrar>{errores.apellido}</ErrorMostrar>}
 
@@ -213,15 +203,6 @@ const registroBilletera = () => {
                 onBlur={handleBlur}
               />
             )}
-            {/* <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="Tu Correo"
-              value={email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            /> */}
           </Campo>
           {errores.telefono && <ErrorMostrar>{errores.telefono}</ErrorMostrar>}
 
