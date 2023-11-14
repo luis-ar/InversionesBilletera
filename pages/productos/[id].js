@@ -1185,7 +1185,10 @@ const Producto = () => {
                     width: 80%;
                     height: 350px;
                     border-radius: 20px;
-                    margin-bottom: 5px;
+                    margin-bottom: 10px;
+                    @media (max-width: 550px) {
+                      height: 150px;
+                    }
                   `}
                 />
               </div>
@@ -1220,6 +1223,10 @@ const Producto = () => {
                       text-align: center;
                       text-transform: uppercase;
                       margin-bottom: 10px;
+                      @media (max-width: 1300px) {
+                        padding: 5px 10px;
+                        font-size: 15px;
+                      }
                     `}
                     onClick={handleModificarPrecio}
                   >
