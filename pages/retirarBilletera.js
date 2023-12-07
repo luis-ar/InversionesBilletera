@@ -56,6 +56,8 @@ const retirarBilletera = () => {
         const responseData = await response.json();
         token = responseData.data.accessToken;
       } else {
+        console.log(usuario.email);
+        console.log(password);
         console.error(
           "Error al enviar los datos:",
           response.status,
