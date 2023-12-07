@@ -5,12 +5,12 @@ import Layout from "@/components/layout/Layout";
 import { useRouter } from "next/router";
 import PanelTransferencia from "@/components/ui/PanelTransferencia";
 
-const Transferencia = () => {
+const Recarga = () => {
   const router = useRouter();
   const {
     query: { token },
   } = router;
-  const tipo = "transferencia";
+  const tipo = "recarga";
   return (
     <Layout>
       <div
@@ -27,4 +27,4 @@ const Transferencia = () => {
   );
 };
 
-export default Transferencia;
+export default Recarga;

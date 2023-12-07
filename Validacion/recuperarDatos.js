@@ -1,5 +1,5 @@
 const recuperarDatos = (userId, token) => {
-  const apiUrl = "https://billapp-5d53d479ff62.herokuapp.com/api/user/";
+  const apiUrl = "https://billapp-57e4b0e7460c.herokuapp.com/api/user/";
 
   const url = apiUrl + userId;
 

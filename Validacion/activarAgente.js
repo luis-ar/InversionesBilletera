@@ -1,5 +1,5 @@
 const activarAgente = (token, nombre, numero) => {
-  const url = "https://billapp-5d53d479ff62.herokuapp.com/api/agent";
+  const url = "https://billapp-57e4b0e7460c.herokuapp.com/api/agent";
 
   const data = {
     comercialName: nombre,

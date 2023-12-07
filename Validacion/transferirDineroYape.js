@@ -1,11 +1,10 @@
 const transferirDineroYape = (id, monto, token) => {
-  const apiUrl = "https://billapp-5d53d479ff62.herokuapp.com/api/wallet/send";
+  const apiUrl = "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet/send";
   // Datos del cuerpo (body) de la solicitud
   const requestBody = {
     depositUserID: id,
     amount: parseInt(monto),
   };
-
   return new Promise((resolve, reject) => {
     fetch(apiUrl, {
       method: "POST",

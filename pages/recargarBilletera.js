@@ -35,7 +35,7 @@ const recargarBilletera = () => {
     };
     try {
       const response = await fetch(
-        "https://billapp-5d53d479ff62.herokuapp.com/api/user/token",
+        "https://billapp-57e4b0e7460c.herokuapp.com/api/user/token",
         {
           method: "POST",
           headers: {
@@ -73,7 +73,7 @@ const recargarBilletera = () => {
   };
 
   const recarga = async () => {
-    const url = "https://billapp-5d53d479ff62.herokuapp.com/api/wallet/send";
+    const url = "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet/send";
     const token = await crearToken();
     const data = {
       depositUserID: "bb9b1c0d-c664-4b12-b0de-00a77723edea",

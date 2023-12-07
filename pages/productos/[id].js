@@ -56,6 +56,11 @@ const CreadorProducto = styled.p`
   position: absolute;
   bottom: 25px;
   right: 5px;
+  @media (max-width: 550px) {
+    background-color: red;
+    top: 15px;
+    bottom: 0;
+  }
 `;
 const contenedorBarra = styled.div`
   margin-top: 20px !important;
@@ -1567,6 +1572,7 @@ const Producto = () => {
                                             @media (max-width: 550px) {
                                               font-size: 10px;
                                               padding: 0.2rem 1rem;
+                                              height: 20px;
                                             }
                                           `}
                                         >
@@ -1588,6 +1594,10 @@ const Producto = () => {
                                           margin-left: 10px;
                                           display: grid;
                                           grid-template-columns: 1fr 1fr;
+                                          @media (max-width: 550px) {
+                                            display: flex;
+                                            flex-direction: column;
+                                          }
                                         `}
                                       >
                                         <div>
@@ -1663,6 +1673,9 @@ const Producto = () => {
                                               <span
                                                 css={css`
                                                   font-weight: bold;
+                                                  @media (max-width: 550px) {
+                                                    font-size: 10px;
+                                                  }
                                                 `}
                                               >
                                                 {inversor.cubos}
@@ -1675,6 +1688,9 @@ const Producto = () => {
                                               <span
                                                 css={css`
                                                   font-weight: bold;
+                                                  @media (max-width: 550px) {
+                                                    font-size: 10px;
+                                                  }
                                                 `}
                                               >
                                                 {""}{" "}
@@ -1736,6 +1752,10 @@ const Producto = () => {
                                       margin-left: 10px;
                                       display: grid;
                                       grid-template-columns: 1fr 1fr;
+                                      @media (max-width: 550px) {
+                                        display: flex;
+                                        flex-direction: column;
+                                      }
                                     `}
                                   >
                                     <div>
@@ -1809,6 +1829,9 @@ const Producto = () => {
                                           <span
                                             css={css`
                                               font-weight: bold;
+                                              @media (max-width: 550px) {
+                                                font-size: 10px;
+                                              }
                                             `}
                                           >
                                             {inversor.cubos}
@@ -1821,6 +1844,9 @@ const Producto = () => {
                                           <span
                                             css={css`
                                               font-weight: bold;
+                                              @media (max-width: 550px) {
+                                                font-size: 10px;
+                                              }
                                             `}
                                           >
                                             {""}{" "}

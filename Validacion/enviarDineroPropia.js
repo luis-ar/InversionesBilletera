@@ -1,5 +1,5 @@
 const enviarDineroPropia = (token, monto, id) => {
-  const url = "https://billapp-5d53d479ff62.herokuapp.com/api/agent/recharge";
+  const url = "https://billapp-57e4b0e7460c.herokuapp.com/api/agent/recharge";
 
   const bodyData = {
     rechargedUserID: id,

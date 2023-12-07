@@ -1,5 +1,5 @@
 export const convertirUsuarioBilletera = (token) => {
-  fetch("https://billapp-5d53d479ff62.herokuapp.com/api/wallet", {
+  fetch("https://billapp-57e4b0e7460c.herokuapp.com/api/wallet", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

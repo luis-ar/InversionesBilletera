@@ -128,7 +128,7 @@ const Contenedor = styled.div`
     }
   }
 `;
-const PanelTransferencia = ({ token }) => {
+const PanelTransferencia = ({ token, tipo }) => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [datosUser, setDatos] = useState();
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
@@ -158,7 +158,7 @@ const PanelTransferencia = ({ token }) => {
   //   const fetchData = async () => {
   //     try {
   //       const response = await fetch(
-  //         "https://billapp-5d53d479ff62.herokuapp.com/api/wallet",
+  //         "https://billapp-57e4b0e7460c.herokuapp.com.com/api/wallet",
   //         {
   //           method: "GET",
   //           headers: {
@@ -275,7 +275,12 @@ const PanelTransferencia = ({ token }) => {
             {datosUser && datosUser.length != 0 ? (
               <>
                 {datosUser.map((usuario, index) => (
-                  <PanelNumero key={index} usuario={usuario} token={token} />
+                  <PanelNumero
+                    key={index}
+                    usuario={usuario}
+                    token={token}
+                    tipo={tipo}
+                  />
                 ))}
               </>
             ) : (

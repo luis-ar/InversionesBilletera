@@ -6,6 +6,7 @@ import SliderBilletera from "./SliderBilletera";
 import DatosBilletera from "./DatosBilletera";
 import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
+import recuperarDatosUsuario from "@/Validacion/recuperarDatosUsuario";
 
 const Pie = styled.div`
   background-color: var(--botonesBilletera);
@@ -17,20 +18,20 @@ const Pie = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  font-size: 13px;
   a {
-    width: 42%;
     div {
       width: 100%;
       justify-content: center;
       display: flex;
       align-items: center;
+      padding: 7px 6px;
     }
     color: white;
   }
   div {
     background-color: var(--fondoBilletera);
-    width: 42%;
-    padding: 7px 0;
+    padding: 7px 6px;
     text-align: center;
     border-radius: 5px;
     i {
@@ -136,6 +137,7 @@ const InicioBilletera = ({ token }) => {
   const [historiales, setHistoriales] = useState();
   const [error, setError] = useState();
   const [loading, setLoading] = useState(true); // Estado de carga
+  const [estado, setEstado] = useState();
   const retornoSaldo = () => {
     if (mostrarSaldo) {
       setMostrarSaldo(false);
@@ -153,7 +155,7 @@ const InicioBilletera = ({ token }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://billapp-5d53d479ff62.herokuapp.com/api/wallet",
+          "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet",
           {
             method: "GET",
             headers: {
@@ -189,6 +191,16 @@ const InicioBilletera = ({ token }) => {
     };
 
     fetchData(); // Llama a la función asincrónica
+  }, [token]);
+  useEffect(() => {
+    const datosUser = async () => {
+      const data = await recuperarDatosUsuario(token);
+      if (data["data"]) {
+        setEstado(data["data"]["ChargingAgent"]["Status"]["subtype"]);
+      }
+    };
+
+    datosUser();
   }, [token]);
   return (
     <div
@@ -314,15 +326,22 @@ const InicioBilletera = ({ token }) => {
         </div>
         <Pie>
           <div>
-            <i class="bx bx-qr"></i>
+            <i className="bx bx-qr"></i>
             escanear qr
           </div>
           <Link href={`/transferencia/${token}`}>
             <div>
-              <i class="bx bx-paper-plane"></i>
+              <i className="bx bx-paper-plane"></i>
               Yapear
             </div>
           </Link>
+          {estado === 9 && (
+            <Link href={`/recargar/${token}`}>
+              <div>
+                <i className="bx bx-reset bx-rotate-180"></i> Recargar
+              </div>
+            </Link>
+          )}
         </Pie>
       </Contenedor>
     </div>

@@ -8,6 +8,7 @@ import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
 import recuperarDatos from "@/Validacion/recuperarDatos";
 import transferirDineroYape from "@/Validacion/transferirDineroYape";
+import enviarDineroPropia from "@/Validacion/enviarDineroPropia";
 const MostrarError = styled.div`
   width: 300px;
   height: 505px;
@@ -23,6 +24,8 @@ const MostrarError = styled.div`
     color: red;
     margin-bottom: 10px;
     font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
   }
   div {
     display: flex;
@@ -145,7 +148,7 @@ const Contenedor = styled.div`
     }
   }
 `;
-const PanelYapear = ({ token, id }) => {
+const PanelYapear = ({ token, id, tipo }) => {
   const { firebase, usuario } = useContext(FirebaseContext);
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
   const [datosUser, setDatos] = useState();
@@ -155,6 +158,7 @@ const PanelYapear = ({ token, id }) => {
   const [error, setError] = useState();
   const [valor, setValor] = useState();
   const [respuesta, setRespuesta] = useState();
+  const [estado, setEstado] = useState(false);
   const retornoSaldo = () => {
     if (mostrarSaldo) {
       setMostrarSaldo(false);
@@ -173,7 +177,7 @@ const PanelYapear = ({ token, id }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://billapp-5d53d479ff62.herokuapp.com/api/wallet",
+          "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet",
           {
             method: "GET",
             headers: {
@@ -226,8 +230,23 @@ const PanelYapear = ({ token, id }) => {
     e.preventDefault();
     const numeroExtraido = valor.replace(/\D/g, "");
     const numero = parseInt(numeroExtraido, 10);
-    const datos = await transferirDineroYape(id, numero, token);
-    setRespuesta(datos["message"]);
+    if (tipo == "transferencia") {
+      if (numero < saldo) {
+        const datos = await transferirDineroYape(id, numero, token);
+        setRespuesta(datos["message"]);
+        return;
+      } else {
+        setError("Saldo Insuficiente");
+        setEstado(true);
+        setTimeout(() => {
+          setError("");
+          setEstado(false);
+        }, 1000);
+      }
+    } else {
+      const datos = await enviarDineroPropia(token, numero, id);
+      setRespuesta(datos["data"]["message"]);
+    }
   };
   return (
     <div
@@ -247,7 +266,7 @@ const PanelYapear = ({ token, id }) => {
           <MostrarError>
             <div>
               <span>{error}</span>
-              <Link href="/billetera">Iniciar Sesión</Link>
+              {estado == false && <Link href="/billetera">Iniciar Sesión</Link>}
             </div>
           </MostrarError>
         )}
@@ -311,37 +330,9 @@ const PanelYapear = ({ token, id }) => {
             </div>
 
             <div className="contenedorBoton">
-              <button>Yapear</button>
+              <button>{tipo == "transferencia" ? "Yapear" : "Recargar"}</button>
             </div>
           </form>
-
-          {/* <ul
-            css={css`
-              height: 100%;
-              margin-top: 5px;
-              overflow-y: auto;
-            `}
-          >
-            {historiales ? (
-              <>
-                {historiales.map((historial, index) => (
-                  <DatosBilletera key={index} historial={historial} />
-                ))}
-              </>
-            ) : (
-              !loading && (
-                <p
-                  css={css`
-                    font-weight: bold;
-                    font-size: 12px;
-                    padding: 0 20px;
-                  `}
-                >
-                  "Aún no tiene historial"
-                </p>
-              )
-            )}
-          </ul> */}
         </div>
       </Contenedor>
     </div>

@@ -8,7 +8,7 @@ import PanelYapear from "@/components/ui/PanelYapear";
 const Usuario = () => {
   const router = useRouter();
   const {
-    query: { token, id },
+    query: { token, id, tipo },
   } = router;
   return (
     <Layout>
@@ -20,7 +20,7 @@ const Usuario = () => {
           }
         `}
       >
-        <PanelYapear token={token} id={id} />
+        <PanelYapear token={token} id={id} tipo={tipo} />
       </div>
     </Layout>
   );

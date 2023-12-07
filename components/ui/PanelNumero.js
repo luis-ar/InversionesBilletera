@@ -16,10 +16,13 @@ const Contenedor = styled.div`
     flex-direction: column;
   }
 `;
-const PanelNumero = ({ usuario, token }) => {
+const PanelNumero = ({ usuario, token, tipo }) => {
   const { names, phone, id } = usuario;
   return (
-    <Link href={`/yapear/${id}?token=${token}`} style={{ color: "white" }}>
+    <Link
+      href={`/yapear/${id}?tipo=${tipo}&token=${token}`}
+      style={{ color: "white" }}
+    >
       <Contenedor>
         <div className="datosPersonales">
           <span className="nombre">{names}</span>

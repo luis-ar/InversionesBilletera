@@ -128,7 +128,7 @@ const HistorialCompleto = ({ token }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://billapp-5d53d479ff62.herokuapp.com/api/wallet",
+          "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet",
           {
             method: "GET",
             headers: {

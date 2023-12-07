@@ -1,5 +1,5 @@
 const recuperarDatosUsuario = (token) => {
-  const url = "https://billapp-5d53d479ff62.herokuapp.com/api/user/me";
+  const url = "https://billapp-57e4b0e7460c.herokuapp.com/api/user/me";
 
   return new Promise((resolve, reject) => {
     fetch(url, {
@@ -11,11 +11,11 @@ const recuperarDatosUsuario = (token) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Respuesta de la API:", data);
+        // console.log("Respuesta de la API:", data);
         resolve(data);
       })
       .catch((error) => {
-        console.error("Error al hacer la solicitud:", error);
+        // console.error("Error al hacer la solicitud:", error);
         reject(error);
       });
   });
