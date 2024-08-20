@@ -96,7 +96,6 @@ const crearCuenta = () => {
                 onBlur={handleBlur}
               />
             </Campo>
-            {/*{" "}
             {errores.telefono && (
               <ErrorMostrar>{errores.telefono}</ErrorMostrar>
             )}
@@ -110,9 +109,9 @@ const crearCuenta = () => {
                 value={telefono}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                maxLength={9}
               />
-            </Campo>{" "}
-            */}
+            </Campo>
             {errores.imagen && <ErrorMostrar>{errores.imagen}</ErrorMostrar>}
             <Campo>
               <label htmlFor="imagen">Imagen</label>

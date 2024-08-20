@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { es } from "date-fns/locale";
 import Link from "next/link";
+import obtenerPhone from "@/Validacion/obtenerPhone";
+import { FirebaseContext } from "@/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import MapPage from "../ui/MapaPrueba";
+import { css } from "@emotion/react";
 const Producto = styled.li`
   padding: 1.2rem;
   border-radius: 20px;
@@ -183,6 +188,34 @@ const RedesSociales = styled.div`
     color: #3ff71a;
   }
 `;
+const Contenedor = styled.div`
+  position: fixed;
+  z-index: 200;
+  background-color: rgb(0 0 0 / 0.92);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  .cerrar-modal {
+    position: absolute;
+    right: 3rem;
+    top: 3rem;
+    width: 2rem;
+    height: 2rem;
+    z-index: 2;
+    cursor: pointer;
+    img {
+      width: 100%;
+    }
+  }
+`;
+const Mapa = styled.div`
+  z-index: 1;
+  width: 80%;
+  height: 60%;
+  border: 1px solid #e1e1e1;
+  margin-bottom: 20px;
+`;
 const DetallesProducto = ({ producto }) => {
   const {
     id,
@@ -195,19 +228,73 @@ const DetallesProducto = ({ producto }) => {
     urlimagen,
     votos,
     precio,
+    creador,
+    cordenadas,
   } = producto;
+  console.log(cordenadas);
+  const [paseModalMapa, setPaseModalMapa] = useState(false);
+  const { usuario, firebase } = useContext(FirebaseContext);
+  const [phone, setPhone] = useState();
 
+  const recuperarPhone = async () => {
+    if (creador) {
+      const phoneUsuario = await obtenerPhone(creador.id);
+      setPhone(phoneUsuario);
+    }
+  };
   const formatearPresupuesto = (cantidad) => {
     return cantidad.toLocaleString("es-PE", {
       style: "currency",
       currency: "PEN",
     });
   };
+  useEffect(() => {
+    if (usuario) {
+      const usuarioDocRef = doc(firebase.db, "usuarios", creador.id);
+
+      const unsuscribeUsuario = onSnapshot(usuarioDocRef, (usuarioDoc) => {
+        if (usuarioDoc.exists() && usuarioDoc.data().phone !== undefined) {
+          recuperarPhone();
+        }
+      });
+      return () => {
+        unsuscribeUsuario();
+      };
+    }
+  }, [usuario, creador]);
+  recuperarPhone();
+
   return (
     <>
+      {paseModalMapa && (
+        <Contenedor className="modal">
+          <div className="cerrar-modal">
+            <img
+              src="/static/img/cerrar.svg"
+              alt="cerrar modal"
+              onClick={() => {
+                setPaseModalMapa(false);
+              }}
+            />
+          </div>
+          <div
+            css={css`
+              width: 100%;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            `}
+          >
+            <Mapa id="mapaProducto">
+              <MapPage cordenadas={cordenadas} />
+            </Mapa>
+          </div>
+        </Contenedor>
+      )}
       <Producto>
         <ContenedorImagen>
-          <Imagen src={urlimagen} />
+          <Imagen src={urlimagen[0]} />
         </ContenedorImagen>
         <DescripcionProducto>
           <ContenedorDatos>
@@ -225,12 +312,19 @@ const DetallesProducto = ({ producto }) => {
                 <i className="bx bx-heart"></i>
                 <p>{votos}</p>
               </div>
-              <div className="ubicacion">
+              <div
+                className="ubicacion"
+                onClick={() => {
+                  setPaseModalMapa(true);
+                }}
+              >
                 <i class="bx bx-map"></i>
               </div>
-              <div className="whatsapp">
-                <i class="bx bxl-whatsapp"></i>
-              </div>
+              <a href={`https://wa.me/${phone}`} target="_blank">
+                <div className="whatsapp">
+                  <i class="bx bxl-whatsapp"></i>
+                </div>
+              </a>
             </Comentarios>
             <Publicado>
               Publicado hace{" "}

@@ -22,12 +22,12 @@ const validarCrearCuenta = (valores) => {
     errores.password = "El password debe tener al menos 6 caracteres";
   }
   //validar el telefono
-  // if (!valores.telefono) {
-  //   errores.telefono = "El telefono es obligatorio";
-  // } else if (!regex.test(valores.telefono)) {
-  //   errores.telefono =
-  //     "Número de celular no válido. Debe empezar con 9 y tener 9 dígitos";
-  // }
+  if (!valores.telefono) {
+    errores.telefono = "El telefono es obligatorio";
+  } else if (!regex.test(valores.telefono)) {
+    errores.telefono =
+      "Número de celular no válido. Debe empezar con 9 / Tener 9 dígitos";
+  }
   return errores;
 };
 

@@ -53,6 +53,7 @@ class Firebase {
     const usuarioDocRef = doc(db, "usuarios", nuevoUsuario.user.uid);
     await setDoc(usuarioDocRef, {
       saldo: 0,
+      phone: telefono,
     });
 
     return nuevoUsuario.user;

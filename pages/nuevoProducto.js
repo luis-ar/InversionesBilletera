@@ -35,7 +35,7 @@ const Mapa = styled.div`
 const nuevoProducto = () => {
   // States para la subida de la imagen
   const [uploading, setUploading] = useState(false);
-  const [urlimagen, setURLImage] = useState("");
+  const [urlimagen, setURLImage] = useState([]);
   ///
   const [error, guardarError] = useState(false);
   const [cordenadas, setCordenadas] = useState({});
@@ -84,37 +84,54 @@ const nuevoProducto = () => {
   };
 
   const handleImageUpload = (e) => {
-    // Se obtiene referencia de la ubicación donde se guardará la imagen
-    const file = e.target.files[0];
-    const imageRef = ref(firebase.storage, "productos/" + file.name);
+    const files = e.target.files;
+    const uploadPromises = [];
 
-    // Se inicia la subida
     setUploading(true);
-    const uploadTask = uploadBytesResumable(imageRef, file);
 
-    // Registra eventos para cuando detecte un cambio en el estado de la subida
-    uploadTask.on(
-      "state_changed",
-      // Muestra progreso de la subida
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Subiendo imagen: ${progress}% terminado`);
-      },
-      // En caso de error
-      (error) => {
+    // Recorrer cada archivo y subirlo
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const imageRef = ref(firebase.storage, "productos/" + file.name);
+      const uploadTask = uploadBytesResumable(imageRef, file);
+
+      // Crear una promesa para cada archivo subido
+      const uploadPromise = new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Subiendo imagen ${file.name}: ${progress}% terminado`);
+          },
+          (error) => {
+            console.error(error);
+            reject(error);
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+              resolve(url);
+            });
+          }
+        );
+      });
+
+      uploadPromises.push(uploadPromise);
+    }
+
+    // Esperar a que todas las subidas terminen
+    Promise.all(uploadPromises)
+      .then((urls) => {
+        setUploading(false);
+        // `urls` es un array con todas las URLs de las imágenes subidas
+        setURLImage(urls); // Guardar todas las URLs de las imágenes
+      })
+      .catch((error) => {
         setUploading(false);
         console.error(error);
-      },
-      // Subida finalizada correctamente
-      () => {
-        setUploading(false);
-        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setURLImage(url);
-        });
-      }
-    );
+      });
   };
+
   const { valores, errores, handleSumit, handleChange, handleBlur } =
     useValidacion(STATE_INICIAL, validarCrearProducto, crearProducto);
   //OnBlur -> cuando salgo del input lo valida sin la necesidad de presion el boton de crear cuenta
@@ -191,6 +208,7 @@ const nuevoProducto = () => {
                     name="imagen"
                     value={imagen}
                     onChange={handleImageUpload}
+                    multiple
                   />
                 </Campo>
                 {errores.url && <ErrorMostrar>{errores.url}</ErrorMostrar>}

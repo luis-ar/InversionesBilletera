@@ -36,6 +36,7 @@ import sumarSaldo from "@/Validacion/actualizarSaldo";
 import restarSaldoCreador from "@/Validacion/restarSaldoCreador";
 import SpinnerPrincipal from "@/components/ui/SpinnerPrincipal";
 import enviarGanancia from "@/Validacion/enviarGanancia";
+import SliderProducto from "@/components/ui/SliderProducto";
 const ContenedorProducto = styled.div`
   display: grid;
   gap: 60px;
@@ -439,7 +440,6 @@ const Producto = () => {
     monto,
     depositoRecaudado,
   } = producto;
-
   //elimina un producto de la bd
   const eliminarProducto = async () => {
     if (!usuario) {
@@ -963,7 +963,7 @@ const Producto = () => {
   const handleModificarPrecio = () => {
     guardarPaseModalPrecio(true);
   };
-  const hadleModificarNuevoPreecio = async (e) => {
+  const hadleModificarNuevoPrecio = async (e) => {
     e.preventDefault();
     try {
       const docRef = doc(firebase.db, "productos", `${id}`);
@@ -971,22 +971,29 @@ const Producto = () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const precio = docSnap.data().precio;
-        await updateDoc(docRef, {
-          precio: inputPrecio,
-        });
-        console.log("actualizado con exito el estado");
-        guardarProducto({
-          ...producto,
-          precio: inputPrecio,
-        });
-        guardarConsultarDB(true);
-        setInputPrecio("");
+        if (inputPrecio !== "") {
+          await updateDoc(docRef, {
+            precio: inputPrecio,
+          });
+          console.log("actualizado con exito el estado");
+          guardarProducto({
+            ...producto,
+            precio: inputPrecio,
+          });
+          guardarConsultarDB(true);
+          setInputPrecio("");
+          guardarPaseModalPrecio(false);
+        } else {
+          setMensaje("Ingrese un precio valido");
+          guardarPaseModalPrecio(true);
+          setTimeout(() => {
+            setMensaje("");
+          }, 2000);
+        }
       } else {
         console.log("El documento no existe");
       }
     } catch (error) {}
-
-    guardarPaseModalPrecio(false);
   };
   return (
     <Layout>
@@ -1019,7 +1026,7 @@ const Producto = () => {
 
                 <form
                   className="formulario"
-                  onSubmit={hadleModificarNuevoPreecio}
+                  onSubmit={hadleModificarNuevoPrecio}
                 >
                   <legend>Modificar Precio</legend>
 
@@ -1184,18 +1191,7 @@ const Producto = () => {
                   justify-content: center;
                 `}
               >
-                <img
-                  src={urlimagen}
-                  css={css`
-                    width: 80%;
-                    height: 350px;
-                    border-radius: 20px;
-                    margin-bottom: 10px;
-                    @media (max-width: 550px) {
-                      height: 150px;
-                    }
-                  `}
-                />
+                <SliderProducto images={urlimagen} />
               </div>
               <div className="nombreProducto">
                 <div
@@ -1216,7 +1212,7 @@ const Producto = () => {
               </div>
               <div>
                 <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
-                {esCreador(usuario.uid) && (
+                {esCreador(usuario?.uid) && (
                   <button
                     css={css`
                       background-color: var(--botones);
