@@ -12,6 +12,7 @@ const Contenedor = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
+  border-radius: 20px;
   @media (max-width: 500px) {
     height: 200px;
   }
@@ -22,17 +23,13 @@ const Contenedor = styled.div`
 const Image = styled.img`
   width: 100%;
   height: 280px;
-  object-fit: cover;
   cursor: pointer;
+  border-radius: 20px;
   @media (max-width: 500px) {
     height: 180px;
   }
 `;
-const TextoInformativo = styled.div`
-  background-color: black;
-  z-index: 1;
-  color: white;
-`;
+
 const SliderProducto = ({ images }) => {
   return (
     <>

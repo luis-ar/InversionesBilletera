@@ -17,6 +17,10 @@ const Producto = styled.li`
   display: flex;
   flex-direction: column;
   align-items: center;
+  :hover {
+    background-color: #000000;
+    cursor: pointer;
+  }
 `;
 const DescripcionProducto = styled.div`
   flex: 0 1;
@@ -152,7 +156,7 @@ const ContenedorImagen = styled.div`
   justify-content: center;
   margin-bottom: 10px;
   width: 100%;
-  height: 150px;
+  height: 200px;
 `;
 
 const Publicado = styled.p`

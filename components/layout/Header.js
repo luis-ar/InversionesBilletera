@@ -244,7 +244,7 @@ const Header = () => {
                     </Boton>
                   </Link>
 
-                  <div className="contenedorImagen">
+                  <a className="contenedorImagen" href="/perfilUsuario">
                     <img
                       src={
                         usuario.photoURL != null && usuario.photoURL
@@ -252,7 +252,7 @@ const Header = () => {
                           : "/static/img/imagenPerfil.png"
                       }
                     />
-                  </div>
+                  </a>
                 </>
               ) : (
                 <>

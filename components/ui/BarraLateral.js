@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import React, { act, useContext, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { FirebaseContext } from "@/firebase";
+import { useRouter } from "next/router";
 const Barra = styled.div`
   background-color: black;
   z-index: 100;
@@ -56,18 +57,30 @@ const Logo = styled.div`
 const ContenedorEnlaces = styled.div`
   color: white;
   font-size: 20px;
-  padding-left: 30px;
   .bx {
     font-size: 30px;
     margin-right: 5px;
   }
   div {
     display: flex;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+    padding: 10px 30px;
+
+    :hover {
+      cursor: pointer;
+      background-color: var(--botones);
+    }
   }
 `;
 const BarraLateral = () => {
+  const [active, setActive] = useState("/");
   const { firebase, usuario } = useContext(FirebaseContext);
+  const router = useRouter();
+  const path = router.pathname;
+  useEffect(() => {
+    setActive(path);
+    console.log(path);
+  }, [path]);
 
   return (
     <Barra>
@@ -87,9 +100,14 @@ const BarraLateral = () => {
           href="/"
           onClick={() => {
             localStorage.clear();
+            setActive("/");
           }}
         >
-          <div>
+          <div
+            style={{
+              backgroundColor: `${active == "/" ? "var(--botones)" : ""}`,
+            }}
+          >
             <i class="bx bx-home"></i>
             <span>Inicio</span>
           </div>
@@ -99,9 +117,14 @@ const BarraLateral = () => {
           href="/populares"
           onClick={() => {
             localStorage.clear();
+            setActive("/populares");
           }}
         >
-          <div>
+          <div
+            style={{
+              backgroundColor: `${active == "/populares" && "var(--botones)"}`,
+            }}
+          >
             <i class="bx bx-star"></i> <span>Populares</span>
           </div>
         </Link>
@@ -112,9 +135,16 @@ const BarraLateral = () => {
               href="/nuevoProducto"
               onClick={() => {
                 localStorage.clear();
+                setActive("/nuevoProducto");
               }}
             >
-              <div>
+              <div
+                style={{
+                  backgroundColor: `${
+                    active == "/nuevoProducto" && "var(--botones)"
+                  }`,
+                }}
+              >
                 <i class="bx bx-folder-plus"></i> <span>Nuevo Producto</span>
               </div>
             </Link>
@@ -122,9 +152,16 @@ const BarraLateral = () => {
               href="/misInversiones"
               onClick={() => {
                 localStorage.clear();
+                setActive("/misInversiones");
               }}
             >
-              <div>
+              <div
+                style={{
+                  backgroundColor: `${
+                    active == "/misInversiones" && "var(--botones)"
+                  }`,
+                }}
+              >
                 <i class="bx bx-objects-vertical-bottom"></i>
                 <span>Mis Inversiones</span>
               </div>
@@ -133,9 +170,16 @@ const BarraLateral = () => {
               href="/billetera"
               onClick={() => {
                 localStorage.clear();
+                setActive("/billetera");
               }}
             >
-              <div>
+              <div
+                style={{
+                  backgroundColor: `${
+                    active == "/billetera" && "var(--botones)"
+                  }`,
+                }}
+              >
                 <i class="bx bx-checkbox-minus"></i> <span>Billetera</span>
               </div>
             </Link>

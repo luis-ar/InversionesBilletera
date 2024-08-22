@@ -2,8 +2,6 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 async function obtenerPhone(uid) {
   const db = getFirestore();
   const usuarioDocRef = doc(db, "usuarios", uid);
-  console.log(usuarioDocRef);
-
   try {
     const snapshot = await getDoc(usuarioDocRef);
 
