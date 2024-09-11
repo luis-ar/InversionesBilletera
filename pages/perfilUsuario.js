@@ -1,10 +1,10 @@
 import Layout from "@/components/layout/Layout";
-import { Campo, InputSubmit } from "@/components/ui/Formulario";
+import { Campo, InputSubmitDatos } from "@/components/ui/Formulario";
 import { FirebaseContext } from "@/firebase";
 import { signInUser } from "@/Validacion/autenticarContraseña";
 import obtenerPhone from "@/Validacion/obtenerPhone";
 import styled from "@emotion/styled";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import Mensaje from "@/components/ui/Mensaje";
 import {
@@ -18,24 +18,33 @@ import {
 } from "firebase/auth";
 import Router from "next/router";
 import actualizarPhone from "@/Validacion/actualizarPhone";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import obtenerFechaActualizacion from "@/Validacion/obtenerFechaActualizacion";
+import { MdOutlineAttachEmail, MdOutlinePhoneAndroid } from "react-icons/md";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const ContenedorInversiones = styled.div`
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
   h1 {
     text-align: center;
     text-transform: uppercase;
     font-size: 3.5rem;
     margin-top: 20px;
+    @media (max-width: 1000px) {
+      font-size: 2rem;
+    }
   }
   @media (min-width: 1000px) {
     margin-left: 300px;
   }
   .campos {
     width: 50%;
+    @media (max-width: 1000px) {
+      width: 60%;
+    }
+    @media (max-width: 650px) {
+      width: 98%;
+    }
   }
 `;
 
@@ -139,11 +148,38 @@ const perfilUsuario = () => {
   const [mensaje, setMensaje] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [disabled, setDisabled] = useState(false);
   const [datosUser, setDatosUser] = useState({
     nombre: "",
     email: "",
     telefono: "",
   });
+
+  const comprobarDisable = useCallback(async () => {
+    const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
+    if (usuario) {
+      const fechaActualizacion = await obtenerFechaActualizacion(usuario.uid);
+
+      if (!fechaActualizacion) {
+        setDisabled(false);
+        return;
+      }
+
+      const fechaActual = Date.now();
+
+      const diasDesdeActualizacion =
+        (fechaActual - fechaActualizacion) / MILLISECONDS_IN_A_DAY;
+      if (diasDesdeActualizacion < 10) {
+        setDisabled(true);
+        return;
+      } else {
+        setDisabled(false);
+        return;
+      }
+    }
+    return false;
+  }, [usuario]);
+
   useEffect(() => {
     const obtenerDatos = async () => {
       if (usuario) {
@@ -154,6 +190,7 @@ const perfilUsuario = () => {
           email: usuario.email,
           telefono: numberPhone,
         });
+        await comprobarDisable();
       }
     };
     obtenerDatos();
@@ -180,6 +217,16 @@ const perfilUsuario = () => {
     } else if (name === "newPassword") {
       setNewPassword(value);
     }
+  };
+
+  const agregarFecha = async () => {
+    const db = getFirestore();
+    const usuarioDocRef = doc(db, "usuarios", usuario.uid);
+    const fechaActual = Date.now();
+    await updateDoc(usuarioDocRef, {
+      fechaActualizacion: fechaActual,
+    });
+    console.log("fecha actualizada");
   };
   const handleSumit = async (e) => {
     e.preventDefault();
@@ -227,6 +274,8 @@ const perfilUsuario = () => {
     } else {
       await firebase.login(datosUser.email, password);
     }
+    //agregar campo de fecha de actualizacion
+    await agregarFecha();
     setPaseModalDatos(false);
     Router.push("/perfilUsuario");
   };
@@ -355,48 +404,108 @@ const perfilUsuario = () => {
         <Layout>
           <ContenedorInversiones>
             <h1>Perfil de Usuario</h1>
-            <div className="campos">
-              <Campo>
-                <label htmlFor="nombre">Nombre</label>
-                <input
-                  type="text"
-                  id="nombre"
-                  name="nombre"
-                  placeholder="Tu Nombre"
-                  value={datosUser.nombre}
-                  readOnly
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 50px;
+                @media (max-width: 1000px) {
+                  flex-direction: column;
+                }
+              `}
+            >
+              <div className="imagenPerfil">
+                <img
+                  src={
+                    usuario?.photoURL != null && usuario.photoURL
+                      ? usuario.photoURL
+                      : "/static/img/imagenPerfil.png"
+                  }
+                  css={css`
+                    width: 250px;
+                    height: 250px;
+                    border-radius: 100%;
+                    @media (max-width: 620px) {
+                      width: 150px;
+                      height: 150px;
+                    }
+                  `}
                 />
-              </Campo>
-              <Campo>
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Tu Email"
-                  value={datosUser.email}
-                  readOnly
-                />
-              </Campo>
+              </div>
+              <div
+                className="campos"
+                css={css`
+                  @media (max-width: 1000px) {
+                    margin-bottom: 50px;
+                  }
+                `}
+              >
+                <Campo>
+                  <FaRegUserCircle
+                    css={css`
+                      font-size: 25px;
+                      margin-right: 10px;
+                    `}
+                  />
+                  <label htmlFor="nombre">Nombre</label>
+                  <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Tu Nombre"
+                    value={datosUser.nombre}
+                    readOnly
+                  />
+                </Campo>
+                <Campo>
+                  <MdOutlineAttachEmail
+                    css={css`
+                      font-size: 25px;
+                      margin-right: 10px;
+                    `}
+                  />
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Tu Email"
+                    value={datosUser.email}
+                    readOnly
+                  />
+                </Campo>
 
-              <Campo>
-                <label htmlFor="telefono">Telefono</label>
-                <input
-                  type="telefono"
-                  id="telefono"
-                  name="telefono"
-                  placeholder="Tu telefono"
-                  value={datosUser.telefono}
-                  readOnly
+                <Campo>
+                  <MdOutlinePhoneAndroid
+                    css={css`
+                      font-size: 25px;
+                      margin-right: 10px;
+                    `}
+                  />
+                  <label htmlFor="telefono">Telefono</label>
+                  <input
+                    type="telefono"
+                    id="telefono"
+                    name="telefono"
+                    placeholder="Tu telefono"
+                    value={datosUser.telefono}
+                    readOnly
+                  />
+                </Campo>
+                <InputSubmitDatos
+                  type="submit"
+                  value="Actualizar Campos"
+                  disabled={disabled}
+                  onClick={() => {
+                    setPaseModalDatos(true);
+                  }}
+                  css={css`
+                    cursor: ${disabled ? "no-drop" : "pointer"};
+                    background-color: ${disabled ? "#a5b4fc" : "#4f46e5"};
+                  `}
                 />
-              </Campo>
-              <InputSubmit
-                type="submit"
-                value="Actualizar Campos"
-                onClick={() => {
-                  setPaseModalDatos(true);
-                }}
-              />
+              </div>
             </div>
           </ContenedorInversiones>
         </Layout>
