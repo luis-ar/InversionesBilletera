@@ -5,18 +5,24 @@ import {
   ErrorMostrar,
 } from "../components/ui/Formulario";
 import Layout from "../components/layout/Layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import firebase from "../firebase";
 import Router from "next/router";
 //Validaciones
 import useValidacion from "../Hooks/useValidacion";
 import validarCrearCuenta from "../Validacion/validarCrearCuenta";
+import departamentos from "../data/departamentos.json";
+import provincias from "../data/provincias.json";
+import distritos from "../data/distritos.json";
 const STATE_INICIAL = {
   nombre: "",
   email: "",
   password: "",
   telefono: "",
+  department: "",
+  province: "",
+  district: "",
 };
 
 const crearCuenta = () => {
@@ -24,7 +30,16 @@ const crearCuenta = () => {
   const [imagen, setImagen] = useState("");
   const crearCuenta = async () => {
     try {
-      await firebase.registrar(nombre, email, password, imagen, telefono);
+      await firebase.registrar(
+        nombre,
+        email,
+        password,
+        imagen,
+        telefono,
+        department,
+        province,
+        district
+      );
       Router.push("/");
     } catch (error) {
       console.error("hubo un error al crear el usuario", error.message);
@@ -34,7 +49,72 @@ const crearCuenta = () => {
   const { valores, errores, handleSumit, handleChange, handleBlur } =
     useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
   //OnBlur -> cuando salgo del input lo valida sin la necesidad de presion el boton de crear cuenta
-  const { nombre, email, password, telefono } = valores;
+  const { nombre, email, password, telefono, department, province, district } =
+    valores;
+  const [distritosPeru, setDistritos] = useState([]);
+  const [provinciasPeru, setProvincias] = useState([]);
+  //resultados de la api
+  const [departamento, setDepartamento] = useState({});
+  const [provincia, setProvincia] = useState({});
+  const [distrito, setDistrito] = useState("");
+  const obtenerProvincias = async (idDepartamento) => {
+    const provinciasFiltradas = await provincias.filter(
+      (provincia) => provincia.department_id === idDepartamento
+    );
+    setProvincias(provinciasFiltradas);
+  };
+  const obtenerDistritos = async (idProvincia) => {
+    const distritosFiltrados = await distritos.filter(
+      (distrito) => distrito.province_id === idProvincia
+    );
+    setDistritos(distritosFiltrados);
+  };
+  useEffect(() => {
+    if (departamento.id) {
+      obtenerProvincias(departamento.id);
+    }
+  }, [departamento]);
+
+  const handleChangeDepartamento = (e) => {
+    const selectedValue = e.target.value;
+    if (selectedValue === "") {
+      setDepartamento({});
+      return;
+    }
+    const selectedDepartamento = departamentos.find(
+      (dep) => dep.name === selectedValue
+    );
+    setDepartamento({
+      name: selectedValue,
+      id: selectedDepartamento.id,
+    });
+  };
+  const handleChangeProvincia = (e) => {
+    const selectedValue = e.target.value;
+    if (selectedValue === "") {
+      setProvincia({});
+      return;
+    }
+    const selectedProvincia = provinciasPeru.find(
+      (provincia) => provincia.name === selectedValue
+    );
+
+    setProvincia({
+      name: selectedValue,
+      id: selectedProvincia.id,
+    });
+    obtenerDistritos(selectedProvincia.id);
+  };
+
+  const handleChangeDistrito = (e) => {
+    const selectedValue = e.target.value;
+    if (selectedValue === "") {
+      setDistrito("");
+      return;
+    }
+    setDistrito(selectedValue);
+  };
+
   return (
     <div>
       <Layout>
@@ -112,6 +192,80 @@ const crearCuenta = () => {
                 maxLength={9}
               />
             </Campo>
+            {errores.departamento && (
+              <ErrorMostrar>{errores.departamento}</ErrorMostrar>
+            )}
+            <Campo>
+              <label htmlFor="departamento">Departamento</label>
+
+              <select
+                value={department}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onClick={handleChangeDepartamento}
+                name="department"
+              >
+                <option value="">-- Seleccione --</option>
+                {departamentos.map((departamento) => (
+                  <option key={departamento.id} value={departamento.name}>
+                    {departamento.name}
+                  </option>
+                ))}
+              </select>
+            </Campo>
+
+            {departamento.id && (
+              <>
+                {errores.provincia && (
+                  <ErrorMostrar>{errores.provincia}</ErrorMostrar>
+                )}
+                <Campo>
+                  <label htmlFor="provincia">Provicia</label>
+
+                  <select
+                    value={province}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onClick={handleChangeProvincia}
+                    name="province"
+                  >
+                    <option value="">-- Seleccione --</option>
+                    {provinciasPeru.map((provincia) => (
+                      <option key={provincia.id} value={provincia.name}>
+                        {provincia.name}
+                      </option>
+                    ))}
+                  </select>
+                </Campo>
+              </>
+            )}
+
+            {provincia.id && (
+              <>
+                {errores.distrito && (
+                  <ErrorMostrar>{errores.distrito}</ErrorMostrar>
+                )}
+                <Campo>
+                  <label htmlFor="distrito">Distrito</label>
+
+                  <select
+                    value={district}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onClick={handleChangeDistrito}
+                    name="district"
+                  >
+                    <option value="">-- Seleccione --</option>
+                    {distritosPeru.map((distrito) => (
+                      <option key={distrito.id} value={distrito.name}>
+                        {distrito.name}
+                      </option>
+                    ))}
+                  </select>
+                </Campo>
+              </>
+            )}
+
             {errores.imagen && <ErrorMostrar>{errores.imagen}</ErrorMostrar>}
             <Campo>
               <label htmlFor="imagen">Imagen</label>

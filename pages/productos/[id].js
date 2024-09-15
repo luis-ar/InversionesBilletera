@@ -37,6 +37,10 @@ import restarSaldoCreador from "@/Validacion/restarSaldoCreador";
 import SpinnerPrincipal from "@/components/ui/SpinnerPrincipal";
 import enviarGanancia from "@/Validacion/enviarGanancia";
 import SliderProducto from "@/components/ui/SliderProducto";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { ImLink } from "react-icons/im";
+
+import obtenerPhone from "@/Validacion/obtenerPhone";
 const ContenedorProducto = styled.div`
   display: grid;
   gap: 60px;
@@ -276,8 +280,6 @@ const GeneralDescripcion = styled.div`
     gap: 5px;
 
     button {
-      background-color: var(--botones);
-      cursor: pointer;
       padding: 10px 20px;
       font-size: 20px;
       color: white;
@@ -285,14 +287,6 @@ const GeneralDescripcion = styled.div`
       text-align: center;
       text-transform: uppercase;
       font-family: "PT Sans", sans-serif;
-
-      /* 
-      :last-child {
-        margin-left: 10px;
-      }
-      :nth-child(2) {
-        margin-left: 10px;
-      } */
     }
 
     @media (max-width: 1300px) {
@@ -324,9 +318,6 @@ const Comentarios = styled.div`
     border: none;
     font-family: "PT Sans", sans-serif;
     font-weight: 700;
-    &:hover {
-      cursor: pointer;
-    }
 
     @media (max-width: 1200px) {
       width: 100%;
@@ -420,6 +411,7 @@ const Producto = () => {
   } = router;
   //context de firebase
   const { firebase, usuario } = useContext(FirebaseContext);
+  const [phone, setPhone] = useState();
 
   const {
     comentarios,
@@ -454,6 +446,12 @@ const Producto = () => {
       router.push("/");
     } catch (error) {
       console.log("error");
+    }
+  };
+  const recuperarPhone = async () => {
+    if (creador) {
+      const phoneUsuario = await obtenerPhone(creador.id);
+      setPhone(phoneUsuario);
     }
   };
   const actualizarInversorPorId = async () => {
@@ -508,6 +506,7 @@ const Producto = () => {
         );
         const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
         await sumarSaldo(usuario.uid, aumento);
+        await restarSaldo(creador.id, creador.id, aumento);
         // if (usuario.uid !== creador.id) {
         //   await restarSaldoCreador(creador.id, aumento);
         // }
@@ -569,6 +568,7 @@ const Producto = () => {
         }
       };
       obtenerProducto();
+      recuperarPhone();
     }
   }, [id, producto]);
 
@@ -682,6 +682,7 @@ const Producto = () => {
     if (!usuario) {
       return router.push("/login");
     }
+    if (inputComentario.trim() === "") return;
 
     //informacion extra al comentario
     comentario.usuarioId = usuario.uid;
@@ -792,6 +793,7 @@ const Producto = () => {
         const valorViejo =
           (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
         await sumarSaldo(usuario.uid, valorViejo);
+        await restarSaldo(creador.id, creador.id, valorViejo);
         // await restarSaldoCreador(creador.id, valorViejo);
         const nuevaResta = (inputCuboInversor * precio) / 100;
         const mensajeRespuesta = await restarSaldo(
@@ -812,6 +814,7 @@ const Producto = () => {
             if (inversores != undefined) {
               inversores[indice] = { ...inversores[indice], ...nuevosCampos };
               const nuevos = [...inversores];
+              await sumarSaldo(creador.id, nuevaResta);
 
               // Actualiza el documento con el array actualizado
               await updateDoc(docRef, { inversores });
@@ -836,6 +839,8 @@ const Producto = () => {
           }, 2000);
           return;
         } else {
+          await sumarSaldo(creador.id, resta);
+
           guardarModal(false);
 
           inver.usuarioId = usuario.uid;
@@ -891,6 +896,10 @@ const Producto = () => {
   };
   const hadleRepartirGanancia = async (e) => {
     e.preventDefault();
+    if (inputGanancia == "") {
+      setMensaje("Ingrese un monto");
+      return;
+    }
     try {
       const docRef = doc(firebase.db, "productos", `${id}`);
 
@@ -912,14 +921,19 @@ const Producto = () => {
           monto: inputGanancia,
         });
         guardarConsultarDB(true);
+        const montoRestar = (parseInt(precio) * totalCubos) / 100;
+        await restarSaldo(usuario.uid, creador.id, montoRestar);
+        await enviarGanancia(inversores, inputGanancia, precio);
+        guardarPaseModalGanancia(false);
+        //actulizar el state
+        guardarProducto({
+          ...producto,
+          estado: false,
+        });
       } else {
         console.log("El documento no existe");
       }
     } catch (error) {}
-    const montoRestar = (parseInt(precio) * totalCubos) / 100;
-    await restarSaldo(usuario.uid, creador.id, montoRestar);
-    await enviarGanancia(inversores, inputGanancia);
-    guardarPaseModalGanancia(false);
   };
   const recuperarCubos = () => {
     let resultado;
@@ -995,6 +1009,7 @@ const Producto = () => {
       }
     } catch (error) {}
   };
+  recuperarPhone();
   return (
     <Layout>
       <>
@@ -1202,17 +1217,20 @@ const Producto = () => {
                   {nombre}
                 </div>
                 <div className="iconoProducto">
-                  <div className="ubicacion">
+                  <div className="ubicacion" onClick={scrollToSection}>
                     <i class="bx bx-map"></i>
                   </div>
-                  <div className="whatsapp">
-                    <i class="bx bxl-whatsapp"></i>
-                  </div>
+
+                  <a href={`https://wa.me/${phone}`} target="_blank">
+                    <div className="whatsapp">
+                      <i class="bx bxl-whatsapp"></i>
+                    </div>
+                  </a>
                 </div>
               </div>
               <div>
                 <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
-                {esCreador(usuario?.uid) && (
+                {estado && esCreador(usuario?.uid) && (
                   <button
                     css={css`
                       background-color: var(--botones);
@@ -1250,7 +1268,12 @@ const Producto = () => {
                     <p>{comentarios.length}</p>
                   </div>
                   <div className="corazon">
-                    <i className="bx bx-heart"></i>
+                    {haVotado.includes(usuario?.uid) ? (
+                      <FaHeart className="bx" />
+                    ) : (
+                      <FaRegHeart className="bx" onClick={votarProducto} />
+                    )}
+
                     <p>{votos}</p>
                   </div>
                   <div className="corazon">
@@ -1298,23 +1321,65 @@ const Producto = () => {
                 {formatDistanceToNow(new Date(creado), { locale: es })}
               </p>
               <div className="botones">
-                <button onClick={scrollToSection}>Plano</button>
+                {/*
+                <button
+                  onClick={scrollToSection}
+                  css={css`
+                    background-color: var(--botones);
+                    cursor: pointer;
+                  `}
+                >
+                  Plano
+                </button>
+                */}
 
                 {usuario && (
                   <>
                     {pase == false && estado && (
-                      <button onClick={handleNuevaInversion}>Invertir</button>
+                      <button
+                        onClick={handleNuevaInversion}
+                        css={css`
+                          background-color: ${totalCubos >= 100
+                            ? "#ad86eb"
+                            : "#9858ff"};
+
+                          cursor: ${totalCubos >= 100
+                            ? "not-allowed"
+                            : "pointer"};
+                        `}
+                        disabled={totalCubos >= 100}
+                      >
+                        Invertir
+                      </button>
                     )}
-                    {estado &&
+
+                    {/*
+
+{estado &&
                       esCreador(usuario.uid) &&
                       totalCubos === 100 &&
                       depositoRecaudado == false && (
-                        <button onClick={handleRecaudado}>
+                        <button
+                          onClick={handleRecaudado}
+                          css={css`
+                            background-color: var(--botones);
+                            cursor: pointer;
+                          `}
+                        >
                           Depositar lo Recaudado
                         </button>
                       )}
+
+                      */}
+
                     {estado && esCreador(usuario.uid) && totalCubos === 100 && (
-                      <button onClick={handleGanancia}>
+                      <button
+                        onClick={handleGanancia}
+                        css={css`
+                          background-color: var(--botones);
+                          cursor: pointer;
+                        `}
+                      >
                         Finalizar Proyecto
                       </button>
                     )}
@@ -1338,7 +1403,15 @@ const Producto = () => {
                         />
                       </Campo>
                       <div className="enviarComentario">
-                        <input type="submit" value="Agregar Comentario" />
+                        <input
+                          type="submit"
+                          value="Agregar Comentario"
+                          css={css`
+                            cursor: ${inputComentario.trim() === ""
+                              ? "not-allowed"
+                              : "pointer"};
+                          `}
+                        />
                       </div>
                     </form>
                   </Comentarios>
@@ -1426,6 +1499,7 @@ const Producto = () => {
                 </ListaComentarios>
               </div>
               <aside>
+                {/*
                 <RutaWeb>
                   <a
                     target="_blank"
@@ -1451,10 +1525,8 @@ const Producto = () => {
                     )}
                   </div>
                 </RutaWeb>
-                {/* <Mapa>
-                  <MapPage cordenadas={cordenadas} />
-                </Mapa> */}
-                {/* {categoria === "habilitacionUrbana" && <MapaAnimada />} */}
+
+                */}
 
                 <div
                   className="grupoInversores"
@@ -1731,7 +1803,7 @@ const Producto = () => {
                                         }
                                       `}
                                     >
-                                      Tu inversion
+                                      Tu inversión
                                     </div>
                                   )}
                                   <div className="contenedorPerfil">

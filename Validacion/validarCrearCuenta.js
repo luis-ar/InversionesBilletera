@@ -28,6 +28,21 @@ const validarCrearCuenta = (valores) => {
     errores.telefono =
       "Número de celular no válido. Debe empezar con 9 / Tener 9 dígitos";
   }
+
+  //validar el departamento
+  if (!valores.department) {
+    errores.departamento = "El departamento es obligatorio";
+  }
+
+  //validar el provincia
+  if (!valores.province) {
+    errores.provincia = "El provincia es obligatorio";
+  }
+
+  //validar el distrito
+  if (!valores.district) {
+    errores.distrito = "El distrito es obligatorio";
+  }
   return errores;
 };
 

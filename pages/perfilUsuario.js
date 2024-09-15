@@ -22,6 +22,12 @@ import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import obtenerFechaActualizacion from "@/Validacion/obtenerFechaActualizacion";
 import { MdOutlineAttachEmail, MdOutlinePhoneAndroid } from "react-icons/md";
 import { FaRegUserCircle } from "react-icons/fa";
+import { IoLocationSharp } from "react-icons/io5";
+import { AiFillLike } from "react-icons/ai";
+import { RiRadioButtonLine } from "react-icons/ri";
+import { FaHouseChimney } from "react-icons/fa6";
+import obtenerDatosExtras from "@/Validacion/obtenerDatosExtras";
+import useProductos from "@/Hooks/useProductos";
 
 const ContenedorInversiones = styled.div`
   color: white;
@@ -139,6 +145,58 @@ const Contenedor = styled.div`
     opacity: 0;
   }
 `;
+
+const ContenerdorImagen = styled.div`
+  background-color: #1a1c21;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 50px 80px;
+  border: 1px solid #898989;
+  width: max-content;
+  border-radius: 20px;
+
+  .datosExtras {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 20px;
+
+      p {
+        font-weight: bold;
+      }
+    }
+    .online {
+      color: #00ff42;
+    }
+  }
+  @media (max-width: 1000px) {
+    padding: 15px 20px;
+  }
+`;
+
+const ContenedorDatos = styled.div`
+  background-color: #1a1c21;
+  padding: 50px 80px;
+  border: 1px solid #898989;
+  width: max-content;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  gap: 40px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 1000px) {
+    padding: 15px 20px;
+  }
+`;
+
 const perfilUsuario = () => {
   const auth = getAuth();
   const user = auth.currentUser;
@@ -149,12 +207,16 @@ const perfilUsuario = () => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const { productos } = useProductos("creado");
   const [datosUser, setDatosUser] = useState({
     nombre: "",
     email: "",
     telefono: "",
+    departamento: "",
+    provincia: "",
+    distrito: "",
+    like: 0,
   });
-
   const comprobarDisable = useCallback(async () => {
     const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
     if (usuario) {
@@ -183,12 +245,26 @@ const perfilUsuario = () => {
   useEffect(() => {
     const obtenerDatos = async () => {
       if (usuario) {
-        const numberPhone = await obtenerPhone(usuario.uid);
+        const {
+          departamento,
+          provincia,
+          distrito,
+          like,
+          ganancia,
+          inversionesCompletadas,
+          phone,
+        } = await obtenerDatosExtras(usuario.uid);
 
         setDatosUser({
           nombre: usuario.displayName,
           email: usuario.email,
-          telefono: numberPhone,
+          telefono: phone,
+          departamento,
+          provincia,
+          distrito,
+          like,
+          ganancia,
+          inversionesCompletadas,
         });
         await comprobarDisable();
       }
@@ -226,7 +302,6 @@ const perfilUsuario = () => {
     await updateDoc(usuarioDocRef, {
       fechaActualizacion: fechaActual,
     });
-    console.log("fecha actualizada");
   };
   const handleSumit = async (e) => {
     e.preventDefault();
@@ -296,6 +371,18 @@ const perfilUsuario = () => {
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
+  };
+
+  const misInversiones = productos.filter((producto) => {
+    return producto.inversores.some(
+      (inversor) => inversor.usuarioId === usuario?.uid
+    );
+  });
+  const formatearPresupuesto = (cantidad) => {
+    return cantidad.toLocaleString("es-PE", {
+      style: "currency",
+      currency: "PEN",
+    });
   };
   return (
     <>
@@ -403,8 +490,172 @@ const perfilUsuario = () => {
       <div>
         <Layout>
           <ContenedorInversiones>
-            <h1>Perfil de Usuario</h1>
             <div
+              className="contentPrincipal"
+              css={css`
+                display: flex;
+                gap: 30px;
+                background-color: var(--colorBarraSuperior);
+                border: 1px solid #898989;
+                margin: 15px;
+                border-radius: 20px;
+                justify-content: center;
+                padding: 50px 10px;
+                @media (max-width: 1000px) {
+                  flex-direction: column;
+                  align-items: center;
+                }
+              `}
+            >
+              <ContenerdorImagen
+                className="contentImagen"
+                css={css`
+                  display: flex;
+                  align-items: center;
+                `}
+              >
+                <img
+                  src={
+                    usuario?.photoURL != null && usuario.photoURL
+                      ? usuario.photoURL
+                      : "/static/img/imagenPerfil.png"
+                  }
+                  css={css`
+                    width: 250px;
+                    height: 250px;
+                    border-radius: 100%;
+
+                    @media (max-width: 620px) {
+                      width: 150px;
+                      height: 150px;
+                    }
+                  `}
+                  alt="Perfil de usuario"
+                />
+                <div className="datosExtras">
+                  <div>
+                    <RiRadioButtonLine className="online" />
+                    <p
+                      css={css`
+                        color: #00ff42;
+                      `}
+                    >
+                      En linea
+                    </p>
+                  </div>
+                  <div>
+                    <IoLocationSharp className="ubicacion" />
+                    <p>
+                      {datosUser.departamento}, {datosUser.provincia}, Perú
+                    </p>
+                  </div>
+                  <div>
+                    <AiFillLike className="votos" />
+                    <p>{datosUser.like} votos</p>
+                  </div>
+                  <div>
+                    <FaHouseChimney />
+                    <p>{datosUser.distrito}</p>
+                  </div>
+                </div>
+              </ContenerdorImagen>
+
+              <ContenedorDatos className="contentDatos">
+                <div
+                  css={css`
+                    display: flex;
+                    gap: 40px;
+                    align-items: center;
+                    justify-content: space-around;
+                    @media (max-width: 1000px) {
+                      flex-direction: column;
+                    }
+                  `}
+                >
+                  <div
+                    css={css`
+                      background-color: var(--colorBuscar);
+                      padding: 20px 40px;
+                      text-align: center;
+                      border-radius: 20px;
+                    `}
+                  >
+                    <p
+                      css={css`
+                        color: #e40e83;
+                      `}
+                    >
+                      {datosUser.email}
+                    </p>
+                    <p>{datosUser.nombre}</p>
+                  </div>
+                  <button
+                    disabled={disabled}
+                    onClick={() => {
+                      setPaseModalDatos(true);
+                    }}
+                    css={css`
+                      background-color: var(--botones);
+                      color: white;
+                      padding: 15px 20px;
+                      border-radius: 10px;
+                      text-align: center;
+                      text-transform: uppercase;
+                      cursor: pointer;
+                      height: max-content;
+                      font-size: 20px;
+                      font-weight: bold;
+                      cursor: ${disabled ? "no-drop" : "pointer"};
+                      background-color: ${disabled
+                        ? "#a071eb"
+                        : "var(--botones)"};
+                    `}
+                  >
+                    Editar Perfil
+                  </button>
+                </div>
+                <div
+                  css={css`
+                    display: flex;
+                    gap: 20px;
+                    div {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                    }
+                    span {
+                      font-size: 45px;
+                    }
+                    p {
+                      text-align: center;
+                    }
+                    @media (max-width: 1000px) {
+                      flex-direction: column;
+                    }
+                  `}
+                >
+                  <div>
+                    <span>{misInversiones.length}</span>
+                    <p>Inversiones Actuales</p>
+                  </div>
+                  <div>
+                    <span>{datosUser.inversionesCompletadas || 0}</span>
+                    <p>Inversiones Completadas</p>
+                  </div>
+                  <div>
+                    <span>
+                      {formatearPresupuesto(
+                        parseFloat(datosUser?.ganancia || 0)
+                      )}
+                    </span>
+                    <p>Ganancia Total</p>
+                  </div>
+                </div>
+              </ContenedorDatos>
+            </div>
+
+            {/*
+<div
               css={css`
                 display: flex;
                 align-items: center;
@@ -507,6 +758,8 @@ const perfilUsuario = () => {
                 />
               </div>
             </div>
+
+              */}
           </ContenedorInversiones>
         </Layout>
       </div>

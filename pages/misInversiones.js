@@ -20,7 +20,6 @@ const ContenedorInversiones = styled.div`
 const misInversiones = () => {
   const { productos } = useProductos("creado");
   const { firebase, usuario } = useContext(FirebaseContext);
-  console.log(usuario);
 
   const datosFiltrados = productos.filter(
     (item) => item.categoria !== "habilitacionUrbana"

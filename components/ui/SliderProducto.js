@@ -40,7 +40,7 @@ const SliderProducto = ({ images }) => {
             rewind: true,
             gap: "1rem",
             autoplay: true,
-            interval: "1000",
+            interval: "2000",
           }}
         >
           {images.map((imagen, i) => (

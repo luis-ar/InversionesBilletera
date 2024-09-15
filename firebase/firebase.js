@@ -24,7 +24,16 @@ class Firebase {
     this.storage = getStorage(app);
   }
   //registra usuario
-  async registrar(nombre, email, password, imagen, telefono) {
+  async registrar(
+    nombre,
+    email,
+    password,
+    imagen,
+    telefono,
+    department,
+    province,
+    district
+  ) {
     const nuevoUsuario = await createUserWithEmailAndPassword(
       this.auth,
       email,
@@ -53,7 +62,17 @@ class Firebase {
     const usuarioDocRef = doc(db, "usuarios", nuevoUsuario.user.uid);
     await setDoc(usuarioDocRef, {
       saldo: 0,
+      like: 0,
       phone: telefono,
+      departamento: department,
+      provincia: province,
+      distrito: district,
+      ganancia: 0,
+      inversionesCompletadas: 0,
+      nombre: nombre,
+      email: email,
+      photoURL: imagenPerfilURL,
+      votantes: [],
     });
 
     return nuevoUsuario.user;

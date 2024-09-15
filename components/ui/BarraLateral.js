@@ -3,6 +3,8 @@ import styled from "@emotion/styled";
 import Link from "next/link";
 import { FirebaseContext } from "@/firebase";
 import { useRouter } from "next/router";
+import { PiUsersFour } from "react-icons/pi";
+
 const Barra = styled.div`
   background-color: black;
   z-index: 100;
@@ -79,7 +81,6 @@ const BarraLateral = () => {
   const path = router.pathname;
   useEffect(() => {
     setActive(path);
-    console.log(path);
   }, [path]);
 
   return (
@@ -185,6 +186,23 @@ const BarraLateral = () => {
             </Link>
           </>
         )}
+        <Link
+          href="/perfilesUsers"
+          onClick={() => {
+            localStorage.clear();
+            setActive("/perfilesUsers");
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: `${
+                active == "/perfilesUsers" && "var(--botones)"
+              }`,
+            }}
+          >
+            <PiUsersFour className="bx" /> <span>Perfiles</span>
+          </div>
+        </Link>
       </ContenedorEnlaces>
     </Barra>
   );
