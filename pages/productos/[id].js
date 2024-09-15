@@ -1444,6 +1444,7 @@ const Producto = () => {
                             margin-bottom: 2rem;
                             border-radius: 10px;
                             position: relative;
+                            background-color: var(--colorBarraSuperior);
                           `}
                         >
                           {esCreador(comentario.usuarioId) && (
@@ -1625,7 +1626,9 @@ const Producto = () => {
                                         padding: 2rem;
                                         width: 100%;
                                         margin-bottom: 20px;
-                                        background-color: var(--grisBotones);
+                                        background-color: var(
+                                          --colorBarraSuperior
+                                        );
                                         @media (max-width: 500px) {
                                           font-size: 10px;
                                           padding: 0.6rem;
@@ -1736,7 +1739,11 @@ const Producto = () => {
                                           `}
                                         >
                                           <div>
-                                            <div>
+                                            <div
+                                              css={css`
+                                                background-color: #080809 !important;
+                                              `}
+                                            >
                                               <i class="bx bx-cube"></i>
                                               <span
                                                 css={css`
@@ -1751,11 +1758,16 @@ const Producto = () => {
                                             </div>
                                           </div>
                                           <div>
-                                            <div>
+                                            <div
+                                              css={css`
+                                                background-color: #080809 !important;
+                                              `}
+                                            >
                                               <i class="bx bx-money-withdraw"></i>
                                               <span
                                                 css={css`
                                                   font-weight: bold;
+                                                  background-color: yellow;
                                                   @media (max-width: 550px) {
                                                     font-size: 10px;
                                                   }
@@ -1784,6 +1796,7 @@ const Producto = () => {
                                     width: 100%;
                                     margin-bottom: 20px;
                                     position: relative;
+                                    background-color: var(--colorBarraSuperior);
                                   `}
                                 >
                                   {esCreadorInversor(inversor.usuarioId) && (
@@ -1892,7 +1905,11 @@ const Producto = () => {
                                       `}
                                     >
                                       <div>
-                                        <div>
+                                        <div
+                                          css={css`
+                                            background-color: #080809 !important;
+                                          `}
+                                        >
                                           <i class="bx bx-cube"></i>
                                           <span
                                             css={css`
@@ -1907,7 +1924,11 @@ const Producto = () => {
                                         </div>
                                       </div>
                                       <div>
-                                        <div>
+                                        <div
+                                          css={css`
+                                            background-color: #080809 !important;
+                                          `}
+                                        >
                                           <i class="bx bx-money-withdraw"></i>
                                           <span
                                             css={css`
