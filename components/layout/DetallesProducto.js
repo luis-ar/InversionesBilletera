@@ -8,6 +8,7 @@ import { FirebaseContext } from "@/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import MapPage from "../ui/MapaPrueba";
 import { css } from "@emotion/react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 const Producto = styled.li`
   padding: 1.2rem;
   border-radius: 20px;
@@ -234,8 +235,8 @@ const DetallesProducto = ({ producto }) => {
     precio,
     creador,
     cordenadas,
+    haVotado,
   } = producto;
-  console.log(cordenadas);
   const [paseModalMapa, setPaseModalMapa] = useState(false);
   const { usuario, firebase } = useContext(FirebaseContext);
   const [phone, setPhone] = useState();
@@ -313,7 +314,11 @@ const DetallesProducto = ({ producto }) => {
                 <p>{comentarios.length}</p>
               </div>
               <div className="corazon">
-                <i className="bx bx-heart"></i>
+                {haVotado.includes(usuario?.uid) ? (
+                  <FaHeart className="bx" />
+                ) : (
+                  <FaRegHeart className="bx" />
+                )}
                 <p>{votos}</p>
               </div>
               <div

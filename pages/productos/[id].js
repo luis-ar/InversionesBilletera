@@ -400,6 +400,7 @@ const Producto = () => {
   const [editarInversion, setEditarInversion] = useState(true);
   const [inverEncontrado, setInverEncontrado] = useState();
   const [depositarRecaudado, setDepositarRecaudado] = useState(false);
+  const [bloquearBoton, setBloquearBoton] = useState(false);
   //mensaje error
   const [mensaje, setMensaje] = useState("");
   //cantida de cubos
@@ -591,18 +592,17 @@ const Producto = () => {
 
   //administrar y validar votos
   const votarProducto = () => {
+    setBloquearBoton(true);
     if (!usuario) {
       return router.push("/login");
     }
-    //obtener y sumar un nuevo voto
-    const nuevoTotal = votos + 1;
-
     //verificar si el usuario actual ha votado
     if (haVotado.includes(usuario.uid)) {
       return;
     }
     //guardar el ID del usuario que ha votado
     const nuevoHaVotado = [...haVotado, usuario.uid];
+    const nuevoTotal = votos + 1;
 
     //actualizar en la bd
     const docRef = doc(firebase.db, "productos", `${id}`);
@@ -616,6 +616,9 @@ const Producto = () => {
       votos: nuevoTotal,
     });
     guardarConsultarDB(true); //hay un voto, por lo tanto consultar a la db
+    setTimeout(() => {
+      setBloquearBoton(false);
+    }, 1000);
   };
 
   //funciones para crear comentario
@@ -1271,7 +1274,21 @@ const Producto = () => {
                     {haVotado.includes(usuario?.uid) ? (
                       <FaHeart className="bx" />
                     ) : (
-                      <FaRegHeart className="bx" onClick={votarProducto} />
+                      <button
+                        css={css`
+                          border: none; /* Sin borde */
+                          background-color: transparent; /* Fondo transparente */
+                          padding: 0; /* Sin relleno */
+                          margin: 0; /* Sin márgenes */
+                          cursor: pointer; /* Opcional, cursor de mano al pasar por encima */
+                          outline: none; /* Sin contorno de foco por defecto */
+                          color: white;
+                        `}
+                        onClick={votarProducto}
+                        disabled={bloquearBoton}
+                      >
+                        <FaRegHeart className="bx" />
+                      </button>
                     )}
 
                     <p>{votos}</p>
