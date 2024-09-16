@@ -41,6 +41,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { ImLink } from "react-icons/im";
 
 import obtenerPhone from "@/Validacion/obtenerPhone";
+import restarSaldoGanancia from "@/Validacion/repartirGanancia";
 const ContenedorProducto = styled.div`
   display: grid;
   gap: 60px;
@@ -925,7 +926,7 @@ const Producto = () => {
         });
         guardarConsultarDB(true);
         const montoRestar = (parseInt(precio) * totalCubos) / 100;
-        await restarSaldo(usuario.uid, creador.id, montoRestar);
+        await restarSaldoGanancia(usuario.uid, creador.id, montoRestar);
         await enviarGanancia(inversores, inputGanancia, precio);
         guardarPaseModalGanancia(false);
         //actulizar el state
@@ -1784,7 +1785,6 @@ const Producto = () => {
                                               <span
                                                 css={css`
                                                   font-weight: bold;
-                                                  background-color: yellow;
                                                   @media (max-width: 550px) {
                                                     font-size: 10px;
                                                   }
