@@ -73,6 +73,7 @@ class Firebase {
       email: email,
       photoURL: imagenPerfilURL,
       votantes: [],
+      saldoRecaudado: [],
     });
 
     return nuevoUsuario.user;

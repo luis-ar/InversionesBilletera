@@ -13,6 +13,7 @@ const Contenedor = styled.div`
   align-items: center;
   padding: 20px;
   border-radius: 20px;
+  margin-bottom: 20px;
   @media (max-width: 500px) {
     height: 200px;
   }

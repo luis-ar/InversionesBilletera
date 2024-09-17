@@ -16,13 +16,14 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import Error404 from "../../components/layout/404";
 import Layout from "../../components/layout/Layout";
 import { css, keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { es } from "date-fns/locale";
+import { de, es } from "date-fns/locale";
 import { Campo, InputSubmit, Invertir } from "../../components/ui/Formulario";
 import Boton from "../../components/ui/Boton1";
 import Spinner from "../../components/ui/Spinner";
@@ -42,6 +43,9 @@ import { ImLink } from "react-icons/im";
 
 import obtenerPhone from "@/Validacion/obtenerPhone";
 import restarSaldoGanancia from "@/Validacion/repartirGanancia";
+import obtenerDatosExtras from "@/Validacion/obtenerDatosExtras";
+import restarSaldoAcumulado from "@/Validacion/restarSaldoAcumulado";
+import sumarSaldoAcumulado from "@/Validacion/sumaSaldoAcumulado";
 const ContenedorProducto = styled.div`
   display: grid;
   gap: 60px;
@@ -377,6 +381,23 @@ const BotonVotar = styled.a`
   cursor: pointer;
   border-radius: 0 0 10px 10px;
 `;
+
+const BotonDepositar = styled.button`
+  background-color: var(--botones);
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 20px;
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-weight: bold;
+  @media (max-width: 1300px) {
+    padding: 5px 10px;
+    font-size: 15px;
+  }
+`;
 const Producto = () => {
   //state del componente
   const [producto, guardarProducto] = useState({});
@@ -402,6 +423,7 @@ const Producto = () => {
   const [inverEncontrado, setInverEncontrado] = useState();
   const [depositarRecaudado, setDepositarRecaudado] = useState(false);
   const [bloquearBoton, setBloquearBoton] = useState(false);
+  const [montoRecaudado, setMontoRecaudado] = useState(0);
   //mensaje error
   const [mensaje, setMensaje] = useState("");
   //cantida de cubos
@@ -450,6 +472,35 @@ const Producto = () => {
       console.log("error");
     }
   };
+  useEffect(() => {
+    if (usuario) {
+      const usuarioDocRef = doc(firebase.db, "usuarios", usuario.uid);
+
+      const unsuscribeUsuario = onSnapshot(usuarioDocRef, (usuarioDoc) => {
+        if (
+          usuarioDoc.exists() &&
+          usuarioDoc.data().saldoRecaudado !== undefined
+        ) {
+          const saldosRecaudados = usuarioDoc.data().saldoRecaudado;
+
+          const saldoProducto = saldosRecaudados.find(
+            (saldo) => saldo.idProducto === id
+          );
+
+          if (saldoProducto) {
+            setMontoRecaudado(saldoProducto.monto);
+          } else {
+            setMontoRecaudado(0);
+          }
+        }
+      });
+
+      return () => {
+        unsuscribeUsuario();
+      };
+    }
+  }, [usuario, id, producto]);
+
   const recuperarPhone = async () => {
     if (creador) {
       const phoneUsuario = await obtenerPhone(creador.id);
@@ -509,6 +560,7 @@ const Producto = () => {
         const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
         await sumarSaldo(usuario.uid, aumento);
         await restarSaldo(creador.id, creador.id, aumento);
+        await restarSaldoAcumulado(creador.id, id, aumento);
         // if (usuario.uid !== creador.id) {
         //   await restarSaldoCreador(creador.id, aumento);
         // }
@@ -542,6 +594,8 @@ const Producto = () => {
           (inversor) => inversor.usuarioId === usuario.uid
         );
 
+        // const { saldoRecaudado } = await obtenerDatosExtras(creador.id);
+        // setMontoRecaudado(saldoRecaudado);
         if (inversorEncontrado) {
           setPase(true);
         }
@@ -572,7 +626,7 @@ const Producto = () => {
       obtenerProducto();
       recuperarPhone();
     }
-  }, [id, producto]);
+  }, [id, producto, usuario]);
 
   useEffect(() => {
     let suma = 0;
@@ -798,6 +852,7 @@ const Producto = () => {
           (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
         await sumarSaldo(usuario.uid, valorViejo);
         await restarSaldo(creador.id, creador.id, valorViejo);
+        await restarSaldoAcumulado(creador.id, id, valorViejo);
         // await restarSaldoCreador(creador.id, valorViejo);
         const nuevaResta = (inputCuboInversor * precio) / 100;
         const mensajeRespuesta = await restarSaldo(
@@ -818,7 +873,8 @@ const Producto = () => {
             if (inversores != undefined) {
               inversores[indice] = { ...inversores[indice], ...nuevosCampos };
               const nuevos = [...inversores];
-              await sumarSaldo(creador.id, nuevaResta);
+              await sumarSaldoAcumulado(creador.id, id, nuevaResta);
+              // await sumarSaldo(creador.id, nuevaResta);
 
               // Actualiza el documento con el array actualizado
               await updateDoc(docRef, { inversores });
@@ -843,7 +899,8 @@ const Producto = () => {
           }, 2000);
           return;
         } else {
-          await sumarSaldo(creador.id, resta);
+          await sumarSaldoAcumulado(creador.id, id, resta);
+          // await sumarSaldo(creador.id, resta);
 
           guardarModal(false);
 
@@ -1012,6 +1069,25 @@ const Producto = () => {
         console.log("El documento no existe");
       }
     } catch (error) {}
+  };
+  const handleDepositarRecaudado = async () => {
+    await sumarSaldo(creador.id, montoRecaudado);
+    await restarSaldoAcumulado(creador.id, id, precio);
+    // cambiar el saldo recáudado
+    const docRef = doc(firebase.db, "productos", `${id}`);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      await updateDoc(docRef, {
+        depositoRecaudado: true,
+      });
+      guardarProducto({
+        ...producto,
+        depositoRecaudado: true,
+      });
+      guardarConsultarDB(true);
+    } else {
+      console.log("El documento no existe");
+    }
   };
   recuperarPhone();
   return (
@@ -1232,29 +1308,60 @@ const Producto = () => {
                   </a>
                 </div>
               </div>
-              <div>
-                <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
-                {estado && esCreador(usuario?.uid) && (
-                  <button
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  gap: 20px;
+                `}
+              >
+                <div>
+                  <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
+                  {estado &&
+                    esCreador(usuario?.uid) &&
+                    depositoRecaudado == false && (
+                      <BotonDepositar onClick={handleModificarPrecio}>
+                        Modificar Precio
+                      </BotonDepositar>
+                    )}
+                </div>
+                {creador.id == usuario?.uid && depositoRecaudado == false && (
+                  <div
                     css={css`
-                      background-color: var(--botones);
-                      cursor: pointer;
-                      padding: 10px 20px;
-                      font-size: 20px;
-                      color: white;
-                      border-radius: 10px;
-                      text-align: center;
-                      text-transform: uppercase;
-                      margin-bottom: 10px;
-                      @media (max-width: 1300px) {
-                        padding: 5px 10px;
-                        font-size: 15px;
-                      }
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      flex-direction: column;
                     `}
-                    onClick={handleModificarPrecio}
                   >
-                    Modificar Precio
-                  </button>
+                    <div
+                      css={css`
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 10px;
+                      `}
+                    >
+                      <p
+                        css={css`
+                          font-size: 20px;
+                          font-weight: bold;
+                        `}
+                      >
+                        Monto Recaudado:
+                      </p>
+                      <Precio>
+                        {formatearPresupuesto(parseInt(montoRecaudado))}
+                      </Precio>
+                    </div>
+                    {montoRecaudado === parseInt(precio) &&
+                      depositoRecaudado == false && (
+                        <BotonDepositar onClick={handleDepositarRecaudado}>
+                          Depositar Recaudado
+                        </BotonDepositar>
+                      )}
+                  </div>
                 )}
               </div>
               <div
@@ -1364,8 +1471,16 @@ const Producto = () => {
                           cursor: ${totalCubos >= 100
                             ? "not-allowed"
                             : "pointer"};
+                          padding: 10px 20px;
+                          font-size: 20px;
+                          color: white;
+                          border-radius: 10px;
+                          text-align: center;
+                          text-transform: uppercase;
+                          margin-bottom: 10px;
+                          font-weight: bold;
                         `}
-                        disabled={totalCubos >= 100}
+                        disabled={totalCubos >= 100 || depositoRecaudado}
                       >
                         Invertir
                       </button>
@@ -1391,7 +1506,7 @@ const Producto = () => {
                       */}
 
                     {estado && esCreador(usuario.uid) && totalCubos === 100 && (
-                      <button
+                      <BotonDepositar
                         onClick={handleGanancia}
                         css={css`
                           background-color: var(--botones);
@@ -1399,7 +1514,7 @@ const Producto = () => {
                         `}
                       >
                         Finalizar Proyecto
-                      </button>
+                      </BotonDepositar>
                     )}
                   </>
                 )}
@@ -1631,7 +1746,8 @@ const Producto = () => {
                           inversores.map((inversor, i) => (
                             <div>
                               {esCreadorInversor(inversor.usuarioId) &&
-                              estado ? (
+                              estado &&
+                              depositoRecaudado == false ? (
                                 <SwipeableList>
                                   <SwipeableListItem
                                     leadingActions={leadingActions()}

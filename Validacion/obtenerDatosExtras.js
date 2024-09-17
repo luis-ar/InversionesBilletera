@@ -14,6 +14,7 @@ async function obtenerDatosExtras(uid) {
       const inversionesCompletadas = snapshot.data().inversionesCompletadas;
       const phone = snapshot.data().phone;
       const votantes = snapshot.data().votantes;
+      const saldoRecaudado = snapshot.data().saldoRecaudado;
       const respuesta = {
         departamento,
         provincia,
@@ -23,6 +24,7 @@ async function obtenerDatosExtras(uid) {
         inversionesCompletadas,
         phone,
         votantes,
+        saldoRecaudado,
       };
 
       return respuesta;
