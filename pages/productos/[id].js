@@ -501,6 +501,27 @@ const Producto = () => {
     }
   }, [usuario, id, producto]);
 
+  useEffect(() => {
+    if (producto) {
+      const productoDocRef = doc(firebase.db, "productos", `${id}`);
+
+      const unsuscribeUsuario = onSnapshot(productoDocRef, (productoDoc) => {
+        // Lógica para manejar cambios en el documento individual del usuario
+        // console.log("El documento del usuario ha cambiado:", usuarioDoc.data());
+
+        // Asegúrate de que el campo 'saldo' esté presente antes de intentar recuperarlo
+        if (productoDoc.exists()) {
+          guardarProducto(productoDoc.data());
+        }
+      });
+
+      // La función de limpieza se ejecutará al desmontar el componente
+      return () => {
+        unsuscribeUsuario();
+      };
+    }
+  }, [producto]);
+
   const recuperarPhone = async () => {
     if (creador) {
       const phoneUsuario = await obtenerPhone(creador.id);
