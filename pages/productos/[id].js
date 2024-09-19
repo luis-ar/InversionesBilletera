@@ -1341,7 +1341,8 @@ const Producto = () => {
                   <Precio>{formatearPresupuesto(parseInt(precio))}</Precio>
                   {estado &&
                     esCreador(usuario?.uid) &&
-                    depositoRecaudado == false && (
+                    depositoRecaudado == false &&
+                    inversores.length == 0 && (
                       <BotonDepositar onClick={handleModificarPrecio}>
                         Modificar Precio
                       </BotonDepositar>
