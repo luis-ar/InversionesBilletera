@@ -872,7 +872,7 @@ const Producto = () => {
         const valorViejo =
           (parseFloat(existeInversor[0]["cubos"]) * precio) / 100;
         await sumarSaldo(usuario.uid, valorViejo);
-        await restarSaldo(creador.id, creador.id, valorViejo);
+        // await restarSaldo(creador.id, creador.id, valorViejo);
         await restarSaldoAcumulado(creador.id, id, valorViejo);
         // await restarSaldoCreador(creador.id, valorViejo);
         const nuevaResta = (inputCuboInversor * precio) / 100;
