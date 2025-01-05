@@ -580,7 +580,7 @@ const Producto = () => {
         );
         const aumento = (inversorEliminado[0]["cubos"] * precio) / 100;
         await sumarSaldo(usuario.uid, aumento);
-        await restarSaldo(creador.id, creador.id, aumento);
+        // await restarSaldo(creador.id, creador.id, aumento);
         await restarSaldoAcumulado(creador.id, id, aumento);
         // if (usuario.uid !== creador.id) {
         //   await restarSaldoCreador(creador.id, aumento);
