@@ -1004,7 +1004,7 @@ const Producto = () => {
         });
         guardarConsultarDB(true);
         const montoRestar = (parseInt(precio) * totalCubos) / 100;
-        await restarSaldoGanancia(usuario.uid, creador.id, montoRestar);
+        await restarSaldoGanancia(usuario.uid, creador.id, inputGanancia);
         await enviarGanancia(inversores, inputGanancia, precio);
         guardarPaseModalGanancia(false);
         //actulizar el state
