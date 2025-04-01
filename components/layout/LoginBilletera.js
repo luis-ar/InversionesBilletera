@@ -14,6 +14,13 @@ const Contenedor = styled.div`
   justify-content: center;
   position: relative;
   flex-direction: column;
+  img {
+    width: 160px;
+    @media (max-width: 500px) {
+      width: 100px;
+    }
+  }
+
   .caja1 {
     background-color: var(--fondoBilletera);
     min-width: 300px;
@@ -23,6 +30,12 @@ const Contenedor = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    @media (max-width: 500px) {
+      scale: 0.8;
+      position: relative;
+      top: -40px;
+    }
   }
 
   .botones {
@@ -138,7 +151,7 @@ const LoginBilletera = () => {
     <>
       {pase && <Spinner />}
       <Contenedor className="contenedor">
-        <img width="160" src="/static/img/iconoBilletera.png" />
+        <img src="/static/img/iconoBilletera.png" />
         {error && <ErrorMostrar>{error}</ErrorMostrar>}
 
         <div className="caja1">

@@ -16,7 +16,6 @@ const MostrarError = styled.div`
   width: 300px;
   height: 505px;
   position: fixed;
-  z-index: 200;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 15px;
   display: flex;
@@ -63,6 +62,9 @@ const Contenedor = styled.div`
   height: 500px;
   width: 300px;
   border-radius: 15px;
+  @media (max-width: 500px) {
+    scale: 0.8;
+  }
   .datosGenerales {
     text-align: center;
     font-weight: bold;

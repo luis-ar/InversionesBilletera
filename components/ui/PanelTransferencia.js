@@ -65,6 +65,10 @@ const Contenedor = styled.div`
   height: 500px;
   width: 300px;
   border-radius: 15px;
+  overflow: hidden;
+  @media (max-width: 500px) {
+    scale: 0.8;
+  }
   .encabezado {
     padding: 10px;
     background-color: var(--botonesContorno);

@@ -29,6 +29,8 @@ const Content = styled.div`
   margin-top: 10vh;
   background-color: var(--colorBuscar);
   padding: 5px;
+  position: relative;
+  z-index: 400;
   .css-qen1cq-SliderBarra {
     height: auto;
   }
