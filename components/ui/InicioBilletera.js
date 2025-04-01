@@ -7,9 +7,11 @@ import DatosBilletera from "./DatosBilletera";
 import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
 import recuperarDatosUsuario from "@/Validacion/recuperarDatosUsuario";
+import { perfilUsuario } from "@/utils/perfilUser";
+import { formatearPresupuesto } from "@/utils/formatearPresupuesto";
 
 const Pie = styled.div`
-  background-color: var(--botonesBilletera);
+  background-color: var(--botonesContorno);
   height: 10%;
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
@@ -18,7 +20,9 @@ const Pie = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  padding: 0 10px;
   font-size: 13px;
+  gap: 10px;
   a {
     div {
       width: 100%;
@@ -75,7 +79,7 @@ const Contenedor = styled.div`
   border-radius: 15px;
   .encabezado {
     padding: 10px;
-    background-color: var(--botonesBilletera);
+    background-color: var(--botonesContorno);
     height: 40px;
     width: 100%;
     border-top-right-radius: 15px;
@@ -138,6 +142,7 @@ const InicioBilletera = ({ token }) => {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(true); // Estado de carga
   const [estado, setEstado] = useState();
+  const [data, setData] = useState();
   const retornoSaldo = () => {
     if (mostrarSaldo) {
       setMostrarSaldo(false);
@@ -145,59 +150,14 @@ const InicioBilletera = ({ token }) => {
       setMostrarSaldo(true);
     }
   };
-  const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-    });
-  };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Error de servidor");
-        }
-
-        setHistoriales(data["data"]["WalletHistrial"]);
-        setSaldo(data["data"]["cash"]);
-        setLoading(false); // Marca como cargado
-      } catch (error) {
-        // En caso de error, maneja el error y oculta el spinner
-        console.error("Error al obtener datos:", error.message);
-        // console.log(error.message.length);
-        if (error.message.length === 29) {
-          setError(error.message);
-          setLoading(false);
-        }
-        if (
-          (error.message =
-            "Cannot read properties of null (reading 'WalletHistrial')")
-        ) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData(); // Llama a la función asincrónica
-  }, [token]);
   useEffect(() => {
     const datosUser = async () => {
-      const data = await recuperarDatosUsuario(token);
-      if (data["data"]) {
-        setEstado(data["data"]["ChargingAgent"]["Status"]["subtype"]);
-      }
+      const data = await perfilUsuario(token);
+      setSaldo(data.saldo);
+      setHistoriales(data.transacciones);
+      setData(data);
+      setLoading(false);
     };
 
     datosUser();
@@ -307,7 +267,7 @@ const InicioBilletera = ({ token }) => {
           >
             {historiales ? (
               <>
-                {historiales.map((historial, index) => (
+                {historiales.slice(0, 4).map((historial, index) => (
                   <DatosBilletera key={index} historial={historial} />
                 ))}
               </>
@@ -325,18 +285,20 @@ const InicioBilletera = ({ token }) => {
           </ul>
         </div>
         <Pie>
-          <div>
-            <i className="bx bx-qr"></i>
-            escanear qr
-          </div>
-          <Link href={`/transferencia/${token}`}>
+          <Link
+            href={`/transferencia/${token}`}
+            style={{ textDecoration: "none", flex: 1, display: "flex" }}
+          >
             <div>
               <i className="bx bx-paper-plane"></i>
               Yapear
             </div>
           </Link>
-          {estado === 9 && (
-            <Link href={`/recargar/${token}`}>
+          {data?.type === "admin" && (
+            <Link
+              href={`/recargar/${token}`}
+              style={{ textDecoration: "none", width: "50%" }}
+            >
               <div>
                 <i className="bx bx-reset bx-rotate-180"></i> Recargar
               </div>

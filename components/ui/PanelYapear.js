@@ -9,6 +9,9 @@ import SpinnerHistorial from "./SpinnerHistorial";
 import recuperarDatos from "@/Validacion/recuperarDatos";
 import transferirDineroYape from "@/Validacion/transferirDineroYape";
 import enviarDineroPropia from "@/Validacion/enviarDineroPropia";
+import { allPerfilUsuario } from "@/utils/perfilUser";
+import { transferenciaBilletera } from "@/utils/transferenciaBilletera";
+import Router from "next/router";
 const MostrarError = styled.div`
   width: 300px;
   height: 505px;
@@ -37,6 +40,22 @@ const MostrarError = styled.div`
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
+  }
+  button {
+    background-color: var(--botonesBilletera);
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 10px;
+    :hover {
+      opacity: 0.8;
+    }
   }
 `;
 const Contenedor = styled.div`
@@ -86,7 +105,7 @@ const Contenedor = styled.div`
   }
   .encabezado {
     padding: 10px;
-    background-color: var(--botonesBilletera);
+    background-color: var(--botonesContorno);
     height: 40px;
     width: 100%;
     border-top-right-radius: 15px;
@@ -159,68 +178,6 @@ const PanelYapear = ({ token, id, tipo }) => {
   const [valor, setValor] = useState();
   const [respuesta, setRespuesta] = useState();
   const [estado, setEstado] = useState(false);
-  const retornoSaldo = () => {
-    if (mostrarSaldo) {
-      setMostrarSaldo(false);
-    } else {
-      setMostrarSaldo(true);
-    }
-  };
-  const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-    });
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Error de servidor");
-        }
-
-        setHistoriales(data["data"]["WalletHistrial"]);
-        setSaldo(data["data"]["cash"]);
-        setLoading(false); // Marca como cargado
-      } catch (error) {
-        // console.error("Error al obtener datos:", error.message);
-        if (error.message.length === 29) {
-          setError(error.message);
-          setLoading(false);
-        }
-        if (
-          (error.message =
-            "Cannot read properties of null (reading 'WalletHistrial')")
-        ) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData(); // Llama a la función asincrónica
-  }, [token]);
-
-  useEffect(() => {
-    const llamadaDatos = async () => {
-      const datos = await recuperarDatos(id, token);
-      setDatos(datos["data"]);
-      setLoading(false); // Marca como cargado
-    };
-    llamadaDatos();
-  }, []);
 
   const formatoMoneda = (e) => {
     const valorNumerico = e.target.value.replace(/[^0-9]/g, "");
@@ -229,25 +186,36 @@ const PanelYapear = ({ token, id, tipo }) => {
   const transferirDinero = async (e) => {
     e.preventDefault();
     const numeroExtraido = valor.replace(/\D/g, "");
-    const numero = parseInt(numeroExtraido, 10);
-    if (tipo == "transferencia") {
-      if (numero < saldo) {
-        const datos = await transferirDineroYape(id, numero, token);
-        setRespuesta(datos["message"]);
-        return;
-      } else {
-        setError("Saldo Insuficiente");
-        setEstado(true);
-        setTimeout(() => {
-          setError("");
-          setEstado(false);
-        }, 1000);
-      }
-    } else {
-      const datos = await enviarDineroPropia(token, numero, id);
-      setRespuesta(datos["data"]["message"]);
+    const monto = parseInt(numeroExtraido, 10);
+    const datos = await transferenciaBilletera(monto, tipo, id, token);
+    if (datos.error) {
+      setError(datos.error);
+      setEstado(true);
+    } else if (datos.mensaje) {
+      setRespuesta(datos.mensaje);
     }
+    setTimeout(() => {
+      setError("");
+      setEstado(false);
+    }, 1000);
   };
+
+  useEffect(() => {
+    const llamadaDatos = async () => {
+      const datos = await allPerfilUsuario(token);
+
+      if (!Array.isArray(datos)) {
+        console.error("Error: datos no es un array", datos);
+        return;
+      }
+
+      const filterUser = datos.filter((user) => user.id === id);
+      setDatos(filterUser[0]);
+      setLoading(false);
+    };
+
+    llamadaDatos();
+  }, [token]);
   return (
     <div
       css={css`
@@ -258,6 +226,15 @@ const PanelYapear = ({ token, id, tipo }) => {
         align-items: center;
         @media (max-width: 1000px) {
           height: calc(90vh - 103px);
+        }
+        .contenedorBoton {
+          button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+          }
+          button:hover {
+            background-color: var(--botonesHoverBilletera);
+          }
         }
       `}
     >
@@ -281,9 +258,9 @@ const PanelYapear = ({ token, id, tipo }) => {
               >
                 {respuesta}
               </span>
-              <Link href={`/usuarios/${token}`}>
+              <button onClick={() => Router.push(`/usuarios/${token}`)}>
                 Regresar a la Pagina Principal
-              </Link>
+              </button>
             </div>
           </MostrarError>
         )}
@@ -310,29 +287,32 @@ const PanelYapear = ({ token, id, tipo }) => {
           `}
         >
           {loading && <SpinnerHistorial />}
-          {datosUser && (
-            <div className="datosGenerales">
-              <span>
-                {datosUser["names"]} {datosUser["lastname"]}
-              </span>
-              <p>{datosUser["phone"]}</p>
-            </div>
-          )}
-          <form onSubmit={transferirDinero}>
-            <div className="contenedorValor">
-              <input
-                type="text"
-                id="monto"
-                value={valor}
-                onChange={formatoMoneda}
-                placeholder="S/ 0"
-              />{" "}
-            </div>
 
-            <div className="contenedorBoton">
-              <button>{tipo == "transferencia" ? "Yapear" : "Recargar"}</button>
-            </div>
-          </form>
+          {datosUser && (
+            <>
+              <div className="datosGenerales">
+                <span>{datosUser.nombre}</span>
+                <p>{datosUser.phoneNumber}</p>
+              </div>
+              <form onSubmit={transferirDinero}>
+                <div className="contenedorValor">
+                  <input
+                    type="text"
+                    id="monto"
+                    value={valor}
+                    onChange={formatoMoneda}
+                    placeholder="S/ 0"
+                  />{" "}
+                </div>
+
+                <div className="contenedorBoton">
+                  <button type="submit" disabled={!valor}>
+                    {tipo == "transacciones" ? "Yapear" : "Recargar"}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </Contenedor>
     </div>

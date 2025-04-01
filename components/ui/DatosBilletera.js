@@ -2,48 +2,58 @@ import React from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { formatearFecha } from "@/Validacion/convertirUsuarioBilletera";
+import { formatearPresupuesto } from "@/utils/formatearPresupuesto";
 const Contenedor = styled.div`
-  padding: 0 20px;
-  padding-bottom: 5px;
+  padding: 5px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 0 20px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
   margin-bottom: 13px;
+  background-color: var(--botonesBilletera);
+  border-radius: 5px;
   .datosPersonales {
     display: flex;
     flex-direction: column;
+    font-size: 12px;
   }
 `;
-const DatosBilletera = ({ historial }) => {
-  const { DepositUser, Operation, amount, createdAt } = historial;
-  const { names, phone, lastname } = DepositUser;
-  const { extra } = Operation;
-  const { symbol, description } = extra;
-  const monto = symbol + amount;
-  const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-    });
+const Monto = ({ tipo, monto }) => {
+  const estilos = {
+    fontWeight: "bold",
+    fontSize: "12px",
+    color:
+      tipo === "retiro"
+        ? "rgb(216, 48, 48)"
+        : tipo === "deposito"
+        ? "var(--botonesContorno)"
+        : "inherit",
   };
-  const fechaOriginal = new Date(createdAt);
-  const fechaFormateada = formatearFecha(fechaOriginal);
+
+  return (
+    <div className="cantidad">
+      <p style={estilos}>{tipo === "retiro" ? `-${monto}` : monto}</p>
+    </div>
+  );
+};
+const DatosBilletera = ({ historial }) => {
+  const { id, tipo, monto, fecha, receptorId, userSend } = historial;
+  const fechaDate = new Date(fecha);
+
+  const fechaFormateada = formatearFecha(fechaDate);
   return (
     <Contenedor>
       <div className="datosPersonales">
-        <span className="nombre">{names}</span>
+        <span className="nombre">
+          {tipo === "retiro"
+            ? receptorId.phoneNumber.replace(/.(?=.{3})/g, "*")
+            : userSend.phoneNumber.replace(/.(?=.{3})/g, "*")}
+        </span>
         <span>{fechaFormateada}</span>
       </div>
-      <div className="cantidad">
-        {symbol === "-" ? (
-          <p style={{ color: "#FE4141" }}>
-            {formatearPresupuesto(parseInt(monto))}
-          </p>
-        ) : (
-          <p>{formatearPresupuesto(parseInt(monto))}</p>
-        )}
-      </div>
+
+      <Monto tipo={tipo} monto={formatearPresupuesto(parseInt(monto))} />
     </Contenedor>
   );
 };

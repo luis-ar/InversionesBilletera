@@ -6,6 +6,7 @@ import SliderBilletera from "./SliderBilletera";
 import DatosBilletera from "./DatosBilletera";
 import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
+import { perfilUsuario } from "@/utils/perfilUser";
 const MostrarError = styled.div`
   width: 300px;
   height: 505px;
@@ -41,7 +42,7 @@ const Contenedor = styled.div`
   border-radius: 15px;
   .encabezado {
     padding: 10px;
-    background-color: var(--botonesBilletera);
+    background-color: var(--botonesContorno);
     height: 40px;
     width: 100%;
     border-top-right-radius: 15px;
@@ -117,52 +118,22 @@ const HistorialCompleto = ({ token }) => {
       setMostrarSaldo(true);
     }
   };
-  const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-    });
-  };
-
+  // const formatearPresupuesto = (cantidad) => {
+  //   return cantidad.toLocaleString("es-PE", {
+  //     style: "currency",
+  //     currency: "PEN",
+  //   });
+  // };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://billapp-57e4b0e7460c.herokuapp.com/api/wallet",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Error de servidor");
-        }
-
-        setHistoriales(data["data"]["WalletHistrial"]);
-        setSaldo(data["data"]["cash"]);
-        setLoading(false); // Marca como cargado
-      } catch (error) {
-        // console.error("Error al obtener datos:", error.message);
-        if (error.message.length === 29) {
-          setError(error.message);
-          setLoading(false);
-        }
-        if (
-          (error.message =
-            "Cannot read properties of null (reading 'WalletHistrial')")
-        ) {
-          setLoading(false);
-        }
-      }
+    const datosUser = async () => {
+      const data = await perfilUsuario(token);
+      setHistoriales(data.transacciones);
+      setLoading(false);
     };
 
-    fetchData(); // Llama a la función asincrónica
+    datosUser();
   }, [token]);
+
   return (
     <div
       css={css`

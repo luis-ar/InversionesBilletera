@@ -10,7 +10,7 @@ const Recarga = () => {
   const {
     query: { token },
   } = router;
-  const tipo = "recarga";
+  const tipo = "recargar";
   return (
     <Layout>
       <div

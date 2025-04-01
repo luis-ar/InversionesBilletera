@@ -8,6 +8,7 @@ import Link from "next/link";
 import SpinnerHistorial from "./SpinnerHistorial";
 import recuperarNumeros from "@/Validacion/recuperarNumeros";
 import PanelNumero from "./PanelNumero";
+import { allPerfilUsuario } from "@/utils/perfilUser";
 
 const BuscarTelefono = styled.div`
   height: 8%;
@@ -66,7 +67,7 @@ const Contenedor = styled.div`
   border-radius: 15px;
   .encabezado {
     padding: 10px;
-    background-color: var(--botonesBilletera);
+    background-color: var(--botonesContorno);
     height: 40px;
     width: 100%;
     border-top-right-radius: 15px;
@@ -137,76 +138,21 @@ const PanelTransferencia = ({ token, tipo }) => {
   const [loading, setLoading] = useState(true); // Estado de carga
   const [error, setError] = useState();
   const [numero, setNumero] = useState();
-  const retornoSaldo = () => {
-    if (mostrarSaldo) {
-      setMostrarSaldo(false);
-    } else {
-      setMostrarSaldo(true);
-    }
-  };
-  const formatearPresupuesto = (cantidad) => {
-    return cantidad.toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-    });
-  };
+
   const cargarDatos = (e) => {
     setNumero(e.target.value);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         "https://billapp-57e4b0e7460c.herokuapp.com.com/api/wallet",
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       const data = await response.json();
-
-  //       if (!response.ok) {
-  //         throw new Error(data.message || "Error de servidor");
-  //       }
-
-  //       setHistoriales(data["data"]["WalletHistrial"]);
-  //       setSaldo(data["data"]["cash"]);
-  //       setLoading(false); // Marca como cargado
-  //     } catch (error) {
-  //       // console.error("Error al obtener datos:", error.message);
-  //       if (error.message.length === 29) {
-  //         setError(error.message);
-  //         setLoading(false);
-  //       }
-  //       if (
-  //         (error.message =
-  //           "Cannot read properties of null (reading 'WalletHistrial')")
-  //       ) {
-  //         setLoading(false);
-  //       }
-  //     }
-  //   };
-
-  //   fetchData(); // Llama a la función asincrónica
-  // }, [token]);
+  useEffect(() => {}, [numero]);
 
   useEffect(() => {
-    const llamadaDatos = async () => {
-      const datos = await recuperarNumeros(numero, token);
-      // console.log(datos["error"]);
-      // console.log("desde", datos["data"]);
-      setDatos(datos["data"]);
-      if (datos["error"]) {
-        setError(datos["message"]);
-      }
-      setLoading(false); // Marca como cargado
+    const data = async () => {
+      const data = await allPerfilUsuario(token);
+      setDatos(data);
+      setLoading(false);
     };
-    llamadaDatos();
-  }, [numero]);
+    data();
+  }, [token]);
 
   return (
     <div
@@ -273,7 +219,13 @@ const PanelTransferencia = ({ token, tipo }) => {
             `}
           >
             {datosUser && datosUser.length != 0 ? (
-              <>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
                 {datosUser.map((usuario, index) => (
                   <PanelNumero
                     key={index}
@@ -282,7 +234,7 @@ const PanelTransferencia = ({ token, tipo }) => {
                     tipo={tipo}
                   />
                 ))}
-              </>
+              </div>
             ) : (
               !loading && (
                 <p

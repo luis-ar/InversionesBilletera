@@ -10,7 +10,7 @@ const Transferencia = () => {
   const {
     query: { token },
   } = router;
-  const tipo = "transferencia";
+  const tipo = "transacciones";
   return (
     <Layout>
       <div

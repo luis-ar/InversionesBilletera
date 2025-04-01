@@ -5,6 +5,7 @@ import { FirebaseContext } from "@/firebase";
 import Router from "next/router";
 import Spinner from "../ui/Spinner";
 import { ErrorMostrar } from "../ui/Formulario";
+import { iniciarSesion } from "@/utils/loginUser";
 
 const Contenedor = styled.div`
   background-color: var(--contCard);
@@ -50,7 +51,7 @@ const Contenedor = styled.div`
     border-radius: 15px;
     font-size: 30px;
     color: #e7e6e8;
-    border: solid 0.5px #5b02da;
+    border: solid 2px var(--botonesContorno);
     cursor: pointer;
     background-color: var(--botonesBilletera);
     :hover {
@@ -71,7 +72,7 @@ const Contenedor = styled.div`
     }
   }
   .pintado {
-    background-color: black !important;
+    background-color: var(--botonesContorno) !important;
   }
   img {
     margin-bottom: 10px;
@@ -98,55 +99,6 @@ const LoginBilletera = () => {
     }
   }, [clave]);
 
-  const crearCuenta = async (password) => {
-    const data = {
-      email: usuario.email,
-      password: password,
-    };
-    try {
-      const response = await fetch(
-        "https://billapp-57e4b0e7460c.herokuapp.com/api/user/token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (response.ok) {
-        const responseData = await response.json();
-        guardarPase(true);
-        const token = responseData.data.accessToken;
-        setTimeout(() => {
-          Router.push(`/usuarios/${token}`);
-        }, 1000);
-      } else {
-        console.error(
-          "Error al enviar los datos:",
-          response.status,
-          response.statusText
-        );
-
-        // Imprimir más detalles sobre la respuesta
-        const responseBody = await response.json();
-
-        // Acceder al valor de la propiedad 'data'
-        if (responseBody && responseBody.data) {
-          guardarError(responseBody.data);
-          console.log("errorrrr");
-          setTimeout(() => {
-            guardarError("");
-            guardarClave("");
-          }, 2000);
-        }
-      }
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-    }
-  };
-
   const enviarClave = async (e) => {
     if (clave.length < 6) {
       const nuevo = clave + e.target.value;
@@ -156,7 +108,23 @@ const LoginBilletera = () => {
       }
       if (nuevo.length == 6) {
         guardarClave(nuevo);
-        await crearCuenta(nuevo);
+        guardarPase(true);
+        const response = await iniciarSesion("luisSantos@gmail.com", nuevo);
+        if (response.success) {
+          guardarError("");
+          guardarClave("");
+          setTimeout(() => {
+            guardarPase(false);
+            Router.push(`/usuarios/${response.token}`);
+          }, 1000);
+        } else {
+          guardarError(response.message);
+          guardarPase(false);
+          setTimeout(() => {
+            guardarError("");
+            guardarClave("");
+          }, 1500);
+        }
         return;
       }
       return;
@@ -170,7 +138,7 @@ const LoginBilletera = () => {
     <>
       {pase && <Spinner />}
       <Contenedor className="contenedor">
-        <img width="100" src="/static/img/yape.png" />
+        <img width="160" src="/static/img/iconoBilletera.png" />
         {error && <ErrorMostrar>{error}</ErrorMostrar>}
 
         <div className="caja1">
@@ -292,11 +260,14 @@ const LoginBilletera = () => {
             </div>
           </div>
         </div>
+        {/** 
         <div className="nuevoRegistro">
           <h3>
             ¿No tienes Cuenta? <a href="/registroBilletera">Registrate aqui</a>
           </h3>
         </div>
+          
+          */}
       </Contenedor>
     </>
   );
