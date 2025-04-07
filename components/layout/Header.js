@@ -18,7 +18,7 @@ const ContenedorHeader = styled.div`
   position: fixed;
   height: 10vh;
   border-bottom: 4px solid black;
-  z-index: 5;
+  z-index: 600;
   top: 0;
   background-color: var(--colorBarraSuperior);
   display: flex;
